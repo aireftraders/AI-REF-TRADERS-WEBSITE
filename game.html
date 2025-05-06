@@ -3,223 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI REF-TRADERS - Games Portal</title>
+    <title>AI REF-TRADERS - Games</title>
+    <!-- Include common CSS -->
+    <link rel="stylesheet" href="common.css">
     <style>
         :root {
             --primary: #6C5CE7;
-            --primary-dark: #5649c0;
             --secondary: #00CEFF;
+            --dark: #2D3436;
+            --light: #F5F6FA;
             --success: #00B894;
-            --danger: #e74c3c;
+            --danger: #D63031;
             --warning: #FDCB6E;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --border-radius: 12px;
-            --box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            --transition: all 0.3s ease;
             --nigerian-green: #008753;
             --nigerian-white: #FFFFFF;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --nigerian-green-light: #E5F5EE;
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            background-color: var(--light);
             color: var(--dark);
-            line-height: 1.6;
+            transition: all 0.3s;
         }
         
-        /* Navigation */
-        nav {
-            width: 100%;
-            background: var(--primary);
-            padding: 1rem;
-            text-align: center;
-            box-shadow: var(--box-shadow);
-            position: fixed;
-            top: 0;
-            z-index: 1000;
-        }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        
-        /* Main Container */
-        .main-container {
-            padding: 80px 15px 70px;
+        .container {
             max-width: 100%;
+            padding: 15px;
+            padding-bottom: 70px;
         }
         
-        /* Ad Container Styles */
-        .ad-container {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            width: 95%;
-            max-width: 900px;
-            margin: 2rem auto;
-            box-shadow: var(--box-shadow);
-            text-align: center;
-        }
-        
-        .ad-header {
-            margin-bottom: 1.5rem;
-        }
-        
-        .ad-header h2 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 0 0 0.5rem;
-            color: var(--dark);
-            background: linear-gradient(to right, var(--primary), #a55eea);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .ad-header p {
-            font-size: 1.1rem;
-            color: #6c757d;
-            margin: 0;
-        }
-        
-        #adFrameContainer {
-            width: 100%;
-            min-height: 300px;
-            margin: 2rem auto;
-            border-radius: var(--border-radius);
-            background: var(--light);
-            overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(0,0,0,0.08);
-        }
-        
-        #adFrame {
-            width: 100%;
-            height: 100%;
-            min-height: 300px;
-            border: none;
-        }
-        
-        .progress-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 2rem 0;
-            gap: 0.5rem;
-        }
-        
-        .progress-step {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            background: #e9ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: var(--transition);
-            position: relative;
-        }
-        
-        .progress-step.active {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
-        }
-        
-        .progress-step.completed {
-            background: var(--success);
-            color: white;
-        }
-        
-        .progress-step.completed::after {
-            content: '✓';
-            position: absolute;
-        }
-        
-        #timerDisplay {
-            margin: 1.5rem 0;
-            font-weight: 600;
-            font-size: 1.2rem;
-            color: #495057;
-        }
-        
-        #timerCount {
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .watch-ad-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
-        }
-        
-        .watch-ad-btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
-        }
-        
-        .watch-ad-btn:active {
-            transform: translateY(0);
-        }
-        
-        .ad-status {
+        .app-bar {
             display: flex;
             justify-content: space-between;
-            width: 100%;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-            color: #6c757d;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 20px;
         }
         
-        .access-denied {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background: rgba(231, 76, 60, 0.1);
-            border-radius: var(--border-radius);
-            border-left: 4px solid var(--danger);
-        }
-        
-        .access-denied h3 {
-            color: var(--danger);
-            margin-top: 0;
-            font-size: 1.3rem;
-        }
-        
-        .time-remaining {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .time-remaining span {
-            color: var(--primary);
-            font-weight: 700;
+        .user-chip {
+            background: var(--nigerian-green);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
         }
         
         /* Game Specific Styles */
@@ -682,7 +515,7 @@
         /* Sync Status */
         .sync-status {
             position: fixed;
-            top: 60px;
+            top: 10px;
             right: 10px;
             padding: 5px 10px;
             border-radius: 4px;
@@ -803,7 +636,7 @@
         /* Timer Display */
         .timer-display {
             position: fixed;
-            top: 60px;
+            top: 10px;
             left: 10px;
             background: rgba(0,0,0,0.7);
             color: white;
@@ -820,30 +653,7 @@
         }
         
         /* Responsive Design */
-        @media (max-width: 768px) {
-            .ad-container {
-                padding: 1.5rem;
-                width: 95%;
-            }
-            
-            .ad-header h2 {
-                font-size: 1.5rem;
-            }
-            
-            .ad-header p {
-                font-size: 1rem;
-            }
-            
-            #adFrameContainer, #adFrame {
-                min-height: 250px;
-            }
-            
-            .progress-step {
-                width: 2rem;
-                height: 2rem;
-                font-size: 0.8rem;
-            }
-            
+        @media (max-width: 600px) {
             .cards-grid {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -869,314 +679,315 @@
                 font-size: 12px;
             }
         }
-        
-        @media (max-width: 480px) {
-            .game-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .cards-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .ad-header h2 {
-                font-size: 1.3rem;
-            }
-        }
     </style>
+    <!-- Include Dexie.js for IndexedDB -->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
-        <a href="#" id="homeLink">Home</a>
-    </nav>
-    
-    <!-- Main Content -->
-    <div class="main-container">
-        <!-- Ads Container (shown by default) -->
-        <div class="ad-container" id="adsContainer">
-            <div class="ad-header">
-                <h2>Complete Ads to Continue</h2>
-                <p id="adPurpose">Watch ads to unlock access</p>
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle">
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span class="theme-icon" id="themeIcon">🌙</span>
+            <span id="themeText">Dark Mode</span>
+        </button>
+    </div>
+
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <label for="languageDropdown">🌐 Select Language:</label>
+        <select id="languageDropdown">
+            <option value="en">English</option>
+            <option value="ha">Hausa</option>
+            <option value="yo">Yoruba</option>
+            <option value="ig">Igbo</option>
+        </select>
+    </div>
+
+    <div id="accessDeniedContainer" class="access-denied-container" style="display: none;">
+        <div class="access-denied-icon">🚫</div>
+        <div class="access-denied-title">Access Denied</div>
+        <div class="access-denied-message" id="accessDeniedMessage">
+            You must complete watching 20 ads to access this game section.
+        </div>
+        <button class="access-denied-btn" id="goToAdsBtn">Go to Ads Page</button>
+    </div>
+
+    <div id="mainGameContainer" class="container" style="display: none;">
+        <div class="app-bar">
+            <h1>AI REF-TRADERS Games</h1>
+            <div class="user-chip">
+                <span>📊 ₦<span id="balanceDisplay">0</span></span>
             </div>
-            
-            <div class="ad-status">
-                <span>Progress: <span id="completedCount">0</span>/20</span>
-                <span>Estimated time: <span id="estimatedTime">5 minutes</span></span>
-            </div>
-            
-            <div class="progress-container" id="progressSteps"></div>
-            
-            <div id="adFrameContainer">
-                <!-- Ad will be loaded here -->
-            </div>
-            
-            <div id="timerDisplay">Ad completes in <span id="timerCount">15</span> seconds</div>
-            
-            <button class="watch-ad-btn" id="watchAdBtn">Watch Ad</button>
-            
-            <button class="watch-ad-btn" id="gameConsoleBtn" style="background-color: var(--success); margin-top: 1.5rem; display: none;">Go to Game Console</button>
         </div>
         
-        <!-- Game Container (hidden by default) -->
-        <div id="gameContainer" style="display: none;">
-            <div class="app-bar">
-                <h1>AI REF-TRADERS Games</h1>
-                <div class="user-chip">
-                    <span>📊 ₦<span id="balanceDisplay">0</span></span>
-                </div>
+        <!-- FOMO Banner -->
+        <div class="fomo-banner">
+            <div class="fomo-text">
+                🚨 URGENT BONUS OFFER! 🚨<br>
+                Refer 6 users that sign up and watch 20 ads within 24 hours and receive additional ₦20,000 to your trading capital!
+            </div>
+            <div class="fomo-timer" id="fomoTimer">00:60:00</div>
+        </div>
+        
+        <div class="sync-status" id="syncStatus">Syncing...</div>
+        
+        <div class="game-cards" id="gameCards">
+            <div class="game-card" data-game="memory">
+                <div class="game-card-icon">🧠</div>
+                <div class="game-card-title">Memory Match</div>
+                <div class="game-card-desc">Match pairs to earn ₦800 per pair</div>
+                <div class="attempts-counter">Attempts: <span id="memoryAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
             
-            <!-- FOMO Banner -->
-            <div class="fomo-banner">
-                <div class="fomo-text">
-                    🚨 URGENT BONUS OFFER! 🚨<br>
-                    Play games to earn rewards!
-                </div>
-                <div class="fomo-timer" id="fomoTimer">00:60:00</div>
+            <div class="game-card" data-game="dice">
+                <div class="game-card-icon">🎲</div>
+                <div class="game-card-title">Lucky Dice</div>
+                <div class="game-card-desc">Roll dice to win ₦800 per correct guess</div>
+                <div class="attempts-counter">Attempts: <span id="diceAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
             
-            <div class="sync-status online" id="syncStatus">Online</div>
-            
-            <div class="game-cards" id="gameCards">
-                <div class="game-card" data-game="memory">
-                    <div class="game-card-icon">🧠</div>
-                    <div class="game-card-title">Memory Match</div>
-                    <div class="game-card-desc">Match pairs to earn ₦800 per pair</div>
-                    <div class="attempts-counter">Attempts: <span id="memoryAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
-                
-                <div class="game-card" data-game="dice">
-                    <div class="game-card-icon">🎲</div>
-                    <div class="game-card-title">Lucky Dice</div>
-                    <div class="game-card-desc">Roll dice to win ₦800 per correct guess</div>
-                    <div class="attempts-counter">Attempts: <span id="diceAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
-                
-                <div class="game-card" data-game="snake">
-                    <div class="game-card-icon">🐍</div>
-                    <div class="game-card-title">Snake Game</div>
-                    <div class="game-card-desc">Grow your snake to earn ₦800 per food</div>
-                    <div class="attempts-counter">Attempts: <span id="snakeAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
-                
-                <div class="game-card" data-game="trivia">
-                    <div class="game-card-icon">❓</div>
-                    <div class="game-card-title">Trivia Quiz</div>
-                    <div class="game-card-desc">Answer questions to earn ₦800 each</div>
-                    <div class="attempts-counter">Attempts: <span id="triviaAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
-                
-                <div class="game-card" data-game="wheel">
-                    <div class="game-card-icon">🎡</div>
-                    <div class="game-card-title">Lucky Wheel</div>
-                    <div class="game-card-desc">Spin to win ₦200-₦1,600 prizes</div>
-                    <div class="attempts-counter">Attempts: <span id="wheelAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
-                
-                <div class="game-card" data-game="ayo">
-                    <div class="game-card-icon">🎮</div>
-                    <div class="game-card-title">Ayo Olopon</div>
-                    <div class="game-card-desc">Traditional Yoruba board game</div>
-                    <div class="attempts-counter">Attempts: <span id="ayoAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
-                
-                <div class="game-card" data-game="nairaChase">
-                    <div class="game-card-icon">🦅</div>
-                    <div class="game-card-title">Naira Chase</div>
-                    <div class="game-card-desc">Collect rolling Naira coins with the Nigerian eagle</div>
-                    <div class="attempts-counter">Attempts: <span id="nairaChaseAttemptsDisplay">10</span>/10</div>
-                    <button class="primary" style="margin-top: 10px;">Play Now</button>
-                </div>
+            <div class="game-card" data-game="snake">
+                <div class="game-card-icon">🐍</div>
+                <div class="game-card-title">Snake Game</div>
+                <div class="game-card-desc">Grow your snake to earn ₦800 per food</div>
+                <div class="attempts-counter">Attempts: <span id="snakeAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
             
-            <!-- Game Containers -->
-            <div class="game-container" id="memoryGame">
-                <h3>🎮 Memory Match Game</h3>
-                <p>Match the fruits to win ₦800 per pair</p>
-                <p class="attempts-counter">Attempts left: <span id="memoryAttempts">10</span>/10</p>
-                
-                <div class="cards-grid" id="gameBoard"></div>
-                
-                <div class="game-stats">
-                    <p>🎯 Matched: <span id="wins">0</span> pairs</p>
-                    <p>💰 Earned: ₦<span id="gameEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames1" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+            <div class="game-card" data-game="trivia">
+                <div class="game-card-icon">❓</div>
+                <div class="game-card-title">Trivia Quiz</div>
+                <div class="game-card-desc">Answer questions to earn ₦800 each</div>
+                <div class="attempts-counter">Attempts: <span id="triviaAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
             
-            <div class="game-container" id="diceGame">
-                <h3>🎲 Lucky Dice</h3>
-                <p>Roll the dice to win ₦800 per correct guess</p>
-                <p class="attempts-counter">Attempts left: <span id="diceAttempts">10</span>/10</p>
-                
-                <div style="text-align: center; margin: 20px 0;">
-                    <div id="diceResult" style="font-size: 48px; margin: 20px 0;">?</div>
-                    <button id="rollDiceBtn" class="primary" style="width: 100%;">Roll Dice (₦800)</button>
-                </div>
-                
-                <div class="game-stats">
-                    <p>🎯 Wins: <span id="diceWins">0</span></p>
-                    <p>💰 Earned: ₦<span id="diceEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames2" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+            <div class="game-card" data-game="wheel">
+                <div class="game-card-icon">🎡</div>
+                <div class="game-card-title">Lucky Wheel</div>
+                <div class="game-card-desc">Spin to win ₦200-₦1,600 prizes</div>
+                <div class="attempts-counter">Attempts: <span id="wheelAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
             
-            <div class="game-container" id="snakeGame">
-                <h3>🐍 Snake Game</h3>
-                <p>Grow your snake to earn ₦800 per food</p>
-                <p class="attempts-counter">Attempts left: <span id="snakeAttempts">10</span>/10</p>
-                
-                <canvas id="snakeCanvas" width="300" height="300"></canvas>
-                
-                <button id="startSnakeBtn" class="snake-start-btn">Start Game</button>
-                
-                <div class="snake-controls" style="display: none;">
-                    <button class="snake-btn up">↑</button>
-                    <button class="snake-btn left">←</button>
-                    <button class="snake-btn right">→</button>
-                    <button class="snake-btn down">↓</button>
-                </div>
-                
-                <div class="game-stats">
-                    <p>🎯 Score: <span id="snakeScore">0</span></p>
-                    <p>💰 Earned: ₦<span id="snakeEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames3" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+            <div class="game-card" data-game="ayo">
+                <div class="game-card-icon">🎮</div>
+                <div class="game-card-title">Ayo Olopon</div>
+                <div class="game-card-desc">Traditional Yoruba board game</div>
+                <div class="attempts-counter">Attempts: <span id="ayoAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
             
-            <div class="game-container" id="triviaGame">
-                <h3>🧠 Trivia Quiz</h3>
-                <p>Answer questions correctly to earn ₦800 each</p>
-                <p class="attempts-counter">Attempts left: <span id="triviaAttempts">10</span>/10</p>
-                
-                <div id="triviaQuestion" class="trivia-question">Loading question...</div>
-                <div id="triviaOptions" class="trivia-options">
-                    <div class="trivia-option" data-option="1">Option 1</div>
-                    <div class="trivia-option" data-option="2">Option 2</div>
-                    <div class="trivia-option" data-option="3">Option 3</div>
-                    <div class="trivia-option" data-option="4">Option 4</div>
-                </div>
-                
-                <div class="game-stats">
-                    <p>🎯 Correct: <span id="triviaCorrect">0</span></p>
-                    <p>💰 Earned: ₦<span id="triviaEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames4" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-            </div>
-            
-            <div class="game-container" id="wheelGame">
-                <h3>🎡 Lucky Wheel</h3>
-                <p>Spin the wheel to win prizes from ₦200 to ₦1,600</p>
-                <p class="attempts-counter">Attempts left: <span id="wheelAttempts">10</span>/10</p>
-                
-                <div class="wheel-container">
-                    <div class="wheel" id="wheel"></div>
-                    <div class="wheel-pointer"></div>
-                </div>
-                
-                <div class="wheel-result">
-                    <div id="wheelMessage">Tap SPIN to play</div>
-                    <div id="wheelPrize" class="wheel-prize"></div>
-                </div>
-                
-                <button id="spinWheelBtn" class="spin-btn">SPIN (₦200-₦1,600)</button>
-                
-                <div class="game-stats">
-                    <p>🎯 Wins: <span id="wheelWins">0</span></p>
-                    <p>💰 Earned: ₦<span id="wheelEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames5" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-            </div>
-            
-            <div class="game-container" id="ayoGame">
-                <h3>🎮 Ayo Olopon</h3>
-                <p>Traditional Yoruba board game</p>
-                <p class="attempts-counter">Attempts left: <span id="ayoAttempts">10</span>/10</p>
-                
-                <div class="ayo-game-info">
-                    <p>Current Player: <span id="currentPlayer">Player 1</span></p>
-                    <p>Player 1 Score: <span id="player1Score">0</span></p>
-                    <p>Player 2 Score: <span id="player2Score">0</span></p>
-                </div>
-                
-                <div class="ayo-board">
-                    <div class="ayo-store" id="player1Store">0</div>
-                    
-                    <div class="ayo-row">
-                        <div class="ayo-pit player2" data-row="0" data-col="0">4</div>
-                        <div class="ayo-pit player2" data-row="0" data-col="1">4</div>
-                        <div class="ayo-pit player2" data-row="0" data-col="2">4</div>
-                        <div class="ayo-pit player2" data-row="0" data-col="3">4</div>
-                        <div class="ayo-pit player2" data-row="0" data-col="4">4</div>
-                        <div class="ayo-pit player2" data-row="0" data-col="5">4</div>
-                    </div>
-                    
-                    <div class="ayo-row">
-                        <div class="ayo-pit player1" data-row="1" data-col="0">4</div>
-                        <div class="ayo-pit player1" data-row="1" data-col="1">4</div>
-                        <div class="ayo-pit player1" data-row="1" data-col="2">4</div>
-                        <div class="ayo-pit player1" data-row="1" data-col="3">4</div>
-                        <div class="ayo-pit player1" data-row="1" data-col="4">4</div>
-                        <div class="ayo-pit player1" data-row="1" data-col="5">4</div>
-                    </div>
-                    
-                    <div class="ayo-store" id="player2Store">0</div>
-                </div>
-                
-                <div class="ayo-game-over" id="ayoGameOver"></div>
-                
-                <button id="resetAyoBtn" class="primary" style="width: 100%; margin-top: 15px;">Reset Game</button>
-                
-                <div class="game-stats">
-                    <p>🎯 Wins: <span id="ayoWins">0</span></p>
-                    <p>💰 Earned: ₦<span id="ayoEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames6" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-            </div>
-            
-            <div class="game-container" id="nairaChaseGame">
-                <h3>🦅 Naira Chase</h3>
-                <p>Collect rolling Naira coins with the Nigerian eagle</p>
-                <p class="attempts-counter">Attempts left: <span id="nairaChaseAttempts">10</span>/10</p>
-                
-                <div style="position: relative;">
-                    <canvas id="nairaChaseCanvas" width="400" height="500"></canvas>
-                    <div id="nairaChaseScore">₦0</div>
-                    <div id="nairaChaseGameOver">
-                        <h2>Game Over!</h2>
-                        <p>Total Collected: <span id="nairaChaseFinalScore">₦0</span></p>
-                        <button id="restartNairaChaseButton">Play Again</button>
-                    </div>
-                    <div id="nairaChaseStart">
-                        <h2>Naira Chase</h2>
-                        <p>Tap to make the eagle fly</p>
-                        <p>Collect rolling Naira coins</p>
-                        <p>Avoid falling into ditches!</p>
-                        <button id="startNairaChaseButton">Start Game</button>
-                    </div>
-                </div>
-                
-                <div class="game-stats">
-                    <p>🎯 Score: <span id="nairaChaseGameScore">0</span></p>
-                    <p>💰 Earned: ₦<span id="nairaChaseGameEarnings">0</span></p>
-                </div>
-                
-                <button class="secondary" id="backToGames7" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+            <div class="game-card" data-game="nairaChase">
+                <div class="game-card-icon">🦅</div>
+                <div class="game-card-title">Naira Chase</div>
+                <div class="game-card-desc">Collect rolling Naira coins with the Nigerian eagle</div>
+                <div class="attempts-counter">Attempts: <span id="nairaChaseAttemptsDisplay">10</span>/10</div>
+                <button class="primary" style="margin-top: 10px;">Play Now</button>
             </div>
         </div>
+        
+        <div class="game-container" id="memoryGame">
+            <h3>🎮 Memory Match Game</h3>
+            <p>Match the fruits to win ₦800 per pair</p>
+            <p class="attempts-counter">Attempts left: <span id="memoryAttempts">10</span>/10</p>
+            
+            <div class="cards-grid" id="gameBoard"></div>
+            
+            <div class="game-stats">
+                <p>🎯 Matched: <span id="wins">0</span> pairs</p>
+                <p>💰 Earned: ₦<span id="gameEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames1" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+        
+        <div class="game-container" id="diceGame">
+            <h3>🎲 Lucky Dice</h3>
+            <p>Roll the dice to win ₦800 per correct guess</p>
+            <p class="attempts-counter">Attempts left: <span id="diceAttempts">10</span>/10</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <div id="diceResult" style="font-size: 48px; margin: 20px 0;">?</div>
+                <button id="rollDiceBtn" class="primary" style="width: 100%;">Roll Dice (₦800)</button>
+            </div>
+            
+            <div class="game-stats">
+                <p>🎯 Wins: <span id="diceWins">0</span></p>
+                <p>💰 Earned: ₦<span id="diceEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames2" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+        
+        <div class="game-container" id="snakeGame">
+            <h3>🐍 Snake Game</h3>
+            <p>Grow your snake to earn ₦800 per food</p>
+            <p class="attempts-counter">Attempts left: <span id="snakeAttempts">10</span>/10</p>
+            
+            <canvas id="snakeCanvas" width="300" height="300"></canvas>
+            
+            <button id="startSnakeBtn" class="snake-start-btn">Start Game</button>
+            
+            <div class="snake-controls" style="display: none;">
+                <button class="snake-btn up">↑</button>
+                <button class="snake-btn left">←</button>
+                <button class="snake-btn right">→</button>
+                <button class="snake-btn down">↓</button>
+            </div>
+            
+            <div class="game-stats">
+                <p>🎯 Score: <span id="snakeScore">0</span></p>
+                <p>💰 Earned: ₦<span id="snakeEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames3" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+        
+        <div class="game-container" id="triviaGame">
+            <h3>🧠 Trivia Quiz</h3>
+            <p>Answer questions correctly to earn ₦800 each</p>
+            <p class="attempts-counter">Attempts left: <span id="triviaAttempts">10</span>/10</p>
+            
+            <div id="triviaQuestion" class="trivia-question">Loading question...</div>
+            <div id="triviaOptions" class="trivia-options">
+                <div class="trivia-option" data-option="1">Option 1</div>
+                <div class="trivia-option" data-option="2">Option 2</div>
+                <div class="trivia-option" data-option="3">Option 3</div>
+                <div class="trivia-option" data-option="4">Option 4</div>
+            </div>
+            
+            <div class="game-stats">
+                <p>🎯 Correct: <span id="triviaCorrect">0</span></p>
+                <p>💰 Earned: ₦<span id="triviaEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames4" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+        
+        <div class="game-container" id="wheelGame">
+            <h3>🎡 Lucky Wheel</h3>
+            <p>Spin the wheel to win prizes from ₦200 to ₦1,600</p>
+            <p class="attempts-counter">Attempts left: <span id="wheelAttempts">10</span>/10</p>
+            
+            <div class="wheel-container">
+                <div class="wheel" id="wheel"></div>
+                <div class="wheel-pointer"></div>
+            </div>
+            
+            <div class="wheel-result">
+                <div id="wheelMessage">Tap SPIN to play</div>
+                <div id="wheelPrize" class="wheel-prize"></div>
+            </div>
+            
+            <button id="spinWheelBtn" class="spin-btn">SPIN (₦200-₦1,600)</button>
+            
+            <div class="game-stats">
+                <p>🎯 Wins: <span id="wheelWins">0</span></p>
+                <p>💰 Earned: ₦<span id="wheelEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames5" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+        
+        <div class="game-container" id="ayoGame">
+            <h3>🎮 Ayo Olopon</h3>
+            <p>Traditional Yoruba board game</p>
+            <p class="attempts-counter">Attempts left: <span id="ayoAttempts">10</span>/10</p>
+            
+            <div class="ayo-game-info">
+                <p>Current Player: <span id="currentPlayer">Player 1</span></p>
+                <p>Player 1 Score: <span id="player1Score">0</span></p>
+                <p>Player 2 Score: <span id="player2Score">0</span></p>
+            </div>
+            
+            <div class="ayo-board">
+                <div class="ayo-store" id="player1Store">0</div>
+                
+                <div class="ayo-row">
+                    <div class="ayo-pit player2" data-row="0" data-col="0">4</div>
+                    <div class="ayo-pit player2" data-row="0" data-col="1">4</div>
+                    <div class="ayo-pit player2" data-row="0" data-col="2">4</div>
+                    <div class="ayo-pit player2" data-row="0" data-col="3">4</div>
+                    <div class="ayo-pit player2" data-row="0" data-col="4">4</div>
+                    <div class="ayo-pit player2" data-row="0" data-col="5">4</div>
+                </div>
+                
+                <div class="ayo-row">
+                    <div class="ayo-pit player1" data-row="1" data-col="0">4</div>
+                    <div class="ayo-pit player1" data-row="1" data-col="1">4</div>
+                    <div class="ayo-pit player1" data-row="1" data-col="2">4</div>
+                    <div class="ayo-pit player1" data-row="1" data-col="3">4</div>
+                    <div class="ayo-pit player1" data-row="1" data-col="4">4</div>
+                    <div class="ayo-pit player1" data-row="1" data-col="5">4</div>
+                </div>
+                
+                <div class="ayo-store" id="player2Store">0</div>
+            </div>
+            
+            <div class="ayo-game-over" id="ayoGameOver"></div>
+            
+            <button id="resetAyoBtn" class="primary" style="width: 100%; margin-top: 15px;">Reset Game</button>
+            
+            <div class="game-stats">
+                <p>🎯 Wins: <span id="ayoWins">0</span></p>
+                <p>💰 Earned: ₦<span id="ayoEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames6" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+        
+        <div class="game-container" id="nairaChaseGame">
+            <h3>🦅 Naira Chase</h3>
+            <p>Collect rolling Naira coins with the Nigerian eagle</p>
+            <p class="attempts-counter">Attempts left: <span id="nairaChaseAttempts">10</span>/10</p>
+            
+            <div style="position: relative;">
+                <canvas id="nairaChaseCanvas" width="400" height="500"></canvas>
+                <div id="nairaChaseScore">₦0</div>
+                <div id="nairaChaseGameOver">
+                    <h2>Game Over!</h2>
+                    <p>Total Collected: <span id="nairaChaseFinalScore">₦0</span></p>
+                    <button id="restartNairaChaseButton">Play Again</button>
+                </div>
+                <div id="nairaChaseStart">
+                    <h2>Naira Chase</h2>
+                    <p>Tap to make the eagle fly</p>
+                    <p>Collect rolling Naira coins</p>
+                    <p>Avoid falling into ditches!</p>
+                    <button id="startNairaChaseButton">Start Game</button>
+                </div>
+            </div>
+            
+            <div class="game-stats">
+                <p>🎯 Score: <span id="nairaChaseGameScore">0</span></p>
+                <p>💰 Earned: ₦<span id="nairaChaseGameEarnings">0</span></p>
+            </div>
+            
+            <button class="secondary" id="backToGames7" style="width: 100%; margin-top: 15px;">← Back to Games</button>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon">🏠</div>
+            <div>Dashboard</div>
+        </a>
+        <a href="#" class="nav-item">
+            <div class="nav-icon">🎮</div>
+            <div>Games</div>
+        </a>
+        <a href="#" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Earnings</div>
+        </a>
+        <a href="#" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
     </div>
     
     <!-- Notification -->
@@ -1186,7 +997,7 @@
     
     <!-- Timer Display -->
     <div class="timer-display" id="timerDisplay">
-        Time remaining: <span id="timeRemaining">60:00</span>
+        Time remaining: <span id="timeRemaining">55:00</span>
     </div>
     
     <!-- Audio elements for game sounds -->
@@ -1197,34 +1008,25 @@
     <audio id="coinFlipSound" src="https://assets.mixkit.co/sfx/preview/mixkit-coin-flip-1940.mp3" preload="auto"></audio>
     <audio id="coinLandSound" src="https://assets.mixkit.co/sfx/preview/mixkit-metal-hit-impact-2065.mp3" preload="auto"></audio>
     
-    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <!-- Include common JS -->
+    <script src="common.js"></script>
     <script>
-        // ========================
-        // GLOBAL VARIABLES
-        // ========================
+        // Initialize Dexie database with same structure as index.html
         const db = new Dexie("AI_REF_TRADERS_DB");
         db.version(1).stores({
-            users: '++id, username, balance, adsWatched, totalAdsWatched, lastAdWatchTime, gameState, gameTimerStart, dailySessions',
-            gameHistory: '++id, gameName, score, earnings, timestamp'
+            users: '++id, telegramId, balance, referrals, adsWatched, lastAdWatchTime, gameState, gameTimerStart',
+            announcements: '++id, title, content, time, unread',
+            supportTickets: '++id, userId, subject, message, status, createdAt',
+            adminCredentials: '++id, username, password',
+            transactions: '++id, userId, type, amount, status, timestamp'
         });
 
-        const totalAds = 20;
-        const minAdDuration = 15000; // 15 seconds per ad
-        const accessCooldown = 60 * 60 * 1000; // 60 minutes in milliseconds
-        const gameDuration = 60 * 60 * 1000; // 60 minutes in milliseconds
-        const maxDailySessions = 10; // Maximum 10 game sessions per day
-        
-        let currentAdCount = 0;
-        let timer = null;
-        let adStartTime = 0;
-        let canCountAd = false;
-        let accessDenied = false;
-        let cooldownInterval = null;
-        let timerInterval = null;
-        let timerStartTime = 0;
+        // ========================
+        // GAME STATE MANAGEMENT
+        // ========================
         
         const gameState = {
-            balance: 5000,
+            balance: 0,
             memory: { attempts: 10, wins: 0, earnings: 0 },
             dice: { attempts: 10, wins: 0, earnings: 0 },
             snake: { attempts: 10, score: 0, earnings: 0 },
@@ -1234,288 +1036,149 @@
             nairaChase: { attempts: 10, score: 0, earnings: 0 },
             lastAccessTime: 0,
             adsWatched: 0,
-            gameTimerStart: 0,
-            dailySessions: 0
+            gameTimerStart: 0
         };
-        
-        // ========================
-        // AD SYSTEM FUNCTIONS
-        // ========================
-        
-        async function loadUserData() {
+
+        // Initialize game state based on URL parameters
+        async function initializeGameState() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromAds = urlParams.has('fromAds');
+            const fromConsole = urlParams.has('fromConsole');
+            
             try {
-                // For standalone website, we'll use localStorage to track user
-                let user = await db.users.get(1);
+                const userId = 'demo-user'; // In a real app, get from Telegram or auth
+                const savedData = await db.users.where('telegramId').equals(userId).first();
                 
-                if (!user) {
-                    // Create new user with default values
-                    user = {
-                        id: 1,
-                        username: 'Player',
-                        balance: 5000,
-                        adsWatched: 0,
-                        totalAdsWatched: 0,
-                        lastAdWatchTime: null,
-                        gameState: null,
-                        gameTimerStart: 0,
-                        dailySessions: 0
-                    };
-                    
-                    await db.users.add(user);
+                if (!savedData) {
+                    // If no user data found, redirect to ads page
+                    showAccessDenied("No user data found. Please watch ads first.");
+                    return false;
                 }
                 
-                // Update game state from database
-                if (user.gameState) {
-                    Object.assign(gameState, user.gameState);
+                // Check if user has watched 20 ads
+                if (savedData.adsWatched < 20) {
+                    showAccessDenied(`You've only watched ${savedData.adsWatched}/20 ads. Please complete watching ads.`);
+                    return false;
                 }
                 
-                gameState.balance = user.balance || 5000;
-                gameState.adsWatched = user.adsWatched || 0;
-                gameState.dailySessions = user.dailySessions || 0;
-                currentAdCount = gameState.adsWatched;
+                // Check if coming from valid source
+                if (!fromAds && !fromConsole) {
+                    showAccessDenied("Invalid access. Please use the game console button from ads page.");
+                    return false;
+                }
                 
+                // Check if copied URL with fromConsole=true
+                if (fromConsole && !document.referrer.includes('ads.html')) {
+                    showAccessDenied("Invalid access detected. Please use the game console button from ads page.");
+                    return false;
+                }
+                
+                // Get balance from storage
+                gameState.balance = savedData?.balance || 0;
+                gameState.adsWatched = savedData?.adsWatched || 0;
+                
+                // Reset all attempts if coming from ads.html automatic redirect and 55 minutes have passed
+                const now = Date.now();
+                const timeSinceLastReset = now - (savedData.gameTimerStart || 0);
+                
+                if (fromAds && timeSinceLastReset >= 55 * 60 * 1000) {
+                    gameState.memory.attempts = 10;
+                    gameState.dice.attempts = 10;
+                    gameState.snake.attempts = 10;
+                    gameState.trivia.attempts = 10;
+                    gameState.wheel.attempts = 10;
+                    gameState.ayo.attempts = 10;
+                    gameState.nairaChase.attempts = 10;
+                    gameState.lastAccessTime = now;
+
+                    // Reset game earnings and wins for fresh session
+                    gameState.memory.wins = 0;
+                    gameState.memory.earnings = 0;
+                    gameState.dice.wins = 0;
+                    gameState.dice.earnings = 0;
+                    gameState.snake.score = 0;
+                    gameState.snake.earnings = 0;
+                    gameState.trivia.correct = 0;
+                    gameState.trivia.earnings = 0;
+                    gameState.trivia.usedQuestions = [];
+                    gameState.wheel.wins = 0;
+                    gameState.wheel.earnings = 0;
+                    gameState.ayo.wins = 0;
+                    gameState.ayo.earnings = 0;
+                    gameState.nairaChase.score = 0;
+                    gameState.nairaChase.earnings = 0;
+
+                    // Start game timer
+                    gameState.gameTimerStart = now;
+                    await db.users.where('telegramId').equals(userId).modify({
+                        gameTimerStart: gameState.gameTimerStart
+                    });
+                    startGameTimer();
+                } else if (timeSinceLastReset < 55 * 60 * 1000) {
+                    // Prevent reset if 55 minutes have not passed
+                    if (savedData?.gameState) {
+                        gameState.memory.attempts = savedData.gameState.memory?.attempts || 10;
+                        gameState.dice.attempts = savedData.gameState.dice?.attempts || 10;
+                        gameState.snake.attempts = savedData.gameState.snake?.attempts || 10;
+                        gameState.trivia.attempts = savedData.gameState.trivia?.attempts || 10;
+                        gameState.wheel.attempts = savedData.gameState.wheel?.attempts || 10;
+                        gameState.ayo.attempts = savedData.gameState.ayo?.attempts || 10;
+                        gameState.nairaChase.attempts = savedData.gameState.nairaChase?.attempts || 10;
+
+                        // Keep other stats too
+                        gameState.memory.wins = savedData.gameState.memory?.wins || 0;
+                        gameState.memory.earnings = savedData.gameState.memory?.earnings || 0;
+                        gameState.dice.wins = savedData.gameState.dice?.wins || 0;
+                        gameState.dice.earnings = savedData.gameState.dice?.earnings || 0;
+                        gameState.snake.score = savedData.gameState.snake?.score || 0;
+                        gameState.snake.earnings = savedData.gameState.snake?.earnings || 0;
+                        gameState.trivia.correct = savedData.gameState.trivia?.correct || 0;
+                        gameState.trivia.earnings = savedData.gameState.trivia?.earnings || 0;
+                        gameState.trivia.usedQuestions = savedData.gameState.trivia?.usedQuestions || [];
+                        gameState.wheel.wins = savedData.gameState.wheel?.wins || 0;
+                        gameState.wheel.earnings = savedData.gameState.wheel?.earnings || 0;
+                        gameState.ayo.wins = savedData.gameState.ayo?.wins || 0;
+                        gameState.ayo.earnings = savedData.gameState.ayo?.earnings || 0;
+                        gameState.nairaChase.score = savedData.gameState.nairaChase?.score || 0;
+                        gameState.nairaChase.earnings = savedData.gameState.nairaChase?.earnings || 0;
+                    }
+
+                    // Check if game timer is still active
+                    if (savedData.gameTimerStart) {
+                        const timeElapsed = now - savedData.gameTimerStart;
+                        if (timeElapsed < 55 * 60 * 1000) { // 55 minutes
+                            gameState.gameTimerStart = savedData.gameTimerStart;
+                            startGameTimer();
+                        } else {
+                            showAccessDenied("Your game session has expired. Please watch ads again.");
+                            return false;
+                        }
+                    }
+                }
+                
+                // Save initial state
+                await saveGameState();
                 return true;
             } catch (error) {
-                console.error('Error loading user data:', error);
+                console.error('Error initializing game state:', error);
+                showAccessDenied("Error loading game data. Please try again.");
                 return false;
             }
         }
-        
-        async function saveUserData() {
-            try {
-                await db.users.update(1, {
-                    balance: gameState.balance,
-                    adsWatched: gameState.adsWatched,
-                    totalAdsWatched: gameState.totalAdsWatched,
-                    lastAdWatchTime: gameState.lastAdWatchTime,
-                    gameState: {
-                        memory: gameState.memory,
-                        dice: gameState.dice,
-                        snake: gameState.snake,
-                        trivia: gameState.trivia,
-                        wheel: gameState.wheel,
-                        ayo: gameState.ayo,
-                        nairaChase: gameState.nairaChase,
-                        lastAccessTime: gameState.lastAccessTime,
-                        gameTimerStart: gameState.gameTimerStart,
-                        dailySessions: gameState.dailySessions
-                    }
-                });
-            } catch (error) {
-                console.error('Error saving user data:', error);
-            }
-        }
-        
-        function checkAccessStatus() {
-            const now = Date.now();
-            const lastWatchTime = gameState.lastAdWatchTime || 0;
-            
-            // Check if user has watched enough ads
-            if (gameState.adsWatched < totalAds) {
-                return false;
-            }
-            
-            // Check if cooldown period has passed
-            if ((now - lastWatchTime) >= accessCooldown) {
-                gameState.adsWatched = 0;
-                gameState.lastAdWatchTime = 0;
-                saveUserData();
-                return false;
-            }
-            
-            return true;
-        }
-        
-        function showAccessDenied(expiryTime) {
-            const adsContainer = document.getElementById('adsContainer');
-            adsContainer.innerHTML = `
-                <div class="ad-header">
-                    <h2>Ads Limit Reached</h2>
-                    <p>You've completed your daily ads</p>
-                </div>
-                
-                <div class="access-denied">
-                    <h3>Access Temporarily Unavailable</h3>
-                    <p>You've watched 20 ads. Please try again in 60 minutes.</p>
-                    <div class="time-remaining">Time remaining: <span id="cooldownTimer"></span></div>
-                </div>
-                
-                <button class="watch-ad-btn" id="returnBtn">Return to Home</button>
-                <button class="watch-ad-btn" id="gameConsoleBtn" style="background-color: var(--success); margin-top: 1rem;">Go to Game Console</button>
-            `;
 
-            updateCooldownTimer(expiryTime);
-            cooldownInterval = setInterval(() => updateCooldownTimer(expiryTime), 1000);
-
-            document.getElementById('returnBtn').addEventListener('click', () => {
-                window.location.reload();
-            });
-
-            document.getElementById('gameConsoleBtn').addEventListener('click', () => {
-                grantAccess();
+        // Show access denied message
+        function showAccessDenied(message) {
+            document.getElementById('accessDeniedContainer').style.display = 'flex';
+            document.getElementById('mainGameContainer').style.display = 'none';
+            document.getElementById('timerDisplay').style.display = 'none';
+            document.getElementById('accessDeniedMessage').textContent = message;
+            
+            document.getElementById('goToAdsBtn').addEventListener('click', () => {
+                window.location.href = 'ads.html';
             });
         }
-        
-        function updateCooldownTimer(expiryTime) {
-            const remaining = expiryTime - Date.now();
-            if (remaining <= 0) {
-                clearInterval(cooldownInterval);
-                window.location.reload();
-                return;
-            }
-            
-            const minutes = Math.floor(remaining / (1000 * 60));
-            const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-            
-            document.getElementById('cooldownTimer').textContent = 
-                `${minutes}m ${seconds}s`;
-        }
-        
-        function updateProgressDisplay() {
-            const remaining = Math.max(0, totalAds - currentAdCount);
-            const estimatedMinutes = Math.ceil((remaining * minAdDuration) / 60000);
-            
-            document.getElementById('adPurpose').textContent = 
-                remaining > 0 ? `Watch ${remaining} more ads to continue` : 'All ads completed!';
-            document.getElementById('completedCount').textContent = currentAdCount;
-            document.getElementById('estimatedTime').textContent = 
-                estimatedMinutes > 1 ? `${estimatedMinutes} minutes` : 'less than a minute';
-            
-            const container = document.getElementById('progressSteps');
-            container.innerHTML = '';
-            
-            for (let i = 0; i < totalAds; i++) {
-                const step = document.createElement('div');
-                step.className = 'progress-step';
-                step.textContent = i + 1;
-                if (i < currentAdCount) {
-                    step.classList.add('completed');
-                    step.textContent = '';
-                }
-                if (i === currentAdCount && currentAdCount < totalAds) {
-                    step.classList.add('active');
-                }
-                container.appendChild(step);
-            }
-        }
-        
-        function loadAd() {
-            canCountAd = false;
-            adStartTime = Date.now();
-            
-            const adContainer = document.getElementById('adFrameContainer');
-            adContainer.innerHTML = '';
-            
-            // Load ad scripts
-            const adScript1 = document.createElement('script');
-            adScript1.type = 'text/javascript';
-            adScript1.innerHTML = `
-                atOptions = {
-                    'key' : '8a1d6d42d6addf614a0b20c144270316',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                };
-            `;
 
-            const adScript2 = document.createElement('script');
-            adScript2.type = 'text/javascript';
-            adScript2.src = '//innumerablemakeupreligious.com/8a1d6d42d6addf614a0b20c144270316/invoke.js';
-
-            adContainer.appendChild(adScript1);
-            adContainer.appendChild(adScript2);
-            
-            startTimer();
-        }
-        
-        function startTimer() {
-            let seconds = 15;
-            updateTimerDisplay(seconds);
-            
-            clearInterval(timer);
-            timer = setInterval(() => {
-                seconds--;
-                updateTimerDisplay(seconds);
-                
-                if (seconds <= 0) {
-                    clearInterval(timer);
-                    canCountAd = true;
-                    document.getElementById('watchAdBtn').textContent = "Continue";
-                    document.getElementById('watchAdBtn').style.backgroundColor = 'var(--success)';
-                }
-            }, 1000);
-        }
-        
-        function updateTimerDisplay(seconds) {
-            document.getElementById('timerCount').textContent = seconds;
-            document.getElementById('timerCount').style.color = seconds <= 5 ? 'var(--danger)' : 'var(--primary)';
-        }
-        
-        async function handleAdWatch() {
-            if (!canCountAd) {
-                const elapsed = Date.now() - adStartTime;
-                const remaining = Math.ceil((minAdDuration - elapsed) / 1000);
-                alert(`Please watch the ad for ${remaining} more seconds before continuing.`);
-                return;
-            }
-
-            currentAdCount++;
-            
-            // Update user data
-            gameState.adsWatched = currentAdCount;
-            gameState.totalAdsWatched = (gameState.totalAdsWatched || 0) + 1;
-            gameState.lastAdWatchTime = Date.now();
-            await saveUserData();
-            
-            if (currentAdCount >= totalAds) {
-                grantAccess();
-                return;
-            }
-
-            updateProgressDisplay();
-            document.getElementById('watchAdBtn').textContent = "Watch Ad";
-            document.getElementById('watchAdBtn').style.backgroundColor = 'var(--primary)';
-            loadAd();
-        }
-        
-        function grantAccess() {
-            // Show game console button
-            document.getElementById('gameConsoleBtn').style.display = 'block';
-            
-            // Start game timer
-            gameState.gameTimerStart = Date.now();
-            startGameTimer();
-            
-            // Enable game console button
-            document.getElementById('gameConsoleBtn').addEventListener('click', () => {
-                showGameConsole();
-            });
-        }
-        
-        function showGameConsole() {
-            // Check if user has available sessions
-            if (gameState.dailySessions >= maxDailySessions) {
-                alert("You've reached your maximum daily game sessions. Please try again tomorrow.");
-                return;
-            }
-            
-            // Increment session counter
-            gameState.dailySessions++;
-            saveUserData();
-            
-            // Hide ads container and show game container
-            document.getElementById('adsContainer').style.display = 'none';
-            document.getElementById('gameContainer').style.display = 'block';
-            
-            // Initialize games
-            initializeGames();
-            
-            // Start game timer
-            gameState.gameTimerStart = Date.now();
-            startGameTimer();
-        }
-        
+        // Start game timer and log off lingering users after 55 minutes
         function startGameTimer() {
             const timerDisplay = document.getElementById('timerDisplay');
             const timeRemaining = document.getElementById('timeRemaining');
@@ -1525,7 +1188,7 @@
             const updateTimer = () => {
                 const now = Date.now();
                 const timeElapsed = now - gameState.gameTimerStart;
-                const timeLeft = Math.max(0, gameDuration - timeElapsed);
+                const timeLeft = Math.max(0, 55 * 60 * 1000 - timeElapsed);
                 
                 const minutes = Math.floor(timeLeft / (1000 * 60));
                 const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
@@ -1534,19 +1197,113 @@
                 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    alert("Your game session has expired. Please watch ads again.");
-                    window.location.reload();
+                    showAccessDenied("Your game session has expired. Please watch ads again.");
+                    setTimeout(() => {
+                        window.location.href = 'ads.html';
+                    }, 3000);
                 }
             };
             
             updateTimer();
             timerInterval = setInterval(updateTimer, 1000);
         }
-        
-        // ========================
-        // GAME SYSTEM FUNCTIONS
-        // ========================
-        
+
+        // Save game state to IndexedDB and notify parent window
+        async function saveGameState() {
+            try {
+                const userId = 'demo-user'; // In a real app, get from Telegram or auth
+                
+                await db.users.put({
+                    telegramId: userId,
+                    balance: gameState.balance,
+                    gameState: {
+                        memory: { 
+                            attempts: gameState.memory.attempts, 
+                            wins: gameState.memory.wins, 
+                            earnings: gameState.memory.earnings 
+                        },
+                        dice: { 
+                            attempts: gameState.dice.attempts, 
+                            wins: gameState.dice.wins, 
+                            earnings: gameState.dice.earnings 
+                        },
+                        snake: { 
+                            attempts: gameState.snake.attempts, 
+                            score: gameState.snake.score, 
+                            earnings: gameState.snake.earnings 
+                        },
+                        trivia: { 
+                            attempts: gameState.trivia.attempts, 
+                            correct: gameState.trivia.correct, 
+                            earnings: gameState.trivia.earnings,
+                            usedQuestions: gameState.trivia.usedQuestions
+                        },
+                        wheel: { 
+                            attempts: gameState.wheel.attempts, 
+                            wins: gameState.wheel.wins, 
+                            earnings: gameState.wheel.earnings 
+                        },
+                        ayo: { 
+                            attempts: gameState.ayo.attempts, 
+                            wins: gameState.ayo.wins, 
+                            earnings: gameState.ayo.earnings 
+                        },
+                        nairaChase: {
+                            attempts: gameState.nairaChase.attempts,
+                            score: gameState.nairaChase.score,
+                            earnings: gameState.nairaChase.earnings
+                        },
+                        lastAccessTime: gameState.lastAccessTime
+                    },
+                    gameTimerStart: gameState.gameTimerStart
+                }, userId);
+                
+                // Notify parent window (index.html) of balance update
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'balanceUpdate',
+                        balance: gameState.balance
+                    }, '*');
+                }
+            } catch (error) {
+                console.error('Error saving game state:', error);
+            }
+        }
+
+        // Save the updated balance to IndexedDB
+        async function saveBalanceToIndexedDB() {
+            try {
+                const userId = 'demo-user'; // Replace with actual user ID
+                await db.users.where('telegramId').equals(userId).modify({ balance: gameState.balance });
+            } catch (error) {
+                console.error('Error saving balance to IndexedDB:', error);
+            }
+        }
+
+        // Update balance and notify parent window
+        function updateBalance(amount) {
+            gameState.balance += amount;
+            document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
+            saveBalanceToIndexedDB(); // Persist the balance to IndexedDB
+
+            // Notify parent window (index.html) of the balance update
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'balanceUpdate',
+                    balance: gameState.balance
+                }, '*');
+            }
+        }
+
+        // Listen for balance updates from parent window
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'balanceUpdate') {
+                gameState.balance = event.data.balance;
+                document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
+            }
+        });
+
+        // Show notification
         function showNotification(message) {
             const notification = document.getElementById('notification');
             const notificationText = document.getElementById('notificationText');
@@ -1558,7 +1315,8 @@
                 notification.classList.remove('show');
             }, 3000);
         }
-        
+
+        // Show game
         function showGame(game) {
             document.querySelectorAll('.game-container').forEach(container => {
                 container.classList.remove('active');
@@ -1571,14 +1329,12 @@
                     gameContainer.scrollIntoView({ behavior: 'smooth' });
                 }
             } else {
-                document.querySelector('.main-container').scrollIntoView({ behavior: 'smooth' });
+                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
             }
         }
-        
+
+        // Update game UI displays
         function updateGameUI() {
-            // Update balance
-            document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
-            
             // Memory game
             document.getElementById('memoryAttempts').textContent = gameState.memory.attempts;
             document.getElementById('memoryAttemptsDisplay').textContent = gameState.memory.attempts;
@@ -1621,13 +1377,7 @@
             document.getElementById('nairaChaseGameScore').textContent = gameState.nairaChase.score;
             document.getElementById('nairaChaseGameEarnings').textContent = gameState.nairaChase.earnings;
         }
-        
-        async function updateBalance(amount) {
-            gameState.balance += amount;
-            document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
-            await saveUserData();
-        }
-        
+
         // ========================
         // GAME IMPLEMENTATIONS
         // ========================
@@ -1706,7 +1456,7 @@
                 if (gameState.memory.attempts > 0) {
                     gameState.memory.attempts--;
                     updateGameUI();
-                    saveUserData();
+                    saveGameState();
                 }
 
                 if (card1.dataset.value === card2.dataset.value) {
@@ -1755,7 +1505,7 @@
 
                 gameState.dice.attempts--;
                 updateGameUI();
-                saveUserData();
+                saveGameState();
                 document.getElementById('clickSound').play();
 
                 const roll = Math.floor(Math.random() * 6) + 1;
@@ -1963,7 +1713,7 @@
                 this.gameStarted = false;
                 gameState.snake.attempts--;
                 updateGameUI();
-                saveUserData();
+                saveGameState();
                 document.getElementById('loseSound').play();
                 
                 document.getElementById('startSnakeBtn').style.display = 'block';
@@ -1980,6 +1730,7 @@
         // Trivia Game
         const triviaGame = {
             questions: [
+                // Nigeria General Knowledge (20 questions)
                 {
                     question: "What is the capital city of Nigeria?",
                     options: ["Lagos", "Abuja", "Kano", "Port Harcourt"],
@@ -2004,6 +1755,81 @@
                     question: "What is the largest city in Nigeria by population?",
                     options: ["Abuja", "Kano", "Lagos", "Ibadan"],
                     answer: 3
+                },
+                {
+                    question: "Which of these is NOT one of Nigeria's main ethnic groups?",
+                    options: ["Hausa", "Yoruba", "Igbo", "Zulu"],
+                    answer: 4
+                },
+                {
+                    question: "What is the name of Nigeria's highest legislative body?",
+                    options: ["National Assembly", "House of Representatives", "Senate", "Parliament"],
+                    answer: 1
+                },
+                {
+                    question: "Which of these countries does NOT border Nigeria?",
+                    options: ["Ghana", "Niger", "Cameroon", "Chad"],
+                    answer: 1
+                },
+                {
+                    question: "What is Nigeria's official language?",
+                    options: ["English", "Pidgin English", "Hausa", "Yoruba"],
+                    answer: 1
+                },
+                {
+                    question: "Which Nigerian won the Nobel Prize in Literature?",
+                    options: ["Chinua Achebe", "Wole Soyinka", "Ben Okri", "Chimamanda Adichie"],
+                    answer: 2
+                },
+                {
+                    question: "What is the most widely spoken indigenous language in Nigeria?",
+                    options: ["Yoruba", "Igbo", "Hausa", "Edo"],
+                    answer: 3
+                },
+                {
+                    question: "Which of these is a major river in Nigeria?",
+                    options: ["Nile", "Niger", "Congo", "Zambezi"],
+                    answer: 2
+                },
+                {
+                    question: "What is the name of Nigeria's national football team?",
+                    options: ["Super Eagles", "Green Eagles", "Flying Eagles", "Golden Eagles"],
+                    answer: 1
+                },
+                {
+                    question: "Which of these is a traditional Nigerian fabric?",
+                    options: ["Kente", "Aso Oke", "Ankara", "All of the above"],
+                    answer: 4
+                },
+                {
+                    question: "What is the name of Nigeria's film industry?",
+                    options: ["Nollywood", "Kannywood", "Yorubawood", "All of the above"],
+                    answer: 4
+                },
+                {
+                    question: "Which Nigerian musician is known as the 'African Giant'?",
+                    options: ["Davido", "Wizkid", "Burna Boy", "Tiwa Savage"],
+                    answer: 3
+                },
+                {
+                    question: "What is the name of Nigeria's stock exchange?",
+                    options: ["NSE", "LSE", "NYSE", "JSE"],
+                    answer: 1
+                },
+                {
+                    question: "Which of these is a major Nigerian export?",
+                    options: ["Coffee", "Cocoa", "Petroleum", "All of the above"],
+                    answer: 4
+                },
+                {
+                    question: "What is the name of Nigeria's central bank?",
+                    options: ["First Bank", "Central Bank of Nigeria", "Nigeria Reserve Bank", "Bank of Nigeria"],
+                    answer: 2
+                },
+                {
+                    question: "Which of these is a popular Nigerian dish?",
+                    options: ["Jollof Rice", "Pounded Yam", "Egusi Soup", "All of the above"],
+                    answer: 4
                 }
             ],
             currentQuestion: 0,
@@ -2020,14 +1846,18 @@
             },
             
             loadQuestion: function() {
+                // If all questions have been used, reset the used questions array
+                if (gameState.trivia.usedQuestions.length >= this.questions.length) {
+                    gameState.trivia.usedQuestions = [];
+                }
+                
                 // Filter out used questions
                 let availableQuestions = this.questions.filter((q, index) => 
                     !gameState.trivia.usedQuestions.includes(index)
                 );
                 
-                // If all questions have been used, reset the used questions array
+                // If no available questions (shouldn't happen due to reset above), use all questions
                 if (availableQuestions.length === 0) {
-                    gameState.trivia.usedQuestions = [];
                     availableQuestions = [...this.questions];
                 }
                 
@@ -2054,7 +1884,7 @@
 
                 gameState.trivia.attempts--;
                 updateGameUI();
-                saveUserData();
+                saveGameState();
                 document.getElementById('clickSound').play();
 
                 const question = this.questions[this.currentQuestion];
@@ -2128,7 +1958,7 @@
 
                 gameState.wheel.attempts--;
                 updateGameUI();
-                saveUserData();
+                saveGameState();
                 document.getElementById('clickSound').play();
 
                 const prizeIndex = Math.floor(Math.random() * this.prizes.length);
@@ -2308,7 +2138,7 @@
                     
                     gameState.ayo.attempts--;
                     updateGameUI();
-                    saveUserData();
+                    saveGameState();
                     
                     if (gameState.ayo.attempts <= 0) {
                         showNotification('Ayo game attempts exhausted.');
@@ -2597,7 +2427,7 @@
                 gameState.nairaChase.earnings += this.score;
                 updateBalance(this.score);
                 updateGameUI();
-                saveUserData();
+                saveGameState();
                 
                 if (gameState.nairaChase.attempts <= 0) {
                     showNotification('Naira Chase attempts exhausted.');
@@ -2782,12 +2612,21 @@
                 requestAnimationFrame(() => this.animate());
             }
         };
-        
+
         // ========================
         // INITIALIZATION
         // ========================
         
-        function initializeGames() {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize game state
+            const accessGranted = await initializeGameState();
+            
+            if (!accessGranted) return;
+            
+            // Show main game container
+            document.getElementById('mainGameContainer').style.display = 'block';
+            
+            // Initialize games
             memoryGame.init();
             diceGame.init();
             snakeGame.init();
@@ -2798,6 +2637,25 @@
             
             // Update UI with current state
             updateGameUI();
+            document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
+            
+            // Set up online/offline detection
+            window.addEventListener('online', updateSyncStatus);
+            window.addEventListener('offline', updateSyncStatus);
+            
+            function updateSyncStatus() {
+                const statusEl = document.getElementById('syncStatus');
+                if (navigator.onLine) {
+                    statusEl.textContent = 'Online';
+                    statusEl.className = 'sync-status online';
+                } else {
+                    statusEl.textContent = 'Offline - Changes saved locally';
+                    statusEl.className = 'sync-status offline';
+                }
+            }
+            
+            // Initial sync check
+            updateSyncStatus();
             
             // Game card click handlers
             document.querySelectorAll('.game-card').forEach(card => {
@@ -2814,25 +2672,6 @@
             document.getElementById('backToGames5').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames6').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames7').addEventListener('click', () => showGame(''));
-        }
-        
-        async function initializeApp() {
-            // Load user data
-            await loadUserData();
-            
-            // Check access status
-            if (checkAccessStatus()) {
-                showAccessDenied(gameState.lastAdWatchTime + accessCooldown);
-                return;
-            }
-            
-            // Setup ads page
-            updateProgressDisplay();
-            loadAd();
-            
-            // Event listeners
-            document.getElementById('watchAdBtn').addEventListener('click', handleAdWatch);
-            document.getElementById('homeLink').addEventListener('click', () => window.location.reload());
             
             // Update FOMO timer
             setInterval(() => {
@@ -2852,10 +2691,14 @@
                     document.querySelector('.fomo-text').textContent = randomMsg;
                 }
             }, 1000);
-        }
-        
-        // Start the app
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        });
     </script>
+<!-- Add this before the closing </body> tag in your HTML files -->
+<script src="js/telegram-integration.js"></script>
+<!-- Add these scripts right before the closing </body> tag -->
+<script src="js/shared-data-service.js"></script>
+<script src="js/telegram-bridge.js"></script>
+<script src="js/page-connector.js"></script>
+<script src="js/game-connector.js"></script>
 </body>
 </html>
