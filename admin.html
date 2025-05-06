@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI REF-TRADERS - Admin Panel</title>
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/otpauth@9.0.2/dist/otpauth.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #6C5CE7;
+            --secondary: #00CEFF;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --success: #00B894;
+            --danger: #D63031;
+            --warning: #FDCB6E;
+            --nigerian-green: #008753;
+            --nigerian-white: #FFFFFF;
+            --nigerian-green-light: #E5F5EE;
+            
+            /* Dark mode variables */
+            --bg-color: #F5F6FA;
+            --text-color: #2D3436;
+            --card-bg: #FFFFFF;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --input-bg: #FFFFFF;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1A1A1A;
+            --text-color: #F5F6FA;
+            --card-bg: #2D2D2D;
+            --border-color: #444;
+            --shadow-color: rgba(0,0,0,0.3);
+            --input-bg: #333;
+            --primary: #7D6AE8;
+            --secondary: #00B4D8;
+            --dark: #E0E0E0;
+            --light: #2D2D2D;
+            --nigerian-green-light: #1E3A2F;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            padding-bottom: 70px;
+        }
+        
+        .app-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .user-chip {
+            background: var(--nigerian-green);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+        }
+        
+        .nigeria-badge {
+            background: linear-gradient(to right, var(--nigerian-green) 33%, var(--nigerian-white) 33%, var(--nigerian-white) 66%, var(--nigerian-green) 66%);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        
+        .status-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .status-card.accent {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        progress {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            appearance: none;
+        }
+        
+        progress::-webkit-progress-bar {
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+        
+        progress::-webkit-progress-value {
+            background-color: white;
+            border-radius: 4px;
+        }
+        
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+        
+        .profit-chart {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            position: relative;
+        }
+        
+        .chart-bar.user {
+            background-color: var(--success);
+        }
+        
+        .chart-bar.company {
+            background-color: var(--primary);
+        }
+        
+        .chart-bar.system {
+            background-color: var(--dark);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            color: var(--text-color);
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        /* Admin-specific styles */
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        
+        .admin-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            white-space: nowrap;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .admin-tab.active {
+            border-bottom: 3px solid var(--primary);
+            font-weight: bold;
+        }
+        
+        .admin-tab-content {
+            display: none;
+        }
+        
+        .admin-tab-content.active {
+            display: block;
+        }
+        
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .user-table th, .user-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .user-table th {
+            background-color: var(--light);
+            font-weight: bold;
+        }
+        
+        .user-table tr:hover {
+            background-color: var(--light);
+        }
+        
+        .admin-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .admin-form-group input, 
+        .admin-form-group select,
+        .admin-form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-stat-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+        
+        .admin-stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .admin-stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .payment-batch-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .batch-progress {
+            margin-top: 15px;
+        }
+        
+        .batch-history {
+            margin-top: 20px;
+        }
+        
+        .batch-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .theme-toggle-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Login Form */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+        
+        .login-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        .login-form button {
+            width: 100%;
+        }
+        
+        /* 2FA Form */
+        .auth-step {
+            display: none;
+        }
+        
+        .auth-step.active {
+            display: block;
+        }
+        
+        .totp-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 18px;
+            margin-right: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .admin-stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .action-bar {
+                flex-direction: column;
+            }
+            
+            .user-table {
+                font-size: 14px;
+            }
+            
+            .user-table th, .user-table td {
+                padding: 8px 5px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle">
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span class="theme-icon" id="themeIcon">🌙</span>
+            <span id="themeText">Dark Mode</span>
+        </button>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <div class="auth-step active" id="passwordStep">
+            <h2 class="login-title">Admin Login</h2>
+            <div class="login-form">
+                <input type="text" id="adminUsername" placeholder="Username">
+                <input type="password" id="adminPassword" placeholder="Password">
+                <input type="text" id="adminPasskey" placeholder="Passkey (optional)">
+                <button class="primary" id="adminLoginBtn">Login</button>
+            </div>
+        </div>
+        <div class="auth-step" id="totpStep">
+            <h2 class="login-title">2FA Verification</h2>
+            <div class="login-form">
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
+                </div>
+                <button class="primary" id="verifyTotpBtn">Verify</button>
+                <button class="secondary" id="backToPasswordBtn" style="margin-top: 10px;">Back to Password</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (hidden until login) -->
+    <div class="container" id="adminPanel" style="display: none;">
+        <div class="app-bar">
+            <h1>AI REF-TRADERS <span class="nigeria-badge">ADMIN PANEL</span></h1>
+            <div class="user-chip">
+                <span>👤 <span id="adminUsernameDisplay">Admin</span></span>
+                <button id="logoutBtn" style="background: none; border: none; color: white; cursor: pointer;">🚪</button>
+            </div>
+        </div>
+        
+        <!-- Admin Tabs -->
+        <div class="admin-tabs">
+            <div class="admin-tab active" data-tab="dashboard">Dashboard</div>
+            <div class="admin-tab" data-tab="users">User Management</div>
+            <div class="admin-tab" data-tab="payments">Payment Control</div>
+            <div class="admin-tab" data-tab="settings">System Settings</div>
+            <div class="admin-tab" data-tab="announcements">Announcements</div>
+            <div class="admin-tab" data-tab="support">Support</div>
+        </div>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboardTab" class="admin-tab-content active">
+            <div class="admin-stats-grid">
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="totalUsers">0</div>
+                    <div class="admin-stat-label">Total Users</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="activeUsers">0</div>
+                    <div class="admin-stat-label">Active Users</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="verifiedUsers">0</div>
+                    <div class="admin-stat-label">Verified Users</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="pendingWithdrawals">0</div>
+                    <div class="admin-stat-label">Pending Withdrawals</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="currentBatch">0/0</div>
+                    <div class="admin-stat-label">Current Payment Batch</div>
+                </div>
+                <div class="admin-stat-card">
+                    <div class="admin-stat-value" id="totalProfit">₦0</div>
+                    <div class="admin-stat-label">Total Profit Distributed</div>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>📈 User Growth</h3>
+                <div style="height: 250px;">
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>💰 Profit Distribution</h3>
+                <div style="height: 250px;">
+                    <canvas id="profitDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Management Tab -->
+        <div id="usersTab" class="admin-tab-content">
+            <div class="status-card">
+                <h3>👥 User Management</h3>
+                <div class="admin-form-group">
+                    <input type="text" id="userSearch" placeholder="Search users by ID or email...">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email</th>
+                                <th>Balance</th>
+                                <th>Referrals</th>
+                                <th>Ads Watched</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="action-bar">
+                    <button class="secondary" id="prevPageBtn">Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button class="secondary" id="nextPageBtn">Next</button>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>✏️ Edit User</h3>
+                <div class="admin-form-group">
+                    <label for="editUserId">User ID</label>
+                    <input type="text" id="editUserId" readonly>
+                </div>
+                <div class="admin-form-group">
+                    <label for="editUserBalance">Balance (₦)</label>
+                    <input type="number" id="editUserBalance">
+                </div>
+                <div class="admin-form-group">
+                    <label for="editUserReferrals">Referrals Completed</label>
+                    <input type="number" id="editUserReferrals">
+                </div>
+                <div class="admin-form-group">
+                    <label for="editUserAds">Ads Watched</label>
+                    <input type="number" id="editUserAds">
+                </div>
+                <div class="admin-form-group">
+                    <label>
+                        <input type="checkbox" id="editUserVerified"> Verified
+                    </label>
+                </div>
+                <div class="admin-form-group">
+                    <label>
+                        <input type="checkbox" id="editUserActive"> Trading Active
+                    </label>
+                </div>
+                <div class="action-bar">
+                    <button class="primary" id="saveUserBtn">Save Changes</button>
+                    <button class="danger" id="resetUserBtn">Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Control Tab -->
+        <div id="paymentsTab" class="admin-tab-content">
+            <div class="status-card">
+                <h3>💰 Payment Batch Control</h3>
+                <div class="admin-form-group">
+                    <label for="batchSize">Users per Payment Batch</label>
+                    <input type="number" id="batchSize" min="100" step="100">
+                </div>
+                <div class="batch-progress">
+                    <p>Current Batch Progress: <span id="batchProgress">0</span>/<span id="batchSizeDisplay">0</span></p>
+                    <progress id="batchProgressBar" value="0" max="100"></progress>
+                </div>
+                <div class="payment-batch-controls">
+                    <button class="primary" id="processBatchBtn">Process Current Batch</button>
+                    <button class="success" id="forceProcessBtn">Force Process</button>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>🔔 Notify Eligible Users</h3>
+                <div class="admin-form-group">
+                    <label for="notificationBatchSize">Users per Notification Batch</label>
+                    <input type="number" id="notificationBatchSize" min="100" max="1000" step="100" value="1000">
+                </div>
+                <div class="admin-form-group">
+                    <label for="verificationDeadline">Verification Deadline (hours)</label>
+                    <input type="number" id="verificationDeadline" min="1" value="36">
+                </div>
+                <div class="admin-form-group">
+                    <label for="gracePeriod">Grace Period (hours)</label>
+                    <input type="number" id="gracePeriod" min="1" value="12">
+                </div>
+                <div class="action-bar">
+                    <button class="warning" id="notifyEligibleBtn">Notify Eligible Users</button>
+                </div>
+            </div>
+            
+            <div class="status-card batch-history">
+                <h3>📜 Batch History</h3>
+                <div id="batchHistory">
+                    <p>No batch history available</p>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>📊 Withdrawal Requests</h3>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Amount (₦)</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawalTableBody">
+                        <!-- Withdrawals will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- System Settings Tab -->
+        <div id="settingsTab" class="admin-tab-content">
+            <div class="status-card">
+                <h3>⚙️ System Configuration</h3>
+                <div class="admin-form-group">
+                    <label for="referralRequirement">Referral Requirement</label>
+                    <input type="number" id="referralRequirement" min="1" max="20">
+                </div>
+                <div class="admin-form-group">
+                    <label for="adsRequirement">Ads Requirement</label>
+                    <input type="number" id="adsRequirement" min="1" max="50">
+                </div>
+                <div class="admin-form-group">
+                    <label for="verificationFee">Verification Fee (₦)</label>
+                    <input type="number" id="verificationFee" min="0">
+                </div>
+                <div class="admin-form-group">
+                    <label for="minWithdrawal">Minimum Withdrawal (₦)</label>
+                    <input type="number" id="minWithdrawal" min="0">
+                </div>
+                <div class="admin-form-group">
+                    <label for="maxWithdrawal">Maximum Withdrawal (₦)</label>
+                    <input type="number" id="maxWithdrawal" min="0">
+                </div>
+                <div class="admin-form-group">
+                    <label for="processingFee">Processing Fee (₦)</label>
+                    <input type="number" id="processingFee" min="0">
+                </div>
+                <div class="admin-form-group">
+                    <label for="userProfitPercent">User Profit Percentage</label>
+                    <input type="number" id="userProfitPercent" min="1" max="100">
+                </div>
+                <div class="admin-form-group">
+                    <label for="companyProfitPercent">Company Profit Percentage</label>
+                    <input type="number" id="companyProfitPercent" min="1" max="100">
+                </div>
+                <div class="admin-form-group">
+                    <label for="systemFeePercent">System Fee Percentage</label>
+                    <input type="number" id="systemFeePercent" min="1" max="100">
+                </div>
+                <div class="admin-form-group">
+                    <label>
+                        <input type="checkbox" id="maintenanceMode"> Maintenance Mode
+                    </label>
+                </div>
+                <div class="action-bar">
+                    <button class="primary" id="saveSettingsBtn">Save Settings</button>
+                    <button class="secondary" id="resetSettingsBtn">Reset to Defaults</button>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>🔒 Security Settings</h3>
+                <div class="admin-form-group">
+                    <label for="adminNewPassword">Change Admin Password</label>
+                    <input type="password" id="adminNewPassword" placeholder="New Password">
+                    <input type="password" id="adminConfirmPassword" placeholder="Confirm Password">
+                </div>
+                <div class="admin-form-group">
+                    <label for="adminPasskeySetting">Change Passkey (optional)</label>
+                    <input type="text" id="adminPasskeySetting" placeholder="New Passkey">
+                </div>
+                <div class="admin-form-group">
+                    <label>
+                        <input type="checkbox" id="enable2FA"> Enable Two-Factor Authentication (2FA)
+                    </label>
+                </div>
+                <div id="2FASetupSection" style="display: none;">
+                    <div id="2FASecret" style="word-break: break-all; margin: 10px 0;"></div>
+                    <div id="2FAQrCode" style="margin: 10px 0;"></div>
+                    <button class="primary" id="confirm2FABtn">Confirm 2FA Setup</button>
+                </div>
+                <div class="action-bar">
+                    <button class="primary" id="changeSecurityBtn">Save Security Settings</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Announcements Tab -->
+        <div id="announcementsTab" class="admin-tab-content">
+            <div class="status-card">
+                <h3>📢 Create Announcement</h3>
+                <div class="admin-form-group">
+                    <label for="announcementTitle">Title</label>
+                    <input type="text" id="announcementTitle" placeholder="Important Update">
+                </div>
+                <div class="admin-form-group">
+                    <label for="announcementContent">Content</label>
+                    <textarea id="announcementContent" rows="5" placeholder="Enter announcement content..."></textarea>
+                </div>
+                <div class="action-bar">
+                    <button class="primary" id="sendAnnouncementBtn">Send to All Users</button>
+                    <button class="secondary" id="previewAnnouncementBtn">Preview</button>
+                </div>
+            </div>
+            
+            <div class="status-card">
+                <h3>📜 Announcement History</h3>
+                <div id="announcementHistory">
+                    <p>No announcements sent yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Tab -->
+        <div id="supportTab" class="admin-tab-content">
+            <div class="status-card">
+                <h3>📩 Support Tickets</h3>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="supportTicketTableBody">
+                        <!-- Tickets will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="status-card">
+                <h3>✉️ Ticket Details</h3>
+                <div class="admin-form-group">
+                    <label for="ticketId">Ticket ID</label>
+                    <input type="text" id="ticketId" readonly>
+                </div>
+                <div class="admin-form-group">
+                    <label for="ticketSubject">Subject</label>
+                    <input type="text" id="ticketSubject" readonly>
+                </div>
+                <div class="admin-form-group">
+                    <label for="ticketMessage">Message</label>
+                    <textarea id="ticketMessage" rows="5" readonly></textarea>
+                </div>
+                <div class="admin-form-group">
+                    <label for="ticketReply">Reply</label>
+                    <textarea id="ticketReply" rows="5" placeholder="Enter your reply..."></textarea>
+                </div>
+                <div class="action-bar">
+                    <button class="primary" id="sendReplyBtn">Send Reply</button>
+                    <button class="success" id="resolveTicketBtn">Mark as Resolved</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span id="notificationText">Notification message</span>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3 id="confirmTitle">Confirm Action</h3>
+            <p id="confirmMessage">Are you sure you want to perform this action?</p>
+            <div class="modal-actions">
+                <button class="danger" id="confirmActionBtn">Confirm</button>
+                <button class="secondary" id="cancelActionBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <h3 id="previewTitle">Announcement Preview</h3>
+            <div id="previewContent" style="padding: 10px; border: 1px solid var(--border-color); border-radius: 8px; margin: 10px 0;">
+                <!-- Preview content will be inserted here -->
+            </div>
+            <div class="modal-actions">
+                <button class="primary" id="sendPreviewBtn">Send Now</button>
+                <button class="secondary" id="editPreviewBtn">Edit</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Dexie database
+        const db = new Dexie("AI_REF_TRADERS_DB");
+        
+        db.version(2).stores({
+            users: '++id, email, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
+            announcements: '++id, title, content, time, unread',
+            supportTickets: '++id, userId, subject, message, status, createdAt',
+            transactions: '++id, userId, type, amount, status, timestamp',
+            adminCredentials: '++id, username, password, passkey, totpSecret',
+            systemSettings: '++id, name, value',
+            paymentBatches: '++id, batchSize, processedAt, usersProcessed, totalAmount',
+            verificationNotifications: '++id, userId, batchNumber, notifiedAt, deadline, gracePeriod, completed'
+        });
+
+        // Global variables
+        let currentPage = 1;
+        const usersPerPage = 10;
+        let currentSelectedUserId = null;
+        let currentBatchSize = 1000;
+        let tempAdminData = null;
+        let userGrowthChart, profitDistributionChart;
+
+        // Theme management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                document.getElementById('themeIcon').textContent = '☀️';
+                document.getElementById('themeText').textContent = 'Light Mode';
+            } else {
+                document.getElementById('themeIcon').textContent = '🌙';
+                document.getElementById('themeText').textContent = 'Dark Mode';
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Show confirmation modal
+        function showConfirmation(title, message, callback) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            const modal = document.getElementById('confirmModal');
+            
+            modal.classList.add('active');
+            
+            document.getElementById('confirmActionBtn').onclick = function() {
+                modal.classList.remove('active');
+                callback(true);
+            };
+            
+            document.getElementById('cancelActionBtn').onclick = function() {
+                modal.classList.remove('active');
+                callback(false);
+            };
+        }
+
+        // Initialize admin panel
+        async function initializeAdminPanel() {
+            // Check if admin credentials exist, if not create default
+            const adminCount = await db.adminCredentials.count();
+            if (adminCount === 0) {
+                await db.adminCredentials.add({
+                    username: 'admin',
+                    password: 'admin123', // In production, this should be hashed
+                    passkey: 'defaultPasskey' // Optional passkey
+                });
+            }
+            
+            // Check if system settings exist, if not create defaults
+            const settingsCount = await db.systemSettings.count();
+            if (settingsCount === 0) {
+                await db.systemSettings.bulkAdd([
+                    { name: 'referralRequirement', value: 6 },
+                    { name: 'adsRequirement', value: 20 },
+                    { name: 'verificationFee', value: 1050 },
+                    { name: 'minWithdrawal', value: 5000 },
+                    { name: 'userProfitPercent', value: 70 },
+                    { name: 'companyProfitPercent', value: 25 },
+                    { name: 'systemFeePercent', value: 5 },
+                    { name: 'batchSize', value: 1000 }
+                ]);
+            }
+            
+            // Load system settings
+            await loadSystemSettings();
+        }
+
+        // Load system settings
+        async function loadSystemSettings() {
+            const settings = await db.systemSettings.toArray();
+            
+            settings.forEach(setting => {
+                switch(setting.name) {
+                    case 'referralRequirement':
+                        document.getElementById('referralRequirement').value = setting.value;
+                        break;
+                    case 'adsRequirement':
+                        document.getElementById('adsRequirement').value = setting.value;
+                        break;
+                    case 'verificationFee':
+                        document.getElementById('verificationFee').value = setting.value;
+                        break;
+                    case 'minWithdrawal':
+                        document.getElementById('minWithdrawal').value = setting.value;
+                        break;
+                    case 'userProfitPercent':
+                        document.getElementById('userProfitPercent').value = setting.value;
+                        break;
+                    case 'companyProfitPercent':
+                        document.getElementById('companyProfitPercent').value = setting.value;
+                        break;
+                    case 'systemFeePercent':
+                        document.getElementById('systemFeePercent').value = setting.value;
+                        break;
+                    case 'batchSize':
+                        currentBatchSize = setting.value;
+                        document.getElementById('batchSize').value = setting.value;
+                        document.getElementById('batchSizeDisplay').textContent = setting.value;
+                        break;
+                }
+            });
+        }
+
+        // Save system settings
+        async function saveSystemSettings() {
+            const settings = [
+                { name: 'referralRequirement', value: parseInt(document.getElementById('referralRequirement').value) || 6 },
+                { name: 'adsRequirement', value: parseInt(document.getElementById('adsRequirement').value) || 20 },
+                { name: 'verificationFee', value: parseInt(document.getElementById('verificationFee').value) || 1050 },
+                { name: 'minWithdrawal', value: parseInt(document.getElementById('minWithdrawal').value) || 5000 },
+                { name: 'userProfitPercent', value: parseInt(document.getElementById('userProfitPercent').value) || 70 },
+                { name: 'companyProfitPercent', value: parseInt(document.getElementById('companyProfitPercent').value) || 25 },
+                { name: 'systemFeePercent', value: parseInt(document.getElementById('systemFeePercent').value) || 5 },
+                { name: 'batchSize', value: parseInt(document.getElementById('batchSize').value) || 1000 }
+            ];
+            
+            try {
+                await db.systemSettings.clear();
+                await db.systemSettings.bulkAdd(settings);
+                
+                // Update current batch size
+                currentBatchSize = parseInt(document.getElementById('batchSize').value) || 1000;
+                document.getElementById('batchSizeDisplay').textContent = currentBatchSize;
+                
+                showNotification('System settings saved successfully!');
+            } catch (error) {
+                console.error('Error saving system settings:', error);
+                showNotification('Error saving settings. Please try again.');
+            }
+        }
+
+        // Reset system settings to defaults
+        async function resetSystemSettings() {
+            document.getElementById('referralRequirement').value = 6;
+            document.getElementById('adsRequirement').value = 20;
+            document.getElementById('verificationFee').value = 1050;
+            document.getElementById('minWithdrawal').value = 5000;
+            document.getElementById('userProfitPercent').value = 70;
+            document.getElementById('companyProfitPercent').value = 25;
+            document.getElementById('systemFeePercent').value = 5;
+            document.getElementById('batchSize').value = 1000;
+            
+            await saveSystemSettings();
+        }
+
+        // Load admin panel data
+        async function loadAdminPanelData() {
+            try {
+                // Load stats
+                const users = await db.users.toArray();
+                const activeUsers = users.filter(user => user.tradingActive && user.verified);
+                const pendingWithdrawals = await db.transactions.where('status').equals('pending').toArray();
+                
+                document.getElementById('totalUsers').textContent = users.length;
+                document.getElementById('activeUsers').textContent = activeUsers.length;
+                document.getElementById('verifiedUsers').textContent = users.filter(u => u.verified).length;
+                document.getElementById('pendingWithdrawals').textContent = pendingWithdrawals.length;
+                
+                // Calculate current batch progress
+                const currentBatchProgress = users.filter(u => u.withdrawableProfit >= 5000).length;
+                document.getElementById('currentBatch').textContent = `${currentBatchProgress}/${currentBatchSize}`;
+                document.getElementById('batchProgress').textContent = currentBatchProgress;
+                document.getElementById('batchProgressBar').value = currentBatchProgress;
+                document.getElementById('batchProgressBar').max = currentBatchSize;
+                
+                // Calculate total profit distributed
+                const totalProfit = users.reduce((sum, user) => sum + (user.totalWithdrawn || 0), 0);
+                document.getElementById('totalProfit').textContent = `₦${totalProfit.toLocaleString()}`;
+                
+                // Load user growth chart
+                updateUserGrowthChart(users);
+                
+                // Load profit distribution chart
+                updateProfitDistributionChart(users);
+                
+                // Load user management data
+                await loadUserManagementData();
+                
+                // Load payment batch history
+                await loadBatchHistory();
+                
+                // Load withdrawal requests
+                await loadWithdrawalRequests();
+                
+                // Load announcements
+                await loadAnnouncements();
+                
+                // Load support tickets
+                await loadSupportTickets();
+                
+            } catch (error) {
+                console.error('Error loading admin panel data:', error);
+                showNotification('Error loading data. Please try again.');
+            }
+        }
+
+        // Update user growth chart
+        function updateUserGrowthChart(users) {
+            const ctx = document.getElementById('userGrowthChart').getContext('2d');
+            
+            // Group users by registration date (simplified for demo)
+            const userCountByDay = {};
+            users.forEach(user => {
+                const date = new Date(user.lastTradingUpdate || Date.now()).toLocaleDateString();
+                userCountByDay[date] = (userCountByDay[date] || 0) + 1;
+            });
+            
+            const dates = Object.keys(userCountByDay).sort();
+            const counts = dates.map(date => userCountByDay[date]);
+            
+            // Calculate cumulative counts
+            const cumulativeCounts = [];
+            let total = 0;
+            counts.forEach(count => {
+                total += count;
+                cumulativeCounts.push(total);
+            });
+            
+            if (userGrowthChart) {
+                userGrowthChart.destroy();
+            }
+            
+            userGrowthChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Total Users',
+                        data: cumulativeCounts,
+                        borderColor: '#6C5CE7',
+                        backgroundColor: 'rgba(108, 92, 231, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'User Growth Over Time'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update profit distribution chart
+        function updateProfitDistributionChart(users) {
+            const ctx = document.getElementById('profitDistributionChart').getContext('2d');
+            
+            // Calculate profit distribution
+            const userProfit = users.reduce((sum, user) => sum + (user.totalProfit || 0), 0);
+            const companyProfit = users.reduce((sum, user) => sum + (user.totalProfit || 0) * 0.25, 0);
+            const systemProfit = users.reduce((sum, user) => sum + (user.totalProfit || 0) * 0.05, 0);
+            
+            if (profitDistributionChart) {
+                profitDistributionChart.destroy();
+            }
+            
+            profitDistributionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['User Profit', 'Company Profit', 'System Fee'],
+                    datasets: [{
+                        data: [userProfit, companyProfit, systemProfit],
+                        backgroundColor: [
+                            '#00B894',
+                            '#6C5CE7',
+                            '#2D3436'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Profit Distribution'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load user management data
+        async function loadUserManagementData() {
+            try {
+                const users = await db.users.toArray();
+                const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+                
+                // Filter users based on search term
+                const filteredUsers = searchTerm 
+                    ? users.filter(user => 
+                        user.id.toString().includes(searchTerm) || 
+                        (user.email && user.email.toLowerCase().includes(searchTerm)))
+                    : users;
+                
+                // Pagination
+                const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+                const startIdx = (currentPage - 1) * usersPerPage;
+                const paginatedUsers = filteredUsers.slice(startIdx, startIdx + usersPerPage);
+                
+                // Render users
+                const userTableBody = document.getElementById('userTableBody');
+                userTableBody.innerHTML = paginatedUsers.map(user => `
+                    <tr>
+                        <td>${user.id}</td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>₦${user.balance?.toLocaleString() || '0'}</td>
+                        <td>${user.referrals || '0'}</td>
+                        <td>${user.adsWatched || '0'}</td>
+                        <td>${user.verified ? '✅ Verified' : '❌ Not Verified'}</td>
+                        <td>
+                            <button class="primary" onclick="editUser(${user.id})">Edit</button>
+                        </td>
+                    </tr>
+                `).join('');
+                
+                // Update pagination info
+                document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
+                
+                // Disable/enable pagination buttons
+                document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+                document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+                
+            } catch (error) {
+                console.error('Error loading user management data:', error);
+                showNotification('Error loading users. Please try again.');
+            }
+        }
+
+        // Edit user
+        async function editUser(userId) {
+            try {
+                const user = await db.users.get(userId);
+                if (user) {
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('editUserBalance').value = user.balance || 0;
+                    document.getElementById('editUserReferrals').value = user.referrals || 0;
+                    document.getElementById('editUserAds').value = user.adsWatched || 0;
+                    document.getElementById('editUserVerified').checked = user.verified || false;
+                    document.getElementById('editUserActive').checked = user.tradingActive || false;
+                    
+                    currentSelectedUserId = userId;
+                } else {
+                    showNotification('User not found.');
+                }
+            } catch (error) {
+                console.error('Error editing user:', error);
+                showNotification('Error editing user. Please try again.');
+            }
+        }
+
+        // Save user changes
+        async function saveUserChanges() {
+            try {
+                const userId = parseInt(document.getElementById('editUserId').value);
+                const balance = parseFloat(document.getElementById('editUserBalance').value);
+                const referrals = parseInt(document.getElementById('editUserReferrals').value);
+                const adsWatched = parseInt(document.getElementById('editUserAds').value);
+                const verified = document.getElementById('editUserVerified').checked;
+                const tradingActive = document.getElementById('editUserActive').checked;
+                
+                if (isNaN(userId)) {
+                    showNotification('Invalid user ID.');
+                    return;
+                }
+                
+                const user = await db.users.get(userId);
+                if (user) {
+                    user.balance = balance;
+                    user.referrals = referrals;
+                    user.adsWatched = adsWatched;
+                    user.verified = verified;
+                    user.tradingActive = tradingActive;
+                    
+                    await db.users.put(user);
+                    showNotification('User updated successfully!');
+                    await loadUserManagementData();
+                    await loadAdminPanelData(); // Refresh stats
+                } else {
+                    showNotification('User not found.');
+                }
+            } catch (error) {
+                console.error('Error saving user changes:', error);
+                showNotification('Error saving user changes. Please try again.');
+            }
+        }
+
+        // Load batch history
+        async function loadBatchHistory() {
+            try {
+                const batches = await db.paymentBatches.toArray();
+                const batchHistoryEl = document.getElementById('batchHistory');
+                
+                if (batches.length === 0) {
+                    batchHistoryEl.innerHTML = '<p>No batch history available</p>';
+                    return;
+                }
+                
+                batchHistoryEl.innerHTML = batches.reverse().map(batch => `
+                    <div class="batch-item">
+                        <p><strong>Batch ID:</strong> ${batch.id}</p>
+                        <p><strong>Processed:</strong> ${new Date(batch.processedAt).toLocaleString()}</p>
+                        <p><strong>Users Processed:</strong> ${batch.usersProcessed}/${batch.batchSize}</p>
+                        <p><strong>Total Amount:</strong> ₦${batch.totalAmount?.toLocaleString() || '0'}</p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading batch history:', error);
+                showNotification('Error loading batch history. Please try again.');
+            }
+        }
+
+        // Load withdrawal requests
+        async function loadWithdrawalRequests() {
+            try {
+                const withdrawals = await db.transactions.where('type').equals('withdrawal').toArray();
+                const withdrawalTableBody = document.getElementById('withdrawalTableBody');
+                
+                if (withdrawals.length === 0) {
+                    withdrawalTableBody.innerHTML = '<tr><td colspan="6">No withdrawal requests found</td></tr>';
+                    return;
+                }
+                
+                withdrawalTableBody.innerHTML = withdrawals.reverse().map(tx => `
+                    <tr>
+                        <td>${tx.id}</td>
+                        <td>${tx.userId}</td>
+                        <td>₦${tx.amount?.toLocaleString() || '0'}</td>
+                        <td>${tx.status || 'pending'}</td>
+                        <td>${new Date(tx.timestamp).toLocaleString()}</td>
+                        <td>
+                            <button class="primary" onclick="processWithdrawal(${tx.id})">Process</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading withdrawal requests:', error);
+                showNotification('Error loading withdrawals. Please try again.');
+            }
+        }
+
+        // Process withdrawal
+        async function processWithdrawal(txId) {
+            try {
+                const tx = await db.transactions.get(txId);
+                if (!tx) {
+                    showNotification('Transaction not found.');
+                    return;
+                }
+                
+                const user = await db.users.get(tx.userId);
+                if (!user) {
+                    showNotification('User not found.');
+                    return;
+                }
+                
+                // Update transaction status
+                tx.status = 'completed';
+                await db.transactions.put(tx);
+                
+                // Update user's total withdrawn amount
+                user.totalWithdrawn = (user.totalWithdrawn || 0) + tx.amount;
+                user.withdrawableProfit = (user.withdrawableProfit || 0) - tx.amount;
+                await db.users.put(user);
+                
+                showNotification('Withdrawal processed successfully!');
+                await loadWithdrawalRequests();
+                await loadAdminPanelData(); // Refresh stats
+            } catch (error) {
+                console.error('Error processing withdrawal:', error);
+                showNotification('Error processing withdrawal. Please try again.');
+            }
+        }
+
+        // Process current batch
+        async function processCurrentBatch() {
+            try {
+                // Get users eligible for payment (withdrawableProfit >= 5000)
+                const eligibleUsers = await db.users.where('withdrawableProfit').aboveOrEqual(5000).toArray();
+                
+                if (eligibleUsers.length === 0) {
+                    showNotification('No users eligible for payment in this batch.');
+                    return;
+                }
+                
+                // Process payments (simulated)
+                const batchSize = Math.min(eligibleUsers.length, currentBatchSize);
+                let totalAmount = 0;
+                
+                for (let i = 0; i < batchSize; i++) {
+                    const user = eligibleUsers[i];
+                    totalAmount += user.withdrawableProfit;
+                    
+                    // Create transaction record
+                    await db.transactions.add({
+                        userId: user.id,
+                        type: 'withdrawal',
+                        amount: user.withdrawableProfit,
+                        status: 'pending',
+                        timestamp: Date.now()
+                    });
+                    
+                    // Reset withdrawable profit
+                    user.withdrawableProfit = 0;
+                    await db.users.put(user);
+                }
+                
+                // Record batch processing
+                await db.paymentBatches.add({
+                    batchSize: currentBatchSize,
+                    processedAt: Date.now(),
+                    usersProcessed: batchSize,
+                    totalAmount: totalAmount
+                });
+                
+                showNotification(`Processed ${batchSize} payments totaling ₦${totalAmount.toLocaleString()}`);
+                await loadAdminPanelData(); // Refresh all data
+            } catch (error) {
+                console.error('Error processing batch:', error);
+                showNotification('Error processing batch. Please try again.');
+            }
+        }
+
+        // Force process batch (bypass eligibility checks)
+        async function forceProcessBatch() {
+            showConfirmation('Force Process Batch', 'Are you sure you want to force process the current batch? This will process payments for all users regardless of eligibility.', async (confirmed) => {
+                if (confirmed) {
+                    try {
+                        // Get all users
+                        const users = await db.users.toArray();
+                        let totalAmount = 0;
+                        let usersProcessed = 0;
+                        
+                        for (const user of users) {
+                            if (user.withdrawableProfit > 0) {
+                                totalAmount += user.withdrawableProfit;
+                                usersProcessed++;
+                                
+                                // Create transaction record
+                                await db.transactions.add({
+                                    userId: user.id,
+                                    type: 'withdrawal',
+                                    amount: user.withdrawableProfit,
+                                    status: 'pending',
+                                    timestamp: Date.now()
+                                });
+                                
+                                // Reset withdrawable profit
+                                user.withdrawableProfit = 0;
+                                await db.users.put(user);
+                            }
+                        }
+                        
+                        // Record batch processing
+                        await db.paymentBatches.add({
+                            batchSize: currentBatchSize,
+                            processedAt: Date.now(),
+                            usersProcessed: usersProcessed,
+                            totalAmount: totalAmount
+                        });
+                        
+                        showNotification(`Force processed ${usersProcessed} payments totaling ₦${totalAmount.toLocaleString()}`);
+                        await loadAdminPanelData(); // Refresh all data
+                    } catch (error) {
+                        console.error('Error force processing batch:', error);
+                        showNotification('Error force processing batch. Please try again.');
+                    }
+                }
+            });
+        }
+
+        // Notify eligible users to verify and bind accounts
+        async function notifyEligibleUsers() {
+            try {
+                const batchSize = parseInt(document.getElementById('notificationBatchSize').value) || 1000;
+                const deadlineHours = parseInt(document.getElementById('verificationDeadline').value) || 36;
+                const gracePeriodHours = parseInt(document.getElementById('gracePeriod').value) || 12;
+                
+                // Get users who are eligible but not verified
+                const eligibleUsers = await db.users
+                    .where('verified').equals(false)
+                    .and(user => user.referrals >= 6 && user.adsWatched >= 20) // Example eligibility criteria
+                    .toArray();
+                
+                if (eligibleUsers.length === 0) {
+                    showNotification('No eligible users found who need verification.');
+                    return;
+                }
+                
+                // Get the last batch number
+                const lastNotification = await db.verificationNotifications.orderBy('batchNumber').last();
+                const nextBatchNumber = lastNotification ? lastNotification.batchNumber + 1 : 1;
+                
+                // Calculate deadline (36 hours from now)
+                const deadline = new Date(Date.now() + deadlineHours * 60 * 60 * 1000);
+                const gracePeriodEnd = new Date(deadline.getTime() + gracePeriodHours * 60 * 60 * 1000);
+                
+                // Process users in batches
+                const batches = [];
+                for (let i = 0; i < eligibleUsers.length; i += batchSize) {
+                    batches.push(eligibleUsers.slice(i, i + batchSize));
+                }
+                
+                // Process the first batch (you could modify this to process all batches)
+                const currentBatch = batches[0];
+                
+                // Create notification records
+                const notifications = currentBatch.map(user => ({
+                    userId: user.id,
+                    batchNumber: nextBatchNumber,
+                    notifiedAt: new Date(),
+                    deadline: deadline,
+                    gracePeriod: gracePeriodEnd,
+                    completed: false
+                }));
+                
+                await db.verificationNotifications.bulkAdd(notifications);
+                
+                // In a real implementation, you would send actual notifications to users here
+                // For this demo, we'll just show a success message
+                showNotification(`Notified ${currentBatch.length} users to verify and bind accounts within ${deadlineHours} hours (${gracePeriodHours} hour grace period).`);
+                
+            } catch (error) {
+                console.error('Error notifying eligible users:', error);
+                showNotification('Error notifying users. Please try again.');
+            }
+        }
+
+        // Load announcements
+        async function loadAnnouncements() {
+            try {
+                const announcements = await db.announcements.toArray();
+                const announcementHistoryEl = document.getElementById('announcementHistory');
+                
+                if (announcements.length === 0) {
+                    announcementHistoryEl.innerHTML = '<p>No announcements sent yet</p>';
+                    return;
+                }
+                
+                announcementHistoryEl.innerHTML = announcements.reverse().map(announcement => `
+                    <div class="batch-item">
+                        <p><strong>${announcement.title}</strong></p>
+                        <p>${announcement.content}</p>
+                        <p><small>Sent: ${new Date(announcement.time).toLocaleString()}</small></p>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading announcements:', error);
+                showNotification('Error loading announcements. Please try again.');
+            }
+        }
+
+        // Send announcement
+        async function sendAnnouncement() {
+            const title = document.getElementById('announcementTitle').value.trim();
+            const content = document.getElementById('announcementContent').value.trim();
+            
+            if (!title || !content) {
+                showNotification('Please enter both title and content for the announcement.');
+                return;
+            }
+            
+            try {
+                // Create announcement
+                await db.announcements.add({
+                    title: title,
+                    content: content,
+                    time: Date.now(),
+                    unread: true
+                });
+                
+                // Mark as unread for all users
+                const users = await db.users.toArray();
+                for (const user of users) {
+                    if (!user.announcements) {
+                        user.announcements = {
+                            read: [],
+                            unread: []
+                        };
+                    }
+                    user.announcements.unread.push(Date.now()); // Using timestamp as temporary ID
+                    await db.users.put(user);
+                }
+                
+                // Clear form
+                document.getElementById('announcementTitle').value = '';
+                document.getElementById('announcementContent').value = '';
+                
+                showNotification('Announcement sent to all users!');
+                await loadAnnouncements();
+            } catch (error) {
+                console.error('Error sending announcement:', error);
+                showNotification('Error sending announcement. Please try again.');
+            }
+        }
+
+        // Preview announcement
+        function previewAnnouncement() {
+            const title = document.getElementById('announcementTitle').value.trim();
+            const content = document.getElementById('announcementContent').value.trim();
+            
+            if (!title && !content) {
+                showNotification('Please enter some content to preview.');
+                return;
+            }
+            
+            const previewModal = document.getElementById('previewModal');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewContent = document.getElementById('previewContent');
+            
+            previewTitle.textContent = title || 'Announcement Preview';
+            previewContent.innerHTML = content || '<em>No content entered</em>';
+            
+            previewModal.classList.add('active');
+        }
+
+        // Load support tickets
+        async function loadSupportTickets() {
+            try {
+                const tickets = await db.supportTickets.toArray();
+                const ticketTableBody = document.getElementById('supportTicketTableBody');
+                
+                if (tickets.length === 0) {
+                    ticketTableBody.innerHTML = '<tr><td colspan="6">No support tickets found</td></tr>';
+                    return;
+                }
+                
+                ticketTableBody.innerHTML = tickets.reverse().map(ticket => `
+                    <tr>
+                        <td>${ticket.id}</td>
+                        <td>${ticket.userId}</td>
+                        <td>${ticket.subject}</td>
+                        <td>${ticket.status || 'pending'}</td>
+                        <td>${new Date(ticket.createdAt).toLocaleString()}</td>
+                        <td>
+                            <button class="primary" onclick="viewTicket(${ticket.id})">View</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading support tickets:', error);
+                showNotification('Error loading support tickets. Please try again.');
+            }
+        }
+
+        // View ticket details
+        async function viewTicket(ticketId) {
+            try {
+                const ticket = await db.supportTickets.get(ticketId);
+                if (!ticket) {
+                    showNotification('Ticket not found.');
+                    return;
+                }
+                
+                document.getElementById('ticketId').value = ticket.id;
+                document.getElementById('ticketSubject').value = ticket.subject || '';
+                document.getElementById('ticketMessage').value = ticket.message || '';
+                document.getElementById('ticketReply').value = '';
+            } catch (error) {
+                console.error('Error viewing ticket:', error);
+                showNotification('Error viewing ticket. Please try again.');
+            }
+        }
+
+        // Send reply to ticket
+        async function sendTicketReply() {
+            const ticketId = parseInt(document.getElementById('ticketId').value);
+            const reply = document.getElementById('ticketReply').value.trim();
+            
+            if (!ticketId || isNaN(ticketId)) {
+                showNotification('Invalid ticket ID.');
+                return;
+            }
+            
+            if (!reply) {
+                showNotification('Please enter a reply message.');
+                return;
+            }
+            
+            try {
+                const ticket = await db.supportTickets.get(ticketId);
+                if (!ticket) {
+                    showNotification('Ticket not found.');
+                    return;
+                }
+                
+                // In a real app, you would send this reply to the user (e.g., via email)
+                // For this demo, we'll just update the ticket status
+                ticket.status = 'replied';
+                await db.supportTickets.put(ticket);
+                
+                document.getElementById('ticketReply').value = '';
+                showNotification('Reply sent successfully!');
+                await loadSupportTickets();
+            } catch (error) {
+                console.error('Error sending ticket reply:', error);
+                showNotification('Error sending reply. Please try again.');
+            }
+        }
+
+        // Resolve ticket
+        async function resolveTicket() {
+            const ticketId = parseInt(document.getElementById('ticketId').value);
+            
+            if (!ticketId || isNaN(ticketId)) {
+                showNotification('Invalid ticket ID.');
+                return;
+            }
+            
+            try {
+                const ticket = await db.supportTickets.get(ticketId);
+                if (!ticket) {
+                    showNotification('Ticket not found.');
+                    return;
+                }
+                
+                ticket.status = 'resolved';
+                await db.supportTickets.put(ticket);
+                
+                showNotification('Ticket marked as resolved!');
+                await loadSupportTickets();
+            } catch (error) {
+                console.error('Error resolving ticket:', error);
+                showNotification('Error resolving ticket. Please try again.');
+            }
+        }
+
+        // Change admin password
+        async function changeAdminPassword() {
+            const newPassword = document.getElementById('adminNewPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const newPasskey = document.getElementById('adminPasskeySetting').value;
+            
+            if (newPassword && newPassword !== confirmPassword) {
+                showNotification('Passwords do not match.');
+                return;
+            }
+            
+            try {
+                const admin = await db.adminCredentials.where('username').equals('admin').first();
+                if (!admin) {
+                    showNotification('Admin account not found.');
+                    return;
+                }
+                
+                if (newPassword) {
+                    admin.password = newPassword;
+                }
+                
+                if (newPasskey) {
+                    admin.passkey = newPasskey;
+                }
+                
+                // Handle 2FA
+                if (document.getElementById('enable2FA').checked) {
+                    if (!admin.totpSecret) {
+                        // Generate new TOTP secret
+                        const totp = new OTPAuth.TOTP({
+                            issuer: 'AI REF-TRADERS',
+                            label: 'admin',
+                            algorithm: 'SHA1',
+                            digits: 6,
+                            period: 30
+                        });
+                        
+                        admin.totpSecret = totp.secret.base32;
+                        
+                        // Show 2FA setup UI
+                        document.getElementById('2FASecret').textContent = `Secret: ${admin.totpSecret}`;
+                        
+                        // Generate QR code
+                        const otpauth = totp.toString();
+                        document.getElementById('2FAQrCode').innerHTML = '';
+                        QRCode.toCanvas(document.getElementById('2FAQrCode'), otpauth, {
+                            width: 200,
+                            errorCorrectionLevel: 'H'
+                        });
+                        
+                        document.getElementById('2FASetupSection').style.display = 'block';
+                    }
+                } else {
+                    admin.totpSecret = null;
+                    document.getElementById('2FASetupSection').style.display = 'none';
+                }
+                
+                await db.adminCredentials.put(admin);
+                
+                if (!document.getElementById('enable2FA').checked) {
+                    showNotification('Security settings updated successfully!');
+                    document.getElementById('adminNewPassword').value = '';
+                    document.getElementById('adminConfirmPassword').value = '';
+                    document.getElementById('adminPasskeySetting').value = '';
+                }
+            } catch (error) {
+                console.error('Error changing admin password:', error);
+                showNotification('Error changing password. Please try again.');
+            }
+        }
+
+        // Confirm 2FA setup
+        async function confirm2FASetup() {
+            try {
+                const admin = await db.adminCredentials.where('username').equals('admin').first();
+                if (!admin || !admin.totpSecret) {
+                    showNotification('2FA not properly set up.');
+                    return;
+                }
+                
+                const totp = new OTPAuth.TOTP({
+                    secret: OTPAuth.Secret.fromBase32(admin.totpSecret),
+                    issuer: 'AI REF-TRADERS',
+                    label: 'admin',
+                    algorithm: 'SHA1',
+                    digits: 6,
+                    period: 30
+                });
+                
+                const enteredCode = Array.from(document.querySelectorAll('#totpStep .totp-input'))
+                    .map(input => input.value)
+                    .join('');
+                
+                if (enteredCode.length !== 6) {
+                    showNotification('Please enter a valid 6-digit code.');
+                    return;
+                }
+                
+                const isValid = totp.validate({ token: enteredCode, window: 1 }) !== null;
+                if (isValid) {
+                    showNotification('2FA setup confirmed! Security settings updated.');
+                    document.getElementById('2FASetupSection').style.display = 'none';
+                    document.getElementById('adminNewPassword').value = '';
+                    document.getElementById('adminConfirmPassword').value = '';
+                    document.getElementById('adminPasskeySetting').value = '';
+                } else {
+                    showNotification('Invalid verification code. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error confirming 2FA:', error);
+                showNotification('Error confirming 2FA. Please try again.');
+            }
+        }
+
+        // Admin login functionality
+        async function adminLogin() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+            const passkey = document.getElementById('adminPasskey').value.trim();
+
+            if (!username || !password) {
+                showNotification('Please enter both username and password.');
+                return;
+            }
+
+            try {
+                const admin = await db.adminCredentials.where('username').equals(username).first();
+                
+                if (admin && admin.password === password && (!admin.passkey || admin.passkey === passkey)) {
+                    // Successful login
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminUsernameDisplay').textContent = username;
+
+                    // Load admin panel data
+                    await loadAdminPanelData();
+                    
+                    showNotification('Login successful!');
+                } else {
+                    showNotification('Invalid credentials.');
+                }
+            } catch (error) {
+                console.error('Error during admin login:', error);
+                showNotification('An error occurred during login. Please try again.');
+            }
+        }
+
+        // Verify 2FA code
+        async function verify2FACode() {
+            try {
+                const admin = await db.adminCredentials.where('username').equals('admin').first();
+                if (!admin || !admin.totpSecret) {
+                    showNotification('2FA not properly set up.');
+                    return;
+                }
+                
+                const totp = new OTPAuth.TOTP({
+                    secret: OTPAuth.Secret.fromBase32(admin.totpSecret),
+                    issuer: 'AI REF-TRADERS',
+                    label: 'admin',
+                    algorithm: 'SHA1',
+                    digits: 6,
+                    period: 30
+                });
+                
+                const enteredCode = Array.from(document.querySelectorAll('#totpStep .totp-input'))
+                    .map(input => input.value)
+                    .join('');
+                
+                if (enteredCode.length !== 6) {
+                    showNotification('Please enter a valid 6-digit code.');
+                    return;
+                }
+                
+                const isValid = totp.validate({ token: enteredCode, window: 1 }) !== null;
+                if (isValid) {
+                    // Successful verification
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('adminUsernameDisplay').textContent = 'admin';
+
+                    // Load admin panel data
+                    await loadAdminPanelData();
+                    
+                    showNotification('Login successful!');
+                } else {
+                    showNotification('Invalid verification code. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error verifying 2FA code:', error);
+                showNotification('An error occurred during verification. Please try again.');
+            }
+        }
+
+        // Logout admin
+        function logoutAdmin() {
+            showConfirmation('Logout', 'Are you sure you want to logout?', (confirmed) => {
+                if (confirmed) {
+                    document.getElementById('loginContainer').style.display = 'block';
+                    document.getElementById('adminPanel').style.display = 'none';
+                    // Reset login form
+                    document.getElementById('adminUsername').value = '';
+                    document.getElementById('adminPassword').value = '';
+                    document.getElementById('adminPasskey').value = '';
+                }
+            });
+        }
+
+        // Initialize all functionality
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Set theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+            
+            // Initialize database
+            await initializeAdminPanel();
+            
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
+            
+            // Login functionality
+            document.getElementById('adminLoginBtn').addEventListener('click', adminLogin);
+            document.getElementById('verifyTotpBtn').addEventListener('click', verify2FACode);
+            document.getElementById('backToPasswordBtn').addEventListener('click', function() {
+                document.getElementById('passwordStep').classList.add('active');
+                document.getElementById('totpStep').classList.remove('active');
+            });
+            document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
+            
+            // Tab switching
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab') + 'Tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // User management
+            document.getElementById('saveUserBtn').addEventListener('click', saveUserChanges);
+            document.getElementById('resetUserBtn').addEventListener('click', function() {
+                if (currentSelectedUserId) editUser(currentSelectedUserId);
+            });
+            document.getElementById('userSearch').addEventListener('input', loadUserManagementData);
+            document.getElementById('prevPageBtn').addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadUserManagementData();
+                }
+            });
+            document.getElementById('nextPageBtn').addEventListener('click', function() {
+                currentPage++;
+                loadUserManagementData();
+            });
+            
+            // Payment processing
+            document.getElementById('processBatchBtn').addEventListener('click', processCurrentBatch);
+            document.getElementById('forceProcessBtn').addEventListener('click', forceProcessBatch);
+            document.getElementById('notifyEligibleBtn').addEventListener('click', notifyEligibleUsers);
+            
+            // System settings
+            document.getElementById('saveSettingsBtn').addEventListener('click', saveSystemSettings);
+            document.getElementById('resetSettingsBtn').addEventListener('click', resetSystemSettings);
+            document.getElementById('changeSecurityBtn').addEventListener('click', changeAdminPassword);
+            document.getElementById('confirm2FABtn').addEventListener('click', confirm2FASetup);
+            document.getElementById('enable2FA').addEventListener('change', function() {
+                if (this.checked) {
+                    changeAdminPassword(); // This will show the 2FA setup section
+                } else {
+                    document.getElementById('2FASetupSection').style.display = 'none';
+                }
+            });
+            
+            // Announcements
+            document.getElementById('sendAnnouncementBtn').addEventListener('click', sendAnnouncement);
+            document.getElementById('previewAnnouncementBtn').addEventListener('click', previewAnnouncement);
+            
+            // Support tickets
+            document.getElementById('sendReplyBtn').addEventListener('click', sendTicketReply);
+            document.getElementById('resolveTicketBtn').addEventListener('click', resolveTicket);
+            
+            // Modal buttons
+            document.getElementById('sendPreviewBtn').addEventListener('click', function() {
+                document.getElementById('previewModal').classList.remove('active');
+                sendAnnouncement();
+            });
+            document.getElementById('editPreviewBtn').addEventListener('click', function() {
+                document.getElementById('previewModal').classList.remove('active');
+            });
+            
+            // If already logged in, show admin panel
+            if (document.getElementById('adminPanel').style.display === 'none') {
+                document.getElementById('loginContainer').style.display = 'block';
+            }
+        });
+
+        // Make functions available globally for inline event handlers
+        window.editUser = editUser;
+        window.processWithdrawal = processWithdrawal;
+        window.viewTicket = viewTicket;
+    </script>
+</body>
+</html>
