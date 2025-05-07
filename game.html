@@ -207,7 +207,7 @@
         
         <!-- Timer Display -->
         <div id="timerDisplay">
-            Game session time remaining: <span id="timeRemaining">55:00</span>
+            Game session time remaining: <span id="timeRemaining">60:00</span>
         </div>
         
         <!-- FOMO Banner -->
@@ -434,7 +434,8 @@
             announcements: '++id, title, content, time, unread',
             supportTickets: '++id, userId, subject, message, status, createdAt',
             adminCredentials: '++id, username, password',
-            transactions: '++id, userId, type, amount, status, timestamp'
+            transactions: '++id, userId, type, amount, status, timestamp',
+            gameSessions: '++id, userId, startTime, endTime, attemptsUsed, gamesPlayed'
         });
 
         // ========================
@@ -452,7 +453,9 @@
             nairaChase: { attempts: 10, score: 0, earnings: 0 },
             lastAccessTime: 0,
             adsWatched: 0,
-            gameTimerStart: 0
+            gameTimerStart: 0,
+            dailySessions: 0,
+            lastSessionReset: 0
         };
 
         // Load user data from IndexedDB (same as ads.html)
@@ -529,6 +532,47 @@
             }
         }
 
+        // Check daily session limit (10 per 24 hours)
+        async function checkDailySessions() {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
+                
+                // Get today's game sessions
+                const now = Date.now();
+                const twentyFourHoursAgo = now - (24 * 60 * 60 * 1000);
+                
+                const sessions = await db.gameSessions
+                    .where('userId').equals(userEmail || userPhone)
+                    .and(session => session.startTime >= twentyFourHoursAgo)
+                    .toArray();
+                
+                return sessions.length;
+            } catch (error) {
+                console.error('Error checking daily sessions:', error);
+                return 0;
+            }
+        }
+
+        // Record a new game session
+        async function recordGameSession() {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
+                const now = Date.now();
+                
+                await db.gameSessions.add({
+                    userId: userEmail || userPhone,
+                    startTime: now,
+                    endTime: now + (60 * 60 * 1000), // 60 minutes from now
+                    attemptsUsed: 0,
+                    gamesPlayed: 0
+                });
+            } catch (error) {
+                console.error('Error recording game session:', error);
+            }
+        }
+
         // Initialize game state based on user data
         async function initializeGameState() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -539,6 +583,13 @@
                 
                 if (!userData) {
                     showAccessDenied("No user data found. Please watch ads first.");
+                    return false;
+                }
+                
+                // Check daily session limit (10 per 24 hours)
+                const sessionsToday = await checkDailySessions();
+                if (sessionsToday >= 10) {
+                    showAccessDenied("You've reached your daily limit of 10 game sessions. Please try again tomorrow.");
                     return false;
                 }
                 
@@ -559,11 +610,11 @@
                 gameState.adsWatched = userData.adsWatched || 0;
                 gameState.gameEarnings = userData.gameEarnings || 0;
                 
-                // Check if we need to reset attempts (55 minutes since last ad watch)
+                // Check if we need to reset attempts (60 minutes since last ad watch)
                 const now = Date.now();
                 const timeSinceLastAd = now - (userData.lastAdWatchTime || 0);
                 
-                if (fromAds || timeSinceLastAd >= 55 * 60 * 1000) {
+                if (fromAds || timeSinceLastAd >= 60 * 60 * 1000) {
                     // Reset all attempts for fresh session
                     gameState.memory.attempts = 10;
                     gameState.dice.attempts = 10;
@@ -596,6 +647,10 @@
                         ...userData,
                         gameTimerStart: gameState.gameTimerStart
                     });
+                    
+                    // Record new game session
+                    await recordGameSession();
+                    
                     startGameTimer();
                 } else {
                     // Load existing game state if available
@@ -630,7 +685,7 @@
             });
         }
 
-        // Start game timer (55 minutes)
+        // Start game timer (60 minutes)
         function startGameTimer() {
             const timerDisplay = document.getElementById('timerDisplay');
             const timeRemaining = document.getElementById('timeRemaining');
@@ -640,7 +695,7 @@
             const updateTimer = () => {
                 const now = Date.now();
                 const timeElapsed = now - gameState.gameTimerStart;
-                const timeLeft = Math.max(0, 55 * 60 * 1000 - timeElapsed);
+                const timeLeft = Math.max(0, 60 * 60 * 1000 - timeElapsed);
                 
                 const minutes = Math.floor(timeLeft / (1000 * 60));
                 const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
@@ -657,7 +712,7 @@
             };
             
             updateTimer();
-            timerInterval = setInterval(updateTimer, 1000);
+            const timerInterval = setInterval(updateTimer, 1000);
         }
 
         // Save game state to IndexedDB
