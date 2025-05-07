@@ -32,6 +32,30 @@
             text-align: center;
             margin-bottom: 20px;
             border-radius: 5px;
+            position: relative;
+        }
+        
+        .nav-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-btn:hover {
+            background-color: #2980b9;
         }
         
         .balance-container {
@@ -98,6 +122,17 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        
+        .game-container.active {
+            display: block;
         }
         
         /* Timer display */
@@ -185,6 +220,12 @@
             .game-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
+            
+            .nav-buttons {
+                position: static;
+                justify-content: center;
+                margin-top: 10px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -220,6 +261,10 @@
             <header>
                 <h1>AI REF-TRADERS GAME CONSOLE</h1>
                 <p>Earn money by playing these games</p>
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="goToDashboardBtn">Dashboard</button>
+                    <button class="nav-btn" id="goToAdsBtn2">Watch Ads</button>
+                </div>
             </header>
             
             <div class="balance-container">
@@ -238,7 +283,7 @@
                 <div class="game-card" data-game="memory">
                     <img src="https://cdn-icons-png.flaticon.com/512/3522/3522697.png" alt="Memory Game">
                     <h3>Memory Match</h3>
-                    <p>Match pairs of cards to win money</p>
+                    <p>Match pairs of cards to win ₦800 per game</p>
                     <p class="attempts-info">Attempts left: <span id="memoryAttempts">10</span></p>
                 </div>
                 
@@ -246,7 +291,7 @@
                 <div class="game-card" data-game="dice">
                     <img src="https://cdn-icons-png.flaticon.com/512/2693/2693739.png" alt="Dice Game">
                     <h3>Lucky Dice</h3>
-                    <p>Roll dice and guess the outcome</p>
+                    <p>Roll dice and guess the outcome to win ₦800</p>
                     <p class="attempts-info">Attempts left: <span id="diceAttempts">10</span></p>
                 </div>
                 
@@ -254,7 +299,7 @@
                 <div class="game-card" data-game="snake">
                     <img src="https://cdn-icons-png.flaticon.com/512/2965/2965879.png" alt="Snake Game">
                     <h3>Snake</h3>
-                    <p>Classic snake game with rewards</p>
+                    <p>Classic snake game with ₦800 winning prize</p>
                     <p class="attempts-info">Attempts left: <span id="snakeAttempts">10</span></p>
                 </div>
                 
@@ -262,7 +307,7 @@
                 <div class="game-card" data-game="trivia">
                     <img src="https://cdn-icons-png.flaticon.com/512/3132/3132693.png" alt="Trivia Game">
                     <h3>Trivia Challenge</h3>
-                    <p>Answer questions to win money</p>
+                    <p>Answer questions to win ₦800 per game</p>
                     <p class="attempts-info">Attempts left: <span id="triviaAttempts">10</span></p>
                 </div>
                 
@@ -270,7 +315,7 @@
                 <div class="game-card" data-game="wheel">
                     <img src="https://cdn-icons-png.flaticon.com/512/3209/3209260.png" alt="Wheel Game">
                     <h3>Spin the Wheel</h3>
-                    <p>Spin for instant prizes</p>
+                    <p>Spin for instant prizes from ₦50 to ₦1800</p>
                     <p class="attempts-info">Attempts left: <span id="wheelAttempts">10</span></p>
                 </div>
                 
@@ -278,7 +323,7 @@
                 <div class="game-card" data-game="ayo">
                     <img src="https://cdn-icons-png.flaticon.com/512/3199/3199937.png" alt="Ayo Game">
                     <h3>Ayo Olopon</h3>
-                    <p>Traditional Nigerian game</p>
+                    <p>Traditional Nigerian game with ₦800 prize</p>
                     <p class="attempts-info">Attempts left: <span id="ayoAttempts">10</span></p>
                 </div>
                 
@@ -286,7 +331,7 @@
                 <div class="game-card" data-game="nairaChase">
                     <img src="https://cdn-icons-png.flaticon.com/512/2936/2936886.png" alt="Naira Chase">
                     <h3>Naira Chase</h3>
-                    <p>Catch falling money</p>
+                    <p>Catch falling money to win ₦800 per game</p>
                     <p class="attempts-info">Attempts left: <span id="nairaChaseAttempts">10</span></p>
                 </div>
             </div>
@@ -295,7 +340,7 @@
             <!-- Memory Game Container -->
             <div id="memoryGameContainer" class="game-container">
                 <h2>Memory Match Game</h2>
-                <p>Match pairs of cards to win ₦100 per match. Complete all pairs to win ₦500 bonus!</p>
+                <p>Match pairs of cards to win ₦800 per game!</p>
                 <div id="memoryGameBoard" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;"></div>
                 <button id="startMemoryGame" class="btn">Start Game</button>
                 <button id="backToGames1" class="btn" style="background-color: #7f8c8d; margin-left: 10px;">Back to Games</button>
@@ -308,7 +353,7 @@
             <!-- Dice Game Container -->
             <div id="diceGameContainer" class="game-container">
                 <h2>Lucky Dice Game</h2>
-                <p>Guess if the sum of two dice will be higher or lower than 7. Win ₦200 per correct guess!</p>
+                <p>Guess if the sum of two dice will be higher or lower than 7. Win ₦800 per game!</p>
                 <div style="display: flex; justify-content: center; gap: 30px; margin: 20px 0;">
                     <div id="dice1" style="font-size: 50px;">🎲</div>
                     <div id="dice2" style="font-size: 50px;">🎲</div>
@@ -330,7 +375,7 @@
             <!-- Snake Game Container -->
             <div id="snakeGameContainer" class="game-container">
                 <h2>Snake Game</h2>
-                <p>Eat the food to grow your snake. Earn ₦10 per food and ₦100 bonus for every 10 foods!</p>
+                <p>Eat the food to grow your snake. Earn ₦800 for reaching the target score!</p>
                 <canvas id="snakeCanvas" width="400" height="400" style="border: 1px solid #ddd; display: block; margin: 20px auto;"></canvas>
                 <div style="text-align: center;">
                     <button id="startSnakeGame" class="btn">Start Game</button>
@@ -346,7 +391,7 @@
             <!-- Trivia Game Container -->
             <div id="triviaGameContainer" class="game-container">
                 <h2>Trivia Challenge</h2>
-                <p>Answer trivia questions correctly to earn ₦150 per question!</p>
+                <p>Answer trivia questions correctly to earn ₦800 per game!</p>
                 <div id="triviaQuestionContainer" style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
                     <p id="triviaQuestion">Press "Start Game" to begin</p>
                     <div id="triviaOptions" style="margin-top: 15px;"></div>
@@ -362,7 +407,7 @@
             <!-- Wheel Game Container -->
             <div id="wheelGameContainer" class="game-container">
                 <h2>Spin the Wheel</h2>
-                <p>Spin the wheel for a chance to win between ₦50 and ₦1000!</p>
+                <p>Spin the wheel for a chance to win between ₦50 and ₦1800!</p>
                 <div style="text-align: center; margin: 20px 0;">
                     <canvas id="wheelCanvas" width="300" height="300"></canvas>
                 </div>
@@ -379,7 +424,7 @@
             <!-- Ayo Game Container -->
             <div id="ayoGameContainer" class="game-container">
                 <h2>Ayo Olopon</h2>
-                <p>Play the traditional Nigerian game against the computer. Win ₦300 per game!</p>
+                <p>Play the traditional Nigerian game against the computer. Win ₦800 per game!</p>
                 <div id="ayoBoard" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin: 20px 0;"></div>
                 <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
                     <div>
@@ -402,7 +447,7 @@
             <!-- Naira Chase Game Container -->
             <div id="nairaChaseGameContainer" class="game-container">
                 <h2>Naira Chase</h2>
-                <p>Catch falling Naira notes to earn money. Each note is worth ₦10-₦100!</p>
+                <p>Catch falling Naira notes to earn ₦800 per game!</p>
                 <canvas id="nairaChaseCanvas" width="400" height="500" style="border: 1px solid #ddd; display: block; margin: 20px auto;"></canvas>
                 <div style="text-align: center;">
                     <button id="startNairaChase" class="btn">Start Game</button>
@@ -448,7 +493,7 @@
             dice: { attempts: 10, wins: 0, earnings: 0 },
             snake: { attempts: 10, score: 0, earnings: 0 },
             trivia: { attempts: 10, correct: 0, earnings: 0, usedQuestions: [] },
-            wheel: { attempts: 10, wins: 0, earnings: 0 },
+            wheel: { attempts: 10, wins: 0, earnings: 0, prizes: [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 750, 1000, 1200, 1500, 1800] },
             ayo: { attempts: 10, wins: 0, earnings: 0 },
             nairaChase: { attempts: 10, score: 0, earnings: 0 },
             lastAccessTime: 0,
@@ -837,12 +882,18 @@
         function showGame(gameName) {
             // Hide all game containers
             document.querySelectorAll('.game-container').forEach(container => {
-                container.style.display = 'none';
+                container.classList.remove('active');
             });
+            
+            // Hide game grid
+            document.querySelector('.game-grid').style.display = 'none';
             
             // Show the selected game container
             if (gameName) {
-                document.getElementById(`${gameName}GameContainer`).style.display = 'block';
+                document.getElementById(`${gameName}GameContainer`).classList.add('active');
+            } else {
+                // Show game grid if no game selected
+                document.querySelector('.game-grid').style.display = 'grid';
             }
         }
 
@@ -943,7 +994,7 @@
                 if (card1.value === card2.value) {
                     // Match found
                     this.matchedPairs++;
-                    this.currentWin += 100;
+                    this.currentWin = 800; // Fixed winning amount
                     
                     document.getElementById('memoryMatches').textContent = this.matchedPairs;
                     document.getElementById('memoryCurrentWin').textContent = this.currentWin;
@@ -962,9 +1013,6 @@
                     
                     // Check if all pairs are matched
                     if (this.matchedPairs === 8) {
-                        this.currentWin += 500; // Bonus for completing all pairs
-                        document.getElementById('memoryCurrentWin').textContent = this.currentWin;
-                        
                         setTimeout(() => {
                             alert(`Congratulations! You won ₦${this.currentWin}!`);
                             gameState.memory.wins++;
@@ -1070,13 +1118,13 @@
                         
                         if (this.currentGuess === 'higher' && sum > 7) {
                             result = 'WIN! Sum is higher than 7';
-                            winAmount = 200;
+                            winAmount = 800; // Fixed winning amount
                         } else if (this.currentGuess === 'lower' && sum < 7) {
                             result = 'WIN! Sum is lower than 7';
-                            winAmount = 200;
+                            winAmount = 800; // Fixed winning amount
                         } else if (this.currentGuess === 'seven' && sum === 7) {
                             result = 'BIG WIN! Sum is exactly 7';
-                            winAmount = 600;
+                            winAmount = 800; // Fixed winning amount
                         } else {
                             result = `LOSE! Sum is ${sum}`;
                         }
@@ -1253,8 +1301,7 @@
                     document.getElementById('snakeScore').textContent = this.score;
                     
                     // Add earnings
-                    const earnings = this.score * 10;
-                    if (this.score % 10 === 0) earnings += 100; // Bonus every 10 foods
+                    const earnings = this.score >= 20 ? 800 : 0; // Win 800 if score reaches 20
                     gameState.snake.earnings = earnings;
                     document.getElementById('snakeEarnings').textContent = earnings;
                     
@@ -1300,12 +1347,17 @@
                 
                 // Update game state
                 gameState.snake.score = Math.max(gameState.snake.score, this.score);
-                gameState.snake.earnings = this.score * 10 + Math.floor(this.score / 10) * 100;
-                updateBalance(gameState.snake.earnings);
+                const earnings = this.score >= 20 ? 800 : 0;
+                gameState.snake.earnings = earnings;
+                
+                if (earnings > 0) {
+                    updateBalance(earnings);
+                }
+                
                 gameState.snake.attempts--;
                 updateGameUI();
                 
-                alert(`Game Over! Your score: ${this.score}. You earned ₦${gameState.snake.earnings}`);
+                alert(`Game Over! Your score: ${this.score}. ${earnings > 0 ? `You earned ₦${earnings}!` : 'Try again to reach the target score!'}`);
             }
         };
         
@@ -1397,13 +1449,18 @@
                 
                 if (availableQuestions.length === 0 || gameState.trivia.usedQuestions.length >= 10) {
                     // No more questions or max attempts reached
-                    alert(`Game Over! You answered ${this.correctAnswers} questions correctly and earned ₦${this.totalWinnings}`);
+                    const winAmount = this.correctAnswers >= 5 ? 800 : 0; // Win 800 if at least 5 correct answers
+                    
+                    if (winAmount > 0) {
+                        gameState.trivia.earnings = winAmount;
+                        updateBalance(winAmount);
+                    }
                     
                     gameState.trivia.correct = this.correctAnswers;
-                    gameState.trivia.earnings = this.totalWinnings;
-                    updateBalance(this.totalWinnings);
                     gameState.trivia.attempts--;
                     updateGameUI();
+                    
+                    alert(`Game Over! You answered ${this.correctAnswers} questions correctly. ${winAmount > 0 ? `You earned ₦${winAmount}!` : 'Try again to get at least 5 correct answers!'}`);
                     
                     return;
                 }
@@ -1441,11 +1498,8 @@
                 if (selectedOption === this.currentQuestion.answer) {
                     // Correct answer
                     this.correctAnswers++;
-                    const winAmount = 150;
-                    this.totalWinnings += winAmount;
                     
                     document.getElementById('triviaCorrect').textContent = this.correctAnswers;
-                    document.getElementById('triviaTotalWinnings').textContent = this.totalWinnings;
                     
                     // Play win sound
                     document.getElementById('winSound').currentTime = 0;
@@ -1473,7 +1527,7 @@
             init: function() {
                 this.canvas = document.getElementById('wheelCanvas');
                 this.ctx = this.canvas.getContext('2d');
-                this.prizes = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 750, 1000];
+                this.prizes = gameState.wheel.prizes;
                 this.spinning = false;
                 this.totalWinnings = 0;
                 
@@ -1844,7 +1898,7 @@
                     document.getElementById('winSound').currentTime = 0;
                     document.getElementById('winSound').play();
                     
-                    winAmount = 300;
+                    winAmount = 800; // Fixed winning amount
                     gameState.ayo.wins++;
                     alert(`You win! Score: ${this.playerScore}-${this.computerScore}. You earned ₦${winAmount}`);
                 } else if (this.computerScore > this.playerScore) {
@@ -1962,8 +2016,8 @@
                         // Collect note
                         this.nairaNotes.splice(index, 1);
                         this.score++;
-                        const noteValue = note.value;
-                        this.earnings += noteValue;
+                        const noteValue = 800; // Fixed winning amount when target is reached
+                        this.earnings = this.score >= 15 ? noteValue : 0;
                         
                         document.getElementById('nairaChaseScore').textContent = this.score;
                         document.getElementById('nairaChaseEarnings').textContent = this.earnings;
@@ -1976,7 +2030,7 @@
                 });
                 
                 // Check game over condition (time-based in this simple version)
-                if (this.score >= 50) {
+                if (this.score >= 15) {
                     this.gameOver();
                 }
             },
@@ -2001,12 +2055,17 @@
                 
                 // Update game state
                 gameState.nairaChase.score = this.score;
-                gameState.nairaChase.earnings = this.earnings;
-                updateBalance(this.earnings);
+                const earnings = this.score >= 15 ? 800 : 0;
+                gameState.nairaChase.earnings = earnings;
+                
+                if (earnings > 0) {
+                    updateBalance(earnings);
+                }
+                
                 gameState.nairaChase.attempts--;
                 updateGameUI();
                 
-                alert(`Game Over! You caught ${this.score} notes and earned ₦${this.earnings}!`);
+                alert(`Game Over! You caught ${this.score} notes. ${earnings > 0 ? `You earned ₦${earnings}!` : 'Try again to catch at least 15 notes!'}`);
             }
         };
         
@@ -2069,6 +2128,15 @@
             document.getElementById('backToGames5').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames6').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames7').addEventListener('click', () => showGame(''));
+            
+            // Navigation buttons
+            document.getElementById('goToDashboardBtn').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+            
+            document.getElementById('goToAdsBtn2').addEventListener('click', () => {
+                window.location.href = 'ads.html';
+            });
             
             // Update FOMO timer
             setInterval(() => {
