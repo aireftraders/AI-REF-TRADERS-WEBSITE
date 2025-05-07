@@ -110,16 +110,6 @@
             display: none;
         }
         
-        /* Session info display */
-        #sessionInfo {
-            background-color: #27ae60;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
         /* Access denied container */
         #accessDeniedContainer {
             display: none;
@@ -218,12 +208,6 @@
         <!-- Timer Display -->
         <div id="timerDisplay">
             Game session time remaining: <span id="timeRemaining">60:00</span>
-        </div>
-        
-        <!-- Session Info Display -->
-        <div id="sessionInfo">
-            Game sessions left today: <span id="sessionsLeft">10</span> |
-            Total ads watched: <span id="totalAdsWatched">0</span>
         </div>
         
         <!-- FOMO Banner -->
@@ -446,7 +430,7 @@
         
         // Define database schema (must match ads.html exactly)
         db.version(1).stores({
-            users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastGameSession, gameSessionsToday, streak, announcements, referrer',
+            users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements, referrer',
             announcements: '++id, title, content, time, unread',
             supportTickets: '++id, userId, subject, message, status, createdAt',
             adminCredentials: '++id, username, password',
@@ -468,10 +452,9 @@
             nairaChase: { attempts: 10, score: 0, earnings: 0 },
             lastAccessTime: 0,
             adsWatched: 0,
-            totalAdsWatched: 0,
             gameTimerStart: 0,
-            gameSessionsToday: 0,
-            maxSessionsPerDay: 10
+            sessionCount: 0,
+            lastSessionReset: 0
         };
 
         // Load user data from IndexedDB (same as ads.html)
@@ -508,8 +491,6 @@
                         paymentCircle: { current: 0, total: 1000 },
                         gameEarnings: 0,
                         lastAdWatchTime: null,
-                        lastGameSession: null,
-                        gameSessionsToday: 0,
                         streak: {
                             count: 0,
                             lastLogin: null,
@@ -519,7 +500,9 @@
                             read: [2],
                             unread: [1]
                         },
-                        referrer: null
+                        referrer: null,
+                        gameSessionCount: 0,
+                        lastGameSessionReset: 0
                     };
                     
                     // Add new user to database
@@ -550,20 +533,6 @@
             }
         }
 
-        // Check if it's a new day for game sessions
-        function isNewDay(lastSessionTimestamp) {
-            if (!lastSessionTimestamp) return true;
-            
-            const lastSessionDate = new Date(lastSessionTimestamp);
-            const currentDate = new Date();
-            
-            return (
-                lastSessionDate.getDate() !== currentDate.getDate() ||
-                lastSessionDate.getMonth() !== currentDate.getMonth() ||
-                lastSessionDate.getFullYear() !== currentDate.getFullYear()
-            );
-        }
-
         // Initialize game state based on user data
         async function initializeGameState() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -589,43 +558,41 @@
                     return false;
                 }
                 
-                // Check if it's a new day for game sessions
-                if (isNewDay(userData.lastGameSession)) {
-                    // Reset daily session count
-                    userData.gameSessionsToday = 0;
-                    await saveUserData({
-                        gameSessionsToday: 0,
-                        lastGameSession: Date.now()
-                    });
+                // Check daily session limit (10 sessions per 24 hours)
+                const now = Date.now();
+                const twentyFourHours = 24 * 60 * 60 * 1000;
+                
+                // Reset session count if more than 24 hours have passed since last reset
+                if (now - (userData.lastGameSessionReset || 0) > twentyFourHours) {
+                    userData.gameSessionCount = 0;
+                    userData.lastGameSessionReset = now;
+                    await saveUserData(userData);
                 }
                 
                 // Check if user has exceeded daily session limit
-                if (userData.gameSessionsToday >= gameState.maxSessionsPerDay) {
-                    showAccessDenied(`You've used all ${gameState.maxSessionsPerDay} game sessions for today. Come back tomorrow!`);
+                if (userData.gameSessionCount >= 10) {
+                    showAccessDenied("You've reached your daily limit of 10 game sessions. Please try again tomorrow.");
                     return false;
+                }
+                
+                // Increment session count if coming from ads
+                if (fromAds) {
+                    userData.gameSessionCount = (userData.gameSessionCount || 0) + 1;
+                    userData.lastGameSessionReset = userData.lastGameSessionReset || now;
+                    await saveUserData(userData);
                 }
                 
                 // Initialize game state from user data
                 gameState.balance = userData.balance || 0;
                 gameState.adsWatched = userData.adsWatched || 0;
-                gameState.totalAdsWatched = userData.totalAdsWatched || 0;
                 gameState.gameEarnings = userData.gameEarnings || 0;
-                gameState.gameSessionsToday = userData.gameSessionsToday || 0;
+                gameState.sessionCount = userData.gameSessionCount || 0;
+                gameState.lastSessionReset = userData.lastGameSessionReset || now;
                 
                 // Check if we need to reset attempts (60 minutes since last ad watch)
-                const now = Date.now();
                 const timeSinceLastAd = now - (userData.lastAdWatchTime || 0);
                 
                 if (fromAds || timeSinceLastAd >= 60 * 60 * 1000) {
-                    // Increment session count if coming from ads
-                    if (fromAds) {
-                        gameState.gameSessionsToday++;
-                        await saveUserData({
-                            gameSessionsToday: gameState.gameSessionsToday,
-                            lastGameSession: now
-                        });
-                    }
-                    
                     // Reset all attempts for fresh session
                     gameState.memory.attempts = 10;
                     gameState.dice.attempts = 10;
@@ -672,12 +639,6 @@
                     }
                 }
                 
-                // Update session info display
-                document.getElementById('sessionsLeft').textContent = 
-                    gameState.maxSessionsPerDay - gameState.gameSessionsToday;
-                document.getElementById('totalAdsWatched').textContent = gameState.totalAdsWatched;
-                document.getElementById('sessionInfo').style.display = 'block';
-                
                 return true;
             } catch (error) {
                 console.error('Error initializing game state:', error);
@@ -691,7 +652,6 @@
             document.getElementById('accessDeniedContainer').style.display = 'flex';
             document.getElementById('mainGameContainer').style.display = 'none';
             document.getElementById('timerDisplay').style.display = 'none';
-            document.getElementById('sessionInfo').style.display = 'none';
             document.getElementById('accessDeniedMessage').textContent = message;
             
             document.getElementById('goToAdsBtn').addEventListener('click', () => {
@@ -741,15 +701,15 @@
                 }
                 
                 // Get current user data
-                let userData = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
+                let user = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
                 
-                if (!userData) return;
+                if (!user) return;
                 
                 // Update user data with game state
-                userData = {
-                    ...userData,
+                user = {
+                    ...user,
                     balance: gameState.balance,
-                    gameEarnings: (userData.gameEarnings || 0) + 
+                    gameEarnings: (user.gameEarnings || 0) + 
                         (gameState.memory.earnings + 
                          gameState.dice.earnings + 
                          gameState.snake.earnings + 
@@ -795,17 +755,19 @@
                             earnings: gameState.nairaChase.earnings
                         }
                     },
-                    gameTimerStart: gameState.gameTimerStart
+                    gameTimerStart: gameState.gameTimerStart,
+                    gameSessionCount: gameState.sessionCount,
+                    lastGameSessionReset: gameState.lastSessionReset
                 };
                 
-                await saveUserData(userData);
+                await saveUserData(user);
                 
                 // Notify parent window (index.html) of balance update
                 if (window.opener) {
                     window.opener.postMessage({
                         type: 'balanceUpdate',
                         balance: gameState.balance,
-                        gameEarnings: userData.gameEarnings
+                        gameEarnings: user.gameEarnings
                     }, '*');
                 }
             } catch (error) {
