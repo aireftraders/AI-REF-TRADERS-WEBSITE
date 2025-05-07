@@ -817,16 +817,47 @@
     </nav>
     
     <script>
-        // Initialize Dexie database
+        // Initialize Dexie database - MUST MATCH index.html EXACTLY
         const db = new Dexie("AI_REF_TRADERS_DB");
-        
-        // Define database schema (must match index.html)
         db.version(1).stores({
-            users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
+            users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements, referrer',
             announcements: '++id, title, content, time, unread',
             supportTickets: '++id, userId, subject, message, status, createdAt',
+            adminCredentials: '++id, username, password',
             transactions: '++id, userId, type, amount, status, timestamp'
         });
+
+        // User data structure - MUST MATCH index.html EXACTLY
+        let userData = {
+            email: '',
+            phone: '',
+            balance: 5000,
+            referrals: 0,
+            referralEarnings: 0,
+            adsWatched: 0,
+            totalAdsWatched: 0,
+            tradingActive: false,
+            verified: false,
+            tradingCapital: 0,
+            dailyProfit: 0,
+            totalProfit: 0,
+            withdrawableProfit: 0,
+            bankDetails: null,
+            paymentCircle: { current: 0, total: 1000 },
+            supportTickets: [],
+            gameEarnings: 0,
+            lastAdWatchTime: null,
+            streak: {
+                count: 0,
+                lastLogin: null,
+                bonus: 0
+            },
+            announcements: {
+                read: [2],
+                unread: [1]
+            },
+            referrer: null
+        };
 
         // DOM Elements
         const elements = {
@@ -873,7 +904,7 @@
         let tradingActivityLog = [];
         let lastPrices = {};
         
-        // Theme management
+        // Theme management - MUST MATCH index.html EXACTLY
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('theme', theme);
@@ -887,11 +918,44 @@
             }
         }
         
-        // Language management
+        // Language management - MUST MATCH index.html EXACTLY
+        const translations = {
+            en: {
+                dashboard: "Dashboard",
+                trading: "AI Trading",
+                games: "Games",
+                info: "Info",
+                support: "Support",
+            },
+            ha: {
+                dashboard: "Dashboard",
+                trading: "Kasuwancin AI",
+                games: "Wasanni",
+                info: "Bayani",
+                support: "Tallafi",
+            },
+            yo: {
+                dashboard: "Dashboard",
+                trading: "Iṣowo AI",
+                games: "Ere",
+                info: "Alaye",
+                support: "Atilẹyin",
+            },
+            ig: {
+                dashboard: "Dashboard",
+                trading: "Ahịa AI",
+                games: "Egwuregwu",
+                info: "Ozi",
+                support: "Nkwado",
+            }
+        };
+
         function setLanguage(lang) {
             localStorage.setItem('language', lang);
-            // In a real app, you would update all text elements here
-            // For this demo, we'll just show a notification
+            // Update UI elements with translations
+            document.querySelector('.navigation-bar a[href="index.html"]').textContent = translations[lang].dashboard;
+            document.querySelector('.navigation-bar a[href="trading.html"]').textContent = translations[lang].trading;
+            document.querySelector('.navigation-bar a[href="ads.html"]').textContent = translations[lang].games;
             showNotification(`Language set to ${lang}`);
         }
         
@@ -948,58 +1012,80 @@
             }
         }
         
-        // Load user data from IndexedDB
+        // Load user data from IndexedDB - MUST MATCH index.html EXACTLY
         async function loadUserData() {
             try {
-                // For demo purposes, we'll use a default user if no Telegram user
-                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
-                const user = await db.users.where('telegramId').equals(userId).first();
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
                 
-                if (user) {
-                    return user;
-                } else {
+                if (!userEmail && !userPhone) {
+                    // User not logged in, redirect to login
+                    window.location.href = 'index.html';
+                    return null;
+                }
+                
+                // Check if user exists in database
+                let user = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
+                
+                if (!user) {
                     // Create new user with default values
-                    const newUser = {
-                        telegramId: userId,
-                        balance: 800,
+                    user = {
+                        email: userEmail,
+                        phone: userPhone,
+                        balance: 5000,
                         referrals: 0,
                         adsWatched: 0,
+                        totalAdsWatched: 0,
                         tradingActive: false,
                         verified: false,
-                        tradingCapital: 800,
+                        tradingCapital: 0,
                         dailyProfit: 0,
                         totalProfit: 0,
                         withdrawableProfit: 0,
-                        totalWithdrawn: 0,
                         bankDetails: null,
                         paymentCircle: { current: 0, total: 1000 },
                         gameEarnings: 0,
                         lastAdWatchTime: null,
-                        lastTradingUpdate: null
+                        streak: {
+                            count: 0,
+                            lastLogin: null,
+                            bonus: 0
+                        },
+                        announcements: {
+                            read: [2],
+                            unread: [1]
+                        },
+                        referrer: null
                     };
                     
-                    await db.users.add(newUser);
-                    return newUser;
+                    // Add new user to database
+                    await db.users.add(user);
                 }
+                
+                return user;
             } catch (error) {
                 console.error('Error loading user data:', error);
                 return null;
             }
         }
 
-        // Save user data to IndexedDB
+        // Save user data to IndexedDB - MUST MATCH index.html EXACTLY
         async function saveUserData(userData) {
             try {
-                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
-                await db.users.where('telegramId').equals(userId).modify(userData);
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
+                
+                if (!userEmail && !userPhone) return;
+                
+                await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).modify(userData);
             } catch (error) {
                 console.error('Error saving user data:', error);
             }
         }
 
-        // Update UI with current data
+        // Update UI with current data - SYNCED WITH index.html
         async function updateUI() {
-            const userData = await loadUserData();
+            userData = await loadUserData();
             if (!userData) return;
             
             // Ensure trading capital matches the balance (from referrals, game play, daily streaks)
@@ -1009,7 +1095,7 @@
             elements.balance.textContent = userData.balance.toLocaleString();
             elements.tradingCapital.textContent = 'Trading Capital: ₦' + userData.tradingCapital.toLocaleString();
             elements.dailyProfit.textContent = 'Daily Profit: ₦' + userData.dailyProfit.toLocaleString();
-            elements.totalProfit.textContent = 'Total Profit: ₦' + (userData.totalProfit + (userData.totalWithdrawn || 0)).toLocaleString();
+            elements.totalProfit.textContent = 'Total Profit: ₦' + userData.totalProfit.toLocaleString();
             elements.withdrawableProfit.textContent = 'Withdrawable: ₦' + userData.withdrawableProfit.toLocaleString();
             
             // Update referral and ads status
@@ -1091,7 +1177,7 @@
             }
         }
 
-        // Simulate trading profits
+        // Simulate trading profits - SYNCED WITH index.html
         async function simulateTrading() {
             const userData = await loadUserData();
             if (!userData) return;
@@ -1174,7 +1260,7 @@
             });
         }
 
-        // Show notification
+        // Show notification - SYNCED WITH index.html
         function showNotification(message) {
             elements.notificationText.textContent = message;
             elements.notification.classList.add('show');
@@ -1197,7 +1283,7 @@
                 labels.push(time.getHours() + ':00');
                 
                 // Simulate price movements
-                const prevValue = data.length > 0 ? data[data.length - 1] : 800;
+                const prevValue = data.length > 0 ? data[data.length - 1] : userData.balance;
                 const change = (Math.random() - 0.5) * 0.1; // -5% to +5% change
                 data.push(prevValue * (1 + change));
             }
@@ -1334,6 +1420,13 @@
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async () => {
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
             // Set up theme
             const savedTheme = localStorage.getItem('theme') || 'light';
             setTheme(savedTheme);
@@ -1341,6 +1434,7 @@
             // Set up language
             const savedLanguage = localStorage.getItem('language') || 'en';
             elements.languageDropdown.value = savedLanguage;
+            setLanguage(savedLanguage);
             
             // Theme toggle
             elements.themeToggle.addEventListener('click', () => {
@@ -1412,6 +1506,13 @@
             
             showNotification(`💰 Trading profit: ₦${userShare.toLocaleString()} added to your withdrawable balance`);
         };
+
+        // Listen for balance updates from other pages
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'balanceUpdate') {
+                updateUI();
+            }
+        });
     </script>
 </body>
 </html>
