@@ -2083,6 +2083,7 @@
         </div>
         
         <div class="action-bar">
+            <button class="primary" id="profileBtn">👤 My Profile</button>
             <button class="primary" id="bankBindingBtn">🏦 Bank Binding</button>
             <button class="secondary" id="withdrawBtn">📤 Withdraw</button>
             <button class="secondary" id="depositBtn">💰 Deposit</button>
@@ -3420,6 +3421,11 @@
             // Trading button functionality
             document.getElementById('tradingButton').addEventListener('click', function() {
                 window.location.href = 'trading.html';
+            });
+            
+            // Profile button functionality
+            document.getElementById('profileBtn').addEventListener('click', function () {
+                window.location.href = 'profile.html';
             });
             
             // Tab switching
