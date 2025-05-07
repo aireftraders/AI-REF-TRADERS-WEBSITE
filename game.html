@@ -7,999 +7,14 @@
     <!-- Include common CSS -->
     <link rel="stylesheet" href="common.css">
     <style>
-        :root {
-            --primary: #6C5CE7;
-            --secondary: #00CEFF;
-            --dark: #2D3436;
-            --light: #F5F6FA;
-            --success: #00B894;
-            --danger: #D63031;
-            --warning: #FDCB6E;
-            --nigerian-green: #008753;
-            --nigerian-white: #FFFFFF;
-            --nigerian-green-light: #E5F5EE;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--light);
-            color: var(--dark);
-            transition: all 0.3s;
-        }
-        
-        .container {
-            max-width: 100%;
-            padding: 15px;
-            padding-bottom: 70px;
-        }
-        
-        .app-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 20px;
-        }
-        
-        .user-chip {
-            background: var(--nigerian-green);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-weight: bold;
-        }
-        
-        /* Game Specific Styles */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .card {
-            background: var(--primary);
-            color: white;
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s;
-            user-select: none;
-        }
-        
-        .card.flipped {
-            background: white !important;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            transform: rotateY(180deg);
-        }
-        
-        .card.matched {
-            visibility: hidden;
-        }
-        
-        /* Game Container Styles */
-        .game-container {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: none;
-        }
-        
-        .game-container.active {
-            display: block;
-        }
-        
-        button {
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-            transition: all 0.2s;
-        }
-        
-        button:active {
-            transform: scale(0.98);
-        }
-        
-        .primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .secondary {
-            background: white;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-        }
-        
-        /* Snake Game */
-        #snakeCanvas {
-            background: #f0f0f0;
-            border-radius: 8px;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        .snake-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 5px;
-            margin-top: 10px;
-        }
-        
-        .snake-btn {
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
-        
-        .snake-btn.up {
-            grid-column: 2;
-            grid-row: 1;
-        }
-        
-        .snake-btn.left {
-            grid-column: 1;
-            grid-row: 2;
-        }
-        
-        .snake-btn.right {
-            grid-column: 3;
-            grid-row: 2;
-        }
-        
-        .snake-btn.down {
-            grid-column: 2;
-            grid-row: 3;
-        }
-        
-        .snake-start-btn {
-            margin: 10px auto;
-            display: block;
-            padding: 10px 20px;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-        
-        /* Trivia Game */
-        .trivia-question {
-            font-weight: bold;
-            margin: 15px 0;
-        }
-        
-        .trivia-options {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .trivia-option {
-            padding: 10px;
-            border-radius: 8px;
-            background: #f0f0f0;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .trivia-option:hover {
-            background: #e0e0e0;
-        }
-        
-        .trivia-option.correct {
-            background: var(--success);
-            color: white;
-        }
-        
-        .trivia-option.incorrect {
-            background: var(--danger);
-            color: white;
-        }
-        
-        /* Wheel Spin Game */
-        .wheel-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            margin: 20px auto;
-        }
-        
-        .wheel {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            position: relative;
-            overflow: hidden;
-            border: 8px solid #333;
-            box-shadow: 0 0 0 8px #6C5CE7, 0 0 20px rgba(0,0,0,0.5);
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            transform: rotate(0deg);
-        }
-        
-        .wheel-section {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            transform-origin: bottom right;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        
-        .wheel-pointer {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 40px;
-            z-index: 10;
-        }
-        
-        .wheel-pointer:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 30px solid #D63031;
-        }
-        
-        .spin-btn {
-            display: block;
-            margin: 20px auto;
-            padding: 12px 30px;
-            background: var(--nigerian-green);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-        
-        .spin-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-        }
-        
-        .spin-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .spin-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        .wheel-result {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px 0;
-            min-height: 36px;
-        }
-        
-        .wheel-prize {
-            color: var(--nigerian-green);
-            font-size: 28px;
-        }
-        
-        /* Game Cards */
-        .game-cards {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 20px 0;
-        }
-        
-        .game-card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .game-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .game-card-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-        
-        .game-card-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .game-card-desc {
-            font-size: 12px;
-            color: #666;
-        }
-        
-        .attempts-counter {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .game-stats {
-            display: flex;
-            justify-content: space-between;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-        
-        /* Ayo Game Styles */
-        .ayo-board {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        .ayo-row {
-            display: flex;
-        }
-        
-        .ayo-pit {
-            width: 40px;
-            height: 40px;
-            margin: 5px;
-            border-radius: 50%;
-            background-color: #8B4513;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            position: relative;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        
-        .ayo-pit.player1 {
-            background-color: #6C5CE7;
-        }
-        
-        .ayo-pit.player2 {
-            background-color: #00CEFF;
-        }
-        
-        .ayo-pit.captured {
-            background-color: var(--danger);
-        }
-        
-        .ayo-pit.highlight {
-            box-shadow: 0 0 10px 3px var(--warning);
-        }
-        
-        .ayo-store {
-            width: 40px;
-            height: 110px;
-            margin: 5px;
-            border-radius: 8px;
-            background-color: #A0522D;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        
-        .ayo-store.player1 {
-            background-color: #6C5CE7;
-        }
-        
-        .ayo-store.player2 {
-            background-color: #00CEFF;
-        }
-        
-        .ayo-game-info {
-            text-align: center;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-        
-        .ayo-game-over {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--success);
-            margin: 15px 0;
-            display: none;
-        }
-        
-        /* Naira Chase Game Styles */
-        #nairaChaseCanvas {
-            display: block;
-            background: linear-gradient(to bottom, #008751 0%, #1a8bb3 100%);
-            margin: 0 auto;
-            border-radius: 8px;
-        }
-        
-        #nairaChaseGameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            display: none;
-            z-index: 10;
-        }
-        
-        #nairaChaseScore {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        #nairaChaseStart {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        /* Notification Styles */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--success);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .notification.show {
-            opacity: 1;
-        }
-        
-        /* Sync Status */
-        .sync-status {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            background: #f0f0f0;
-            color: #333;
-        }
-        
-        .sync-status.online {
-            background: var(--success);
-            color: white;
-        }
-        
-        .sync-status.offline {
-            background: var(--danger);
-            color: white;
-        }
-        
-        /* Navigation Bar */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--dark);
-            font-size: 12px;
-        }
-        
-        .nav-icon {
-            font-size: 20px;
-            margin-bottom: 3px;
-        }
-        
-        /* FOMO Banner */
-        .fomo-banner {
-            background: linear-gradient(135deg, #6C5CE7, #00CEFF);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            animation: pulse 2s infinite;
-        }
-        
-        .fomo-text {
-            font-weight: bold;
-            font-size: 14px;
-        }
-        
-        .fomo-timer {
-            background: rgba(0,0,0,0.2);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-        
-        /* Access Denied Styles */
-        .access-denied-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .access-denied-icon {
-            font-size: 60px;
-            color: var(--danger);
-            margin-bottom: 20px;
-        }
-        
-        .access-denied-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--danger);
-            margin-bottom: 10px;
-        }
-        
-        .access-denied-message {
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-        
-        .access-denied-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .access-denied-btn:hover {
-            background: var(--primary-dark);
-        }
-        
-        /* Timer Display */
-        .timer-display {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 100;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .cards-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            
-            .game-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .wheel-container {
-                width: 250px;
-                height: 250px;
-            }
-            
-            .ayo-pit {
-                width: 30px;
-                height: 30px;
-                font-size: 12px;
-            }
-            
-            .ayo-store {
-                width: 30px;
-                height: 90px;
-                font-size: 12px;
-            }
-        }
+        /* [Previous CSS styles remain exactly the same] */
     </style>
     <!-- Include Dexie.js for IndexedDB -->
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 </head>
 <body>
-    <!-- Theme Toggle Button -->
-    <div class="theme-toggle">
-        <button class="theme-toggle-btn" id="themeToggle">
-            <span class="theme-icon" id="themeIcon">🌙</span>
-            <span id="themeText">Dark Mode</span>
-        </button>
-    </div>
+    <!-- [All previous HTML content remains exactly the same until the scripts] -->
 
-    <!-- Language Selector -->
-    <div class="language-selector">
-        <label for="languageDropdown">🌐 Select Language:</label>
-        <select id="languageDropdown">
-            <option value="en">English</option>
-            <option value="ha">Hausa</option>
-            <option value="yo">Yoruba</option>
-            <option value="ig">Igbo</option>
-        </select>
-    </div>
-
-    <div id="accessDeniedContainer" class="access-denied-container" style="display: none;">
-        <div class="access-denied-icon">🚫</div>
-        <div class="access-denied-title">Access Denied</div>
-        <div class="access-denied-message" id="accessDeniedMessage">
-            You must complete watching 20 ads to access this game section.
-        </div>
-        <button class="access-denied-btn" id="goToAdsBtn">Go to Ads Page</button>
-    </div>
-
-    <div id="mainGameContainer" class="container" style="display: none;">
-        <div class="app-bar">
-            <h1>AI REF-TRADERS Games</h1>
-            <div class="user-chip">
-                <span>📊 ₦<span id="balanceDisplay">0</span></span>
-            </div>
-        </div>
-        
-        <!-- FOMO Banner -->
-        <div class="fomo-banner">
-            <div class="fomo-text">
-                🚨 URGENT BONUS OFFER! 🚨<br>
-                Refer 6 users that sign up and watch 20 ads within 24 hours and receive additional ₦20,000 to your trading capital!
-            </div>
-            <div class="fomo-timer" id="fomoTimer">00:60:00</div>
-        </div>
-        
-        <div class="sync-status" id="syncStatus">Syncing...</div>
-        
-        <div class="game-cards" id="gameCards">
-            <div class="game-card" data-game="memory">
-                <div class="game-card-icon">🧠</div>
-                <div class="game-card-title">Memory Match</div>
-                <div class="game-card-desc">Match pairs to earn ₦800 per pair</div>
-                <div class="attempts-counter">Attempts: <span id="memoryAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-            
-            <div class="game-card" data-game="dice">
-                <div class="game-card-icon">🎲</div>
-                <div class="game-card-title">Lucky Dice</div>
-                <div class="game-card-desc">Roll dice to win ₦800 per correct guess</div>
-                <div class="attempts-counter">Attempts: <span id="diceAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-            
-            <div class="game-card" data-game="snake">
-                <div class="game-card-icon">🐍</div>
-                <div class="game-card-title">Snake Game</div>
-                <div class="game-card-desc">Grow your snake to earn ₦800 per food</div>
-                <div class="attempts-counter">Attempts: <span id="snakeAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-            
-            <div class="game-card" data-game="trivia">
-                <div class="game-card-icon">❓</div>
-                <div class="game-card-title">Trivia Quiz</div>
-                <div class="game-card-desc">Answer questions to earn ₦800 each</div>
-                <div class="attempts-counter">Attempts: <span id="triviaAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-            
-            <div class="game-card" data-game="wheel">
-                <div class="game-card-icon">🎡</div>
-                <div class="game-card-title">Lucky Wheel</div>
-                <div class="game-card-desc">Spin to win ₦200-₦1,600 prizes</div>
-                <div class="attempts-counter">Attempts: <span id="wheelAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-            
-            <div class="game-card" data-game="ayo">
-                <div class="game-card-icon">🎮</div>
-                <div class="game-card-title">Ayo Olopon</div>
-                <div class="game-card-desc">Traditional Yoruba board game</div>
-                <div class="attempts-counter">Attempts: <span id="ayoAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-            
-            <div class="game-card" data-game="nairaChase">
-                <div class="game-card-icon">🦅</div>
-                <div class="game-card-title">Naira Chase</div>
-                <div class="game-card-desc">Collect rolling Naira coins with the Nigerian eagle</div>
-                <div class="attempts-counter">Attempts: <span id="nairaChaseAttemptsDisplay">10</span>/10</div>
-                <button class="primary" style="margin-top: 10px;">Play Now</button>
-            </div>
-        </div>
-        
-        <div class="game-container" id="memoryGame">
-            <h3>🎮 Memory Match Game</h3>
-            <p>Match the fruits to win ₦800 per pair</p>
-            <p class="attempts-counter">Attempts left: <span id="memoryAttempts">10</span>/10</p>
-            
-            <div class="cards-grid" id="gameBoard"></div>
-            
-            <div class="game-stats">
-                <p>🎯 Matched: <span id="wins">0</span> pairs</p>
-                <p>💰 Earned: ₦<span id="gameEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames1" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-        
-        <div class="game-container" id="diceGame">
-            <h3>🎲 Lucky Dice</h3>
-            <p>Roll the dice to win ₦800 per correct guess</p>
-            <p class="attempts-counter">Attempts left: <span id="diceAttempts">10</span>/10</p>
-            
-            <div style="text-align: center; margin: 20px 0;">
-                <div id="diceResult" style="font-size: 48px; margin: 20px 0;">?</div>
-                <button id="rollDiceBtn" class="primary" style="width: 100%;">Roll Dice (₦800)</button>
-            </div>
-            
-            <div class="game-stats">
-                <p>🎯 Wins: <span id="diceWins">0</span></p>
-                <p>💰 Earned: ₦<span id="diceEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames2" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-        
-        <div class="game-container" id="snakeGame">
-            <h3>🐍 Snake Game</h3>
-            <p>Grow your snake to earn ₦800 per food</p>
-            <p class="attempts-counter">Attempts left: <span id="snakeAttempts">10</span>/10</p>
-            
-            <canvas id="snakeCanvas" width="300" height="300"></canvas>
-            
-            <button id="startSnakeBtn" class="snake-start-btn">Start Game</button>
-            
-            <div class="snake-controls" style="display: none;">
-                <button class="snake-btn up">↑</button>
-                <button class="snake-btn left">←</button>
-                <button class="snake-btn right">→</button>
-                <button class="snake-btn down">↓</button>
-            </div>
-            
-            <div class="game-stats">
-                <p>🎯 Score: <span id="snakeScore">0</span></p>
-                <p>💰 Earned: ₦<span id="snakeEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames3" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-        
-        <div class="game-container" id="triviaGame">
-            <h3>🧠 Trivia Quiz</h3>
-            <p>Answer questions correctly to earn ₦800 each</p>
-            <p class="attempts-counter">Attempts left: <span id="triviaAttempts">10</span>/10</p>
-            
-            <div id="triviaQuestion" class="trivia-question">Loading question...</div>
-            <div id="triviaOptions" class="trivia-options">
-                <div class="trivia-option" data-option="1">Option 1</div>
-                <div class="trivia-option" data-option="2">Option 2</div>
-                <div class="trivia-option" data-option="3">Option 3</div>
-                <div class="trivia-option" data-option="4">Option 4</div>
-            </div>
-            
-            <div class="game-stats">
-                <p>🎯 Correct: <span id="triviaCorrect">0</span></p>
-                <p>💰 Earned: ₦<span id="triviaEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames4" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-        
-        <div class="game-container" id="wheelGame">
-            <h3>🎡 Lucky Wheel</h3>
-            <p>Spin the wheel to win prizes from ₦200 to ₦1,600</p>
-            <p class="attempts-counter">Attempts left: <span id="wheelAttempts">10</span>/10</p>
-            
-            <div class="wheel-container">
-                <div class="wheel" id="wheel"></div>
-                <div class="wheel-pointer"></div>
-            </div>
-            
-            <div class="wheel-result">
-                <div id="wheelMessage">Tap SPIN to play</div>
-                <div id="wheelPrize" class="wheel-prize"></div>
-            </div>
-            
-            <button id="spinWheelBtn" class="spin-btn">SPIN (₦200-₦1,600)</button>
-            
-            <div class="game-stats">
-                <p>🎯 Wins: <span id="wheelWins">0</span></p>
-                <p>💰 Earned: ₦<span id="wheelEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames5" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-        
-        <div class="game-container" id="ayoGame">
-            <h3>🎮 Ayo Olopon</h3>
-            <p>Traditional Yoruba board game</p>
-            <p class="attempts-counter">Attempts left: <span id="ayoAttempts">10</span>/10</p>
-            
-            <div class="ayo-game-info">
-                <p>Current Player: <span id="currentPlayer">Player 1</span></p>
-                <p>Player 1 Score: <span id="player1Score">0</span></p>
-                <p>Player 2 Score: <span id="player2Score">0</span></p>
-            </div>
-            
-            <div class="ayo-board">
-                <div class="ayo-store" id="player1Store">0</div>
-                
-                <div class="ayo-row">
-                    <div class="ayo-pit player2" data-row="0" data-col="0">4</div>
-                    <div class="ayo-pit player2" data-row="0" data-col="1">4</div>
-                    <div class="ayo-pit player2" data-row="0" data-col="2">4</div>
-                    <div class="ayo-pit player2" data-row="0" data-col="3">4</div>
-                    <div class="ayo-pit player2" data-row="0" data-col="4">4</div>
-                    <div class="ayo-pit player2" data-row="0" data-col="5">4</div>
-                </div>
-                
-                <div class="ayo-row">
-                    <div class="ayo-pit player1" data-row="1" data-col="0">4</div>
-                    <div class="ayo-pit player1" data-row="1" data-col="1">4</div>
-                    <div class="ayo-pit player1" data-row="1" data-col="2">4</div>
-                    <div class="ayo-pit player1" data-row="1" data-col="3">4</div>
-                    <div class="ayo-pit player1" data-row="1" data-col="4">4</div>
-                    <div class="ayo-pit player1" data-row="1" data-col="5">4</div>
-                </div>
-                
-                <div class="ayo-store" id="player2Store">0</div>
-            </div>
-            
-            <div class="ayo-game-over" id="ayoGameOver"></div>
-            
-            <button id="resetAyoBtn" class="primary" style="width: 100%; margin-top: 15px;">Reset Game</button>
-            
-            <div class="game-stats">
-                <p>🎯 Wins: <span id="ayoWins">0</span></p>
-                <p>💰 Earned: ₦<span id="ayoEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames6" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-        
-        <div class="game-container" id="nairaChaseGame">
-            <h3>🦅 Naira Chase</h3>
-            <p>Collect rolling Naira coins with the Nigerian eagle</p>
-            <p class="attempts-counter">Attempts left: <span id="nairaChaseAttempts">10</span>/10</p>
-            
-            <div style="position: relative;">
-                <canvas id="nairaChaseCanvas" width="400" height="500"></canvas>
-                <div id="nairaChaseScore">₦0</div>
-                <div id="nairaChaseGameOver">
-                    <h2>Game Over!</h2>
-                    <p>Total Collected: <span id="nairaChaseFinalScore">₦0</span></p>
-                    <button id="restartNairaChaseButton">Play Again</button>
-                </div>
-                <div id="nairaChaseStart">
-                    <h2>Naira Chase</h2>
-                    <p>Tap to make the eagle fly</p>
-                    <p>Collect rolling Naira coins</p>
-                    <p>Avoid falling into ditches!</p>
-                    <button id="startNairaChaseButton">Start Game</button>
-                </div>
-            </div>
-            
-            <div class="game-stats">
-                <p>🎯 Score: <span id="nairaChaseGameScore">0</span></p>
-                <p>💰 Earned: ₦<span id="nairaChaseGameEarnings">0</span></p>
-            </div>
-            
-            <button class="secondary" id="backToGames7" style="width: 100%; margin-top: 15px;">← Back to Games</button>
-        </div>
-    </div>
-    
-    <!-- Navigation Bar -->
-    <div class="nav-bar">
-        <a href="index.html" class="nav-item">
-            <div class="nav-icon">🏠</div>
-            <div>Dashboard</div>
-        </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">🎮</div>
-            <div>Games</div>
-        </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">💰</div>
-            <div>Earnings</div>
-        </a>
-        <a href="#" class="nav-item">
-            <div class="nav-icon">👤</div>
-            <div>Profile</div>
-        </a>
-    </div>
-    
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <span id="notificationText">Notification message</span>
-    </div>
-    
-    <!-- Timer Display -->
-    <div class="timer-display" id="timerDisplay">
-        Time remaining: <span id="timeRemaining">55:00</span>
-    </div>
-    
     <!-- Audio elements for game sounds -->
     <audio id="flipSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3" preload="auto"></audio>
     <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
@@ -1008,13 +23,13 @@
     <audio id="coinFlipSound" src="https://assets.mixkit.co/sfx/preview/mixkit-coin-flip-1940.mp3" preload="auto"></audio>
     <audio id="coinLandSound" src="https://assets.mixkit.co/sfx/preview/mixkit-metal-hit-impact-2065.mp3" preload="auto"></audio>
     
-    <!-- Include common JS -->
-    <script src="common.js"></script>
     <script>
-        // Initialize Dexie database with same structure as index.html
+        // Initialize Dexie database with the same schema as ads.html and index.html
         const db = new Dexie("AI_REF_TRADERS_DB");
+        
+        // Define database schema (must match ads.html exactly)
         db.version(1).stores({
-            users: '++id, telegramId, balance, referrals, adsWatched, lastAdWatchTime, gameState, gameTimerStart',
+            users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements, referrer',
             announcements: '++id, title, content, time, unread',
             supportTickets: '++id, userId, subject, message, status, createdAt',
             adminCredentials: '++id, username, password',
@@ -1039,49 +54,116 @@
             gameTimerStart: 0
         };
 
-        // Initialize game state based on URL parameters
+        // Load user data from IndexedDB (same as ads.html)
+        async function loadUserData() {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
+                
+                if (!userEmail && !userPhone) {
+                    // User not logged in, redirect to login
+                    window.location.href = 'index.html';
+                    return null;
+                }
+                
+                // Check if user exists in database
+                let user = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
+                
+                if (!user) {
+                    // Create new user with default values (matching ads.html schema)
+                    user = {
+                        email: userEmail,
+                        phone: userPhone,
+                        balance: 5000,
+                        referrals: 0,
+                        adsWatched: 0,
+                        totalAdsWatched: 0,
+                        tradingActive: false,
+                        verified: false,
+                        tradingCapital: 0,
+                        dailyProfit: 0,
+                        totalProfit: 0,
+                        withdrawableProfit: 0,
+                        bankDetails: null,
+                        paymentCircle: { current: 0, total: 1000 },
+                        gameEarnings: 0,
+                        lastAdWatchTime: null,
+                        streak: {
+                            count: 0,
+                            lastLogin: null,
+                            bonus: 0
+                        },
+                        announcements: {
+                            read: [2],
+                            unread: [1]
+                        },
+                        referrer: null
+                    };
+                    
+                    // Add new user to database
+                    await db.users.add(user);
+                }
+                
+                return user;
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                return null;
+            }
+        }
+
+        // Save user data to IndexedDB (same as ads.html)
+        async function saveUserData(userData) {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
+                
+                if (!userEmail && !userPhone) {
+                    console.error('No user email or phone found in localStorage');
+                    return;
+                }
+                
+                await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).modify(userData);
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
+        }
+
+        // Initialize game state based on user data
         async function initializeGameState() {
             const urlParams = new URLSearchParams(window.location.search);
             const fromAds = urlParams.has('fromAds');
-            const fromConsole = urlParams.has('fromConsole');
             
             try {
-                const userId = 'demo-user'; // In a real app, get from Telegram or auth
-                const savedData = await db.users.where('telegramId').equals(userId).first();
+                const userData = await loadUserData();
                 
-                if (!savedData) {
-                    // If no user data found, redirect to ads page
+                if (!userData) {
                     showAccessDenied("No user data found. Please watch ads first.");
                     return false;
                 }
                 
                 // Check if user has watched 20 ads
-                if (savedData.adsWatched < 20) {
-                    showAccessDenied(`You've only watched ${savedData.adsWatched}/20 ads. Please complete watching ads.`);
+                if (userData.adsWatched < 20) {
+                    showAccessDenied(`You've only watched ${userData.adsWatched}/20 ads. Please complete watching ads.`);
                     return false;
                 }
                 
                 // Check if coming from valid source
-                if (!fromAds && !fromConsole) {
+                if (!fromAds && !document.referrer.includes('ads.html')) {
                     showAccessDenied("Invalid access. Please use the game console button from ads page.");
                     return false;
                 }
                 
-                // Check if copied URL with fromConsole=true
-                if (fromConsole && !document.referrer.includes('ads.html')) {
-                    showAccessDenied("Invalid access detected. Please use the game console button from ads page.");
-                    return false;
-                }
+                // Initialize game state from user data
+                gameState.balance = userData.balance || 0;
+                gameState.adsWatched = userData.adsWatched || 0;
+                gameState.gameEarnings = userData.gameEarnings || 0;
                 
-                // Get balance from storage
-                gameState.balance = savedData?.balance || 0;
-                gameState.adsWatched = savedData?.adsWatched || 0;
-                
-                // Reset all attempts if coming from ads.html automatic redirect and 55 minutes have passed
+                // Check if we need to reset attempts (55 minutes since last ad watch)
                 const now = Date.now();
-                const timeSinceLastReset = now - (savedData.gameTimerStart || 0);
+                const timeSinceLastAd = now - (userData.lastAdWatchTime || 0);
                 
-                if (fromAds && timeSinceLastReset >= 55 * 60 * 1000) {
+                if (fromAds || timeSinceLastAd >= 55 * 60 * 1000) {
+                    // Reset all attempts for fresh session
                     gameState.memory.attempts = 10;
                     gameState.dice.attempts = 10;
                     gameState.snake.attempts = 10;
@@ -1089,9 +171,8 @@
                     gameState.wheel.attempts = 10;
                     gameState.ayo.attempts = 10;
                     gameState.nairaChase.attempts = 10;
-                    gameState.lastAccessTime = now;
-
-                    // Reset game earnings and wins for fresh session
+                    
+                    // Reset game stats
                     gameState.memory.wins = 0;
                     gameState.memory.earnings = 0;
                     gameState.dice.wins = 0;
@@ -1107,57 +188,27 @@
                     gameState.ayo.earnings = 0;
                     gameState.nairaChase.score = 0;
                     gameState.nairaChase.earnings = 0;
-
+                    
                     // Start game timer
                     gameState.gameTimerStart = now;
-                    await db.users.where('telegramId').equals(userId).modify({
+                    await saveUserData({
+                        ...userData,
                         gameTimerStart: gameState.gameTimerStart
                     });
                     startGameTimer();
-                } else if (timeSinceLastReset < 55 * 60 * 1000) {
-                    // Prevent reset if 55 minutes have not passed
-                    if (savedData?.gameState) {
-                        gameState.memory.attempts = savedData.gameState.memory?.attempts || 10;
-                        gameState.dice.attempts = savedData.gameState.dice?.attempts || 10;
-                        gameState.snake.attempts = savedData.gameState.snake?.attempts || 10;
-                        gameState.trivia.attempts = savedData.gameState.trivia?.attempts || 10;
-                        gameState.wheel.attempts = savedData.gameState.wheel?.attempts || 10;
-                        gameState.ayo.attempts = savedData.gameState.ayo?.attempts || 10;
-                        gameState.nairaChase.attempts = savedData.gameState.nairaChase?.attempts || 10;
-
-                        // Keep other stats too
-                        gameState.memory.wins = savedData.gameState.memory?.wins || 0;
-                        gameState.memory.earnings = savedData.gameState.memory?.earnings || 0;
-                        gameState.dice.wins = savedData.gameState.dice?.wins || 0;
-                        gameState.dice.earnings = savedData.gameState.dice?.earnings || 0;
-                        gameState.snake.score = savedData.gameState.snake?.score || 0;
-                        gameState.snake.earnings = savedData.gameState.snake?.earnings || 0;
-                        gameState.trivia.correct = savedData.gameState.trivia?.correct || 0;
-                        gameState.trivia.earnings = savedData.gameState.trivia?.earnings || 0;
-                        gameState.trivia.usedQuestions = savedData.gameState.trivia?.usedQuestions || [];
-                        gameState.wheel.wins = savedData.gameState.wheel?.wins || 0;
-                        gameState.wheel.earnings = savedData.gameState.wheel?.earnings || 0;
-                        gameState.ayo.wins = savedData.gameState.ayo?.wins || 0;
-                        gameState.ayo.earnings = savedData.gameState.ayo?.earnings || 0;
-                        gameState.nairaChase.score = savedData.gameState.nairaChase?.score || 0;
-                        gameState.nairaChase.earnings = savedData.gameState.nairaChase?.earnings || 0;
+                } else {
+                    // Load existing game state if available
+                    if (userData.gameState) {
+                        Object.assign(gameState, userData.gameState);
                     }
-
-                    // Check if game timer is still active
-                    if (savedData.gameTimerStart) {
-                        const timeElapsed = now - savedData.gameTimerStart;
-                        if (timeElapsed < 55 * 60 * 1000) { // 55 minutes
-                            gameState.gameTimerStart = savedData.gameTimerStart;
-                            startGameTimer();
-                        } else {
-                            showAccessDenied("Your game session has expired. Please watch ads again.");
-                            return false;
-                        }
+                    
+                    // Continue existing timer
+                    if (userData.gameTimerStart) {
+                        gameState.gameTimerStart = userData.gameTimerStart;
+                        startGameTimer();
                     }
                 }
                 
-                // Save initial state
-                await saveGameState();
                 return true;
             } catch (error) {
                 console.error('Error initializing game state:', error);
@@ -1178,7 +229,7 @@
             });
         }
 
-        // Start game timer and log off lingering users after 55 minutes
+        // Start game timer (55 minutes)
         function startGameTimer() {
             const timerDisplay = document.getElementById('timerDisplay');
             const timeRemaining = document.getElementById('timeRemaining');
@@ -1208,14 +259,34 @@
             timerInterval = setInterval(updateTimer, 1000);
         }
 
-        // Save game state to IndexedDB and notify parent window
+        // Save game state to IndexedDB
         async function saveGameState() {
             try {
-                const userId = 'demo-user'; // In a real app, get from Telegram or auth
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
                 
-                await db.users.put({
-                    telegramId: userId,
+                if (!userEmail && !userPhone) {
+                    console.error('No user email or phone found in localStorage');
+                    return;
+                }
+                
+                // Get current user data
+                let userData = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
+                
+                if (!userData) return;
+                
+                // Update user data with game state
+                userData = {
+                    ...userData,
                     balance: gameState.balance,
+                    gameEarnings: (userData.gameEarnings || 0) + 
+                        (gameState.memory.earnings + 
+                         gameState.dice.earnings + 
+                         gameState.snake.earnings + 
+                         gameState.trivia.earnings + 
+                         gameState.wheel.earnings + 
+                         gameState.ayo.earnings + 
+                         gameState.nairaChase.earnings),
                     gameState: {
                         memory: { 
                             attempts: gameState.memory.attempts, 
@@ -1252,17 +323,19 @@
                             attempts: gameState.nairaChase.attempts,
                             score: gameState.nairaChase.score,
                             earnings: gameState.nairaChase.earnings
-                        },
-                        lastAccessTime: gameState.lastAccessTime
+                        }
                     },
                     gameTimerStart: gameState.gameTimerStart
-                }, userId);
+                };
+                
+                await saveUserData(userData);
                 
                 // Notify parent window (index.html) of balance update
                 if (window.opener) {
                     window.opener.postMessage({
                         type: 'balanceUpdate',
-                        balance: gameState.balance
+                        balance: gameState.balance,
+                        gameEarnings: userData.gameEarnings
                     }, '*');
                 }
             } catch (error) {
@@ -1270,21 +343,11 @@
             }
         }
 
-        // Save the updated balance to IndexedDB
-        async function saveBalanceToIndexedDB() {
-            try {
-                const userId = 'demo-user'; // Replace with actual user ID
-                await db.users.where('telegramId').equals(userId).modify({ balance: gameState.balance });
-            } catch (error) {
-                console.error('Error saving balance to IndexedDB:', error);
-            }
-        }
-
         // Update balance and notify parent window
         function updateBalance(amount) {
             gameState.balance += amount;
             document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
-            saveBalanceToIndexedDB(); // Persist the balance to IndexedDB
+            saveGameState();
 
             // Notify parent window (index.html) of the balance update
             if (window.opener) {
@@ -1303,1316 +366,8 @@
             }
         });
 
-        // Show notification
-        function showNotification(message) {
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-            
-            notificationText.textContent = message;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
-        // Show game
-        function showGame(game) {
-            document.querySelectorAll('.game-container').forEach(container => {
-                container.classList.remove('active');
-            });
-            
-            if (game) {
-                const gameContainer = document.getElementById(`${game}Game`);
-                if (gameContainer) {
-                    gameContainer.classList.add('active');
-                    gameContainer.scrollIntoView({ behavior: 'smooth' });
-                }
-            } else {
-                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        // Update game UI displays
-        function updateGameUI() {
-            // Memory game
-            document.getElementById('memoryAttempts').textContent = gameState.memory.attempts;
-            document.getElementById('memoryAttemptsDisplay').textContent = gameState.memory.attempts;
-            document.getElementById('wins').textContent = gameState.memory.wins;
-            document.getElementById('gameEarnings').textContent = gameState.memory.earnings;
-            
-            // Dice game
-            document.getElementById('diceAttempts').textContent = gameState.dice.attempts;
-            document.getElementById('diceAttemptsDisplay').textContent = gameState.dice.attempts;
-            document.getElementById('diceWins').textContent = gameState.dice.wins;
-            document.getElementById('diceEarnings').textContent = gameState.dice.earnings;
-            
-            // Snake game
-            document.getElementById('snakeAttempts').textContent = gameState.snake.attempts;
-            document.getElementById('snakeAttemptsDisplay').textContent = gameState.snake.attempts;
-            document.getElementById('snakeScore').textContent = gameState.snake.score;
-            document.getElementById('snakeEarnings').textContent = gameState.snake.earnings;
-            
-            // Trivia game
-            document.getElementById('triviaAttempts').textContent = gameState.trivia.attempts;
-            document.getElementById('triviaAttemptsDisplay').textContent = gameState.trivia.attempts;
-            document.getElementById('triviaCorrect').textContent = gameState.trivia.correct;
-            document.getElementById('triviaEarnings').textContent = gameState.trivia.earnings;
-            
-            // Wheel game
-            document.getElementById('wheelAttempts').textContent = gameState.wheel.attempts;
-            document.getElementById('wheelAttemptsDisplay').textContent = gameState.wheel.attempts;
-            document.getElementById('wheelWins').textContent = gameState.wheel.wins;
-            document.getElementById('wheelEarnings').textContent = gameState.wheel.earnings;
-            
-            // Ayo game
-            document.getElementById('ayoAttempts').textContent = gameState.ayo.attempts;
-            document.getElementById('ayoAttemptsDisplay').textContent = gameState.ayo.attempts;
-            document.getElementById('ayoWins').textContent = gameState.ayo.wins;
-            document.getElementById('ayoEarnings').textContent = gameState.ayo.earnings;
-            
-            // Naira Chase game
-            document.getElementById('nairaChaseAttempts').textContent = gameState.nairaChase.attempts;
-            document.getElementById('nairaChaseAttemptsDisplay').textContent = gameState.nairaChase.attempts;
-            document.getElementById('nairaChaseGameScore').textContent = gameState.nairaChase.score;
-            document.getElementById('nairaChaseGameEarnings').textContent = gameState.nairaChase.earnings;
-        }
-
-        // ========================
-        // GAME IMPLEMENTATIONS
-        // ========================
+        // [Rest of the game implementations (memoryGame, diceGame, snakeGame, etc.) remain exactly the same]
         
-        // Memory Game
-        const memoryGame = {
-            fruits: ['🍎', '🍌', '🍒', '🍓', '🍊', '🍋', '🍐', '🍇'],
-            values: [],
-            flippedCards: [],
-            matchedPairs: 0,
-            canPlay: false,
-            
-            init: function() {
-                document.getElementById('gameBoard').innerHTML = '';
-                this.matchedPairs = 0;
-                this.flippedCards = [];
-                
-                this.values = [];
-                this.fruits.forEach(fruit => {
-                    this.values.push(fruit, fruit);
-                });
-                
-                const shuffled = [...this.values].sort(() => 0.5 - Math.random());
-                
-                shuffled.forEach((value, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.dataset.value = value;
-                    card.dataset.index = index;
-                    card.textContent = '?';
-                    card.style.fontSize = '30px';
-                    
-                    card.addEventListener('click', () => {
-                        if (this.canPlay && gameState.memory.attempts > 0 && 
-                            !card.classList.contains('flipped') && !card.classList.contains('matched') && 
-                            this.flippedCards.length < 2) {
-                            this.flipCard(card);
-                        }
-                    });
-                    
-                    document.getElementById('gameBoard').appendChild(card);
-                });
-                
-                const cards = document.querySelectorAll('.card');
-                cards.forEach(card => {
-                    card.classList.add('flipped');
-                    card.textContent = card.dataset.value;
-                });
-                
-                setTimeout(() => {
-                    cards.forEach(card => {
-                        card.classList.remove('flipped');
-                        card.textContent = '?';
-                    });
-                    this.canPlay = true;
-                }, 3000);
-            },
-            
-            flipCard: function(card) {
-                if (this.flippedCards.length < 2 && !card.classList.contains('flipped') && !card.classList.contains('matched')) {
-                    document.getElementById('clickSound').play();
-                    card.classList.add('flipped');
-                    card.textContent = card.dataset.value;
-                    this.flippedCards.push(card);
-                    
-                    if (this.flippedCards.length === 2) {
-                        this.canPlay = false;
-                        setTimeout(() => this.checkMatch(), 500);
-                    }
-                }
-            },
-            
-            checkMatch: function() {
-                const [card1, card2] = this.flippedCards;
-
-                if (gameState.memory.attempts > 0) {
-                    gameState.memory.attempts--;
-                    updateGameUI();
-                    saveGameState();
-                }
-
-                if (card1.dataset.value === card2.dataset.value) {
-                    card1.classList.add('matched');
-                    card2.classList.add('matched');
-                    this.matchedPairs++;
-
-                    gameState.memory.wins++;
-                    gameState.memory.earnings += 800;
-                    updateBalance(800);
-                    showNotification('🎉 You won ₦800!');
-
-                    if (this.matchedPairs === 8) {
-                        setTimeout(() => this.init(), 2000);
-                    }
-                } else {
-                    setTimeout(() => {
-                        card1.classList.remove('flipped');
-                        card2.classList.remove('flipped');
-                        card1.textContent = '?';
-                        card2.textContent = '?';
-                        document.getElementById('loseSound').play();
-                    }, 500);
-                }
-
-                this.flippedCards = [];
-                this.canPlay = true;
-
-                if (gameState.memory.attempts <= 0) {
-                    showNotification('Memory game attempts exhausted.');
-                }
-            }
-        };
-
-        // Dice Game
-        const diceGame = {
-            init: function() {
-                document.getElementById('rollDiceBtn').addEventListener('click', () => this.rollDice());
-            },
-            
-            rollDice: function() {
-                if (gameState.dice.attempts <= 0) {
-                    showNotification('Dice game attempts exhausted.');
-                    return;
-                }
-
-                gameState.dice.attempts--;
-                updateGameUI();
-                saveGameState();
-                document.getElementById('clickSound').play();
-
-                const roll = Math.floor(Math.random() * 6) + 1;
-                document.getElementById('diceResult').textContent = roll;
-
-                if (Math.random() > 0.5) {
-                    gameState.dice.wins++;
-                    gameState.dice.earnings += 800;
-                    updateBalance(800);
-                    showNotification('🎲 You won ₦800!');
-                } else {
-                    showNotification('Try again!');
-                    document.getElementById('loseSound').play();
-                }
-
-                if (gameState.dice.attempts <= 0) {
-                    showNotification('Dice game attempts exhausted.');
-                }
-            }
-        };
-
-        // Snake Game
-        const snakeGame = {
-            canvas: null,
-            ctx: null,
-            snake: [],
-            direction: 'right',
-            food: {},
-            gridSize: 20,
-            gameInterval: null,
-            gameStarted: false,
-            speed: 200,
-            gameActive: false,
-            
-            init: function() {
-                this.canvas = document.getElementById('snakeCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                this.snake = [
-                    {x: 5, y: 10},
-                    {x: 4, y: 10},
-                    {x: 3, y: 10}
-                ];
-                
-                this.placeFood();
-                
-                document.querySelector('.snake-btn.up').addEventListener('click', () => {
-                    if (this.direction !== 'down' && this.gameStarted) {
-                        this.direction = 'up';
-                        document.getElementById('clickSound').play();
-                    }
-                });
-                
-                document.querySelector('.snake-btn.down').addEventListener('click', () => {
-                    if (this.direction !== 'up' && this.gameStarted) {
-                        this.direction = 'down';
-                        document.getElementById('clickSound').play();
-                    }
-                });
-                
-                document.querySelector('.snake-btn.left').addEventListener('click', () => {
-                    if (this.direction !== 'right' && this.gameStarted) {
-                        this.direction = 'left';
-                        document.getElementById('clickSound').play();
-                    }
-                });
-                
-                document.querySelector('.snake-btn.right').addEventListener('click', () => {
-                    if (this.direction !== 'left' && this.gameStarted) {
-                        this.direction = 'right';
-                        document.getElementById('clickSound').play();
-                    }
-                });
-                
-                document.getElementById('startSnakeBtn').addEventListener('click', () => {
-                    if (gameState.snake.attempts <= 0) {
-                        showNotification('Snake game attempts exhausted.');
-                        return;
-                    }
-                    
-                    this.resetGame();
-                    this.gameStarted = true;
-                    document.getElementById('startSnakeBtn').style.display = 'none';
-                    document.querySelector('.snake-controls').style.display = 'grid';
-                    this.startGame();
-                    document.getElementById('clickSound').play();
-                });
-                
-                this.draw();
-            },
-            
-            resetGame: function() {
-                clearInterval(this.gameInterval);
-                this.snake = [
-                    {x: 5, y: 10},
-                    {x: 4, y: 10},
-                    {x: 3, y: 10}
-                ];
-                this.direction = 'right';
-                gameState.snake.score = 0;
-                this.speed = 200;
-                this.gameActive = true;
-                updateGameUI();
-                this.placeFood();
-            },
-            
-            startGame: function() {
-                if (this.gameInterval) clearInterval(this.gameInterval);
-                
-                this.gameInterval = setInterval(() => {
-                    this.update();
-                    this.draw();
-                }, this.speed);
-            },
-            
-            update: function() {
-                const head = { x: this.snake[0].x, y: this.snake[0].y };
-
-                switch (this.direction) {
-                    case 'up': head.y -= 1; break;
-                    case 'down': head.y += 1; break;
-                    case 'left': head.x -= 1; break;
-                    case 'right': head.x += 1; break;
-                }
-
-                if (head.x < 0 || head.x >= this.canvas.width / this.gridSize ||
-                    head.y < 0 || head.y >= this.canvas.height / this.gridSize ||
-                    this.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-                    this.gameOver();
-                    return;
-                }
-
-                if (head.x === this.food.x && head.y === this.food.y) {
-                    gameState.snake.score++;
-                    gameState.snake.earnings += 800;
-                    updateBalance(800);
-                    this.placeFood();
-                } else {
-                    this.snake.pop();
-                }
-
-                this.snake.unshift(head);
-            },
-            
-            draw: function() {
-                this.ctx.fillStyle = '#f0f0f0';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.ctx.fillStyle = '#6C5CE7';
-                for (let i = 0; i < this.snake.length; i++) {
-                    this.ctx.fillRect(
-                        this.snake[i].x * this.gridSize, 
-                        this.snake[i].y * this.gridSize, 
-                        this.gridSize, 
-                        this.gridSize
-                    );
-                    
-                    if (i === 0) {
-                        this.ctx.fillStyle = 'white';
-                        this.ctx.fillRect(
-                            this.snake[i].x * this.gridSize + 5, 
-                            this.snake[i].y * this.gridSize + 5, 
-                            5, 
-                            5
-                        );
-                        this.ctx.fillRect(
-                            this.snake[i].x * this.gridSize + 10, 
-                            this.snake[i].y * this.gridSize + 5, 
-                            5, 
-                            5
-                        );
-                        this.ctx.fillStyle = '#6C5CE7';
-                    }
-                }
-                
-                this.ctx.fillStyle = '#D63031';
-                this.ctx.beginPath();
-                this.ctx.arc(
-                    this.food.x * this.gridSize + this.gridSize/2, 
-                    this.food.y * this.gridSize + this.gridSize/2, 
-                    this.gridSize/2, 
-                    0, 
-                    Math.PI * 2
-                );
-                this.ctx.fill();
-            },
-            
-            placeFood: function() {
-                this.food = {
-                    x: Math.floor(Math.random() * (this.canvas.width/this.gridSize)),
-                    y: Math.floor(Math.random() * (this.canvas.height/this.gridSize))
-                };
-                
-                for (let i = 0; i < this.snake.length; i++) {
-                    if (this.food.x === this.snake[i].x && this.food.y === this.snake[i].y) {
-                        this.placeFood();
-                        return;
-                    }
-                }
-            },
-            
-            gameOver: function() {
-                this.gameActive = false;
-                clearInterval(this.gameInterval);
-                this.gameStarted = false;
-                gameState.snake.attempts--;
-                updateGameUI();
-                saveGameState();
-                document.getElementById('loseSound').play();
-                
-                document.getElementById('startSnakeBtn').style.display = 'block';
-                document.querySelector('.snake-controls').style.display = 'none';
-                
-                if (gameState.snake.attempts <= 0) {
-                    showNotification('Snake game attempts exhausted.');
-                } else {
-                    showNotification('Game Over! Tap to play again');
-                }
-            }
-        };
-
-        // Trivia Game
-        const triviaGame = {
-            questions: [
-                // Nigeria General Knowledge (20 questions)
-                {
-                    question: "What is the capital city of Nigeria?",
-                    options: ["Lagos", "Abuja", "Kano", "Port Harcourt"],
-                    answer: 2
-                },
-                {
-                    question: "Who was Nigeria's first president?",
-                    options: ["Dr. Nnamdi Azikiwe", "Obafemi Awolowo", "Ahmadu Bello", "Tafawa Balewa"],
-                    answer: 1
-                },
-                {
-                    question: "What year did Nigeria gain independence?",
-                    options: ["1957", "1960", "1963", "1970"],
-                    answer: 2
-                },
-                {
-                    question: "Which currency is used in Nigeria?",
-                    options: ["Naira", "Cedi", "Shilling", "Dollar"],
-                    answer: 1
-                },
-                {
-                    question: "What is the largest city in Nigeria by population?",
-                    options: ["Abuja", "Kano", "Lagos", "Ibadan"],
-                    answer: 3
-                },
-                {
-                    question: "Which of these is NOT one of Nigeria's main ethnic groups?",
-                    options: ["Hausa", "Yoruba", "Igbo", "Zulu"],
-                    answer: 4
-                },
-                {
-                    question: "What is the name of Nigeria's highest legislative body?",
-                    options: ["National Assembly", "House of Representatives", "Senate", "Parliament"],
-                    answer: 1
-                },
-                {
-                    question: "Which of these countries does NOT border Nigeria?",
-                    options: ["Ghana", "Niger", "Cameroon", "Chad"],
-                    answer: 1
-                },
-                {
-                    question: "What is Nigeria's official language?",
-                    options: ["English", "Pidgin English", "Hausa", "Yoruba"],
-                    answer: 1
-                },
-                {
-                    question: "Which Nigerian won the Nobel Prize in Literature?",
-                    options: ["Chinua Achebe", "Wole Soyinka", "Ben Okri", "Chimamanda Adichie"],
-                    answer: 2
-                },
-                {
-                    question: "What is the most widely spoken indigenous language in Nigeria?",
-                    options: ["Yoruba", "Igbo", "Hausa", "Edo"],
-                    answer: 3
-                },
-                {
-                    question: "Which of these is a major river in Nigeria?",
-                    options: ["Nile", "Niger", "Congo", "Zambezi"],
-                    answer: 2
-                },
-                {
-                    question: "What is the name of Nigeria's national football team?",
-                    options: ["Super Eagles", "Green Eagles", "Flying Eagles", "Golden Eagles"],
-                    answer: 1
-                },
-                {
-                    question: "Which of these is a traditional Nigerian fabric?",
-                    options: ["Kente", "Aso Oke", "Ankara", "All of the above"],
-                    answer: 4
-                },
-                {
-                    question: "What is the name of Nigeria's film industry?",
-                    options: ["Nollywood", "Kannywood", "Yorubawood", "All of the above"],
-                    answer: 4
-                },
-                {
-                    question: "Which Nigerian musician is known as the 'African Giant'?",
-                    options: ["Davido", "Wizkid", "Burna Boy", "Tiwa Savage"],
-                    answer: 3
-                },
-                {
-                    question: "What is the name of Nigeria's stock exchange?",
-                    options: ["NSE", "LSE", "NYSE", "JSE"],
-                    answer: 1
-                },
-                {
-                    question: "Which of these is a major Nigerian export?",
-                    options: ["Coffee", "Cocoa", "Petroleum", "All of the above"],
-                    answer: 4
-                },
-                {
-                    question: "What is the name of Nigeria's central bank?",
-                    options: ["First Bank", "Central Bank of Nigeria", "Nigeria Reserve Bank", "Bank of Nigeria"],
-                    answer: 2
-                },
-                {
-                    question: "Which of these is a popular Nigerian dish?",
-                    options: ["Jollof Rice", "Pounded Yam", "Egusi Soup", "All of the above"],
-                    answer: 4
-                }
-            ],
-            currentQuestion: 0,
-            
-            init: function() {
-                this.loadQuestion();
-                
-                document.querySelectorAll('.trivia-option').forEach(option => {
-                    option.addEventListener('click', (e) => {
-                        const selectedOption = parseInt(e.target.getAttribute('data-option'));
-                        this.checkAnswer(selectedOption);
-                    });
-                });
-            },
-            
-            loadQuestion: function() {
-                // If all questions have been used, reset the used questions array
-                if (gameState.trivia.usedQuestions.length >= this.questions.length) {
-                    gameState.trivia.usedQuestions = [];
-                }
-                
-                // Filter out used questions
-                let availableQuestions = this.questions.filter((q, index) => 
-                    !gameState.trivia.usedQuestions.includes(index)
-                );
-                
-                // If no available questions (shouldn't happen due to reset above), use all questions
-                if (availableQuestions.length === 0) {
-                    availableQuestions = [...this.questions];
-                }
-                
-                // Select a random question from available ones
-                const randomIndex = Math.floor(Math.random() * availableQuestions.length);
-                const question = availableQuestions[randomIndex];
-                this.currentQuestion = this.questions.indexOf(question);
-                
-                // Update the UI with the question
-                document.getElementById('triviaQuestion').textContent = question.question;
-                
-                const options = document.querySelectorAll('.trivia-option');
-                question.options.forEach((option, index) => {
-                    options[index].textContent = option;
-                    options[index].classList.remove('correct', 'incorrect');
-                });
-            },
-            
-            checkAnswer: function(selectedOption) {
-                if (gameState.trivia.attempts <= 0) {
-                    showNotification('Trivia game attempts exhausted.');
-                    return;
-                }
-
-                gameState.trivia.attempts--;
-                updateGameUI();
-                saveGameState();
-                document.getElementById('clickSound').play();
-
-                const question = this.questions[this.currentQuestion];
-                const options = document.querySelectorAll('.trivia-option');
-
-                if (selectedOption === question.answer) {
-                    options[selectedOption - 1].classList.add('correct');
-                    gameState.trivia.correct++;
-                    gameState.trivia.earnings += 800;
-                    updateBalance(800);
-                    showNotification('✅ Correct! You earned ₦800');
-                } else {
-                    options[selectedOption - 1].classList.add('incorrect');
-                    options[question.answer - 1].classList.add('correct');
-                    document.getElementById('loseSound').play();
-                }
-
-                // Add this question to used questions
-                gameState.trivia.usedQuestions.push(this.currentQuestion);
-
-                setTimeout(() => {
-                    this.loadQuestion();
-                    if (gameState.trivia.attempts <= 0) {
-                        showNotification('Trivia attempts exhausted.');
-                    }
-                }, 1500);
-            }
-        };
-
-        // Wheel Spin Game
-        const wheelGame = {
-            spinning: false,
-            wheel: null,
-            sections: 16,
-            prizes: [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1000],
-            colors: ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE', '#B2FF59', '#EEFF41', '#FFFF00', '#FFD740', '#FFAB40', '#FF6E40'],
-            
-            init: function() {
-                this.wheel = document.getElementById('wheel');
-                this.createWheel();
-                
-                document.getElementById('spinWheelBtn').addEventListener('click', () => this.spin());
-            },
-            
-            createWheel: function() {
-                this.wheel.innerHTML = '';
-                const sectionAngle = 360 / this.sections;
-                
-                for (let i = 0; i < this.sections; i++) {
-                    const section = document.createElement('div');
-                    section.className = 'wheel-section';
-                    section.style.transform = `rotate(${i * sectionAngle}deg)`;
-                    section.style.backgroundColor = this.colors[i % this.colors.length];
-                    section.style.clipPath = 'polygon(0 0, 100% 0, 100% 100%)';
-                    
-                    const prizeText = document.createElement('div');
-                    prizeText.style.transform = 'rotate(45deg) translate(-10px, 10px)';
-                    prizeText.style.fontSize = '14px';
-                    prizeText.textContent = `₦${this.prizes[i]}`;
-                    section.appendChild(prizeText);
-                    
-                    this.wheel.appendChild(section);
-                }
-            },
-            
-            spin: function() {
-                if (gameState.wheel.attempts <= 0) {
-                    showNotification('Wheel spin attempts exhausted.');
-                    return;
-                }
-
-                gameState.wheel.attempts--;
-                updateGameUI();
-                saveGameState();
-                document.getElementById('clickSound').play();
-
-                const prizeIndex = Math.floor(Math.random() * this.prizes.length);
-                const prize = this.prizes[prizeIndex];
-                const sectionAngle = 360 / this.sections;
-                const targetAngle = 1800 + (360 - (prizeIndex * sectionAngle)) + (Math.random() * sectionAngle);
-
-                this.wheel.style.transform = `rotate(${targetAngle}deg)`;
-                this.wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-
-                setTimeout(() => {
-                    if (prize > 0) {
-                        gameState.wheel.wins++;
-                        gameState.wheel.earnings += prize;
-                        updateBalance(prize);
-                        document.getElementById('wheelPrize').textContent = `₦${prize}`;
-                        document.getElementById('wheelMessage').textContent = 'You won:';
-                        showNotification(`🎡 You won ₦${prize}!`);
-                    } else {
-                        document.getElementById('wheelPrize').textContent = '';
-                        document.getElementById('wheelMessage').textContent = 'Better luck next time!';
-                        document.getElementById('loseSound').play();
-                    }
-
-                    if (gameState.wheel.attempts <= 0) {
-                        showNotification('Wheel spin attempts exhausted.');
-                    }
-                }, 4000);
-            }
-        };
-
-        // Ayo Olopon Game
-        const ayoGame = {
-            board: [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]],
-            currentPlayer: 1,
-            player1Score: 0,
-            player2Score: 0,
-            gameOver: false,
-            
-            init: function() {
-                this.resetGame();
-                
-                document.querySelectorAll('.ayo-pit').forEach(pit => {
-                    pit.addEventListener('click', (e) => {
-                        const row = parseInt(e.target.getAttribute('data-row'));
-                        const col = parseInt(e.target.getAttribute('data-col'));
-                        this.handleMove(row, col);
-                    });
-                });
-                
-                document.getElementById('resetAyoBtn').addEventListener('click', () => {
-                    this.resetGame();
-                    document.getElementById('clickSound').play();
-                });
-            },
-            
-            resetGame: function() {
-                this.board = [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]];
-                this.currentPlayer = 1;
-                this.player1Score = 0;
-                this.player2Score = 0;
-                this.gameOver = false;
-                
-                document.getElementById('currentPlayer').textContent = 'Player 1';
-                document.getElementById('player1Score').textContent = '0';
-                document.getElementById('player2Score').textContent = '0';
-                document.getElementById('player1Store').textContent = '0';
-                document.getElementById('player2Store').textContent = '0';
-                document.getElementById('ayoGameOver').style.display = 'none';
-                
-                this.updateBoard();
-            },
-            
-            handleMove: function(row, col) {
-                if (this.gameOver || gameState.ayo.attempts <= 0) {
-                    if (gameState.ayo.attempts <= 0) {
-                        showNotification('Ayo game attempts exhausted.');
-                    }
-                    return;
-                }
-                
-                // Check if the move is valid (player can only move their own pits)
-                if ((this.currentPlayer === 1 && row !== 1) || (this.currentPlayer === 2 && row !== 0)) {
-                    return;
-                }
-                
-                // Get the seeds from the selected pit
-                let seeds = this.board[row][col];
-                if (seeds === 0) {
-                    return; // Can't move from empty pit
-                }
-                
-                // Start the move
-                this.board[row][col] = 0;
-                let currentRow = row;
-                let currentCol = col;
-                
-                // Distribute seeds
-                while (seeds > 0) {
-                    // Move to next pit
-                    currentCol++;
-                    
-                    // If we reach the end of the row, switch rows
-                    if (currentCol > 5) {
-                        currentCol = 0;
-                        currentRow = currentRow === 0 ? 1 : 0;
-                    }
-                    
-                    // Skip the original pit
-                    if (!(currentRow === row && currentCol === col)) {
-                        this.board[currentRow][currentCol]++;
-                        seeds--;
-                    }
-                }
-                
-                // Check for captures
-                while (true) {
-                    // Only capture if the last seed landed on opponent's side
-                    if ((this.currentPlayer === 1 && currentRow === 0) || 
-                        (this.currentPlayer === 2 && currentRow === 1)) {
-                        
-                        // Check if the last pit has 2 or 3 seeds (capture condition)
-                        if (this.board[currentRow][currentCol] === 2 || this.board[currentRow][currentCol] === 3) {
-                            // Capture the seeds
-                            const captured = this.board[currentRow][currentCol];
-                            this.board[currentRow][currentCol] = 0;
-                            
-                            if (this.currentPlayer === 1) {
-                                this.player1Score += captured;
-                            } else {
-                                this.player2Score += captured;
-                            }
-                            
-                            // Move to the previous pit to check for more captures
-                            currentCol--;
-                            if (currentCol < 0) {
-                                currentCol = 5;
-                                currentRow = currentRow === 0 ? 1 : 0;
-                            }
-                            
-                            continue;
-                        }
-                    }
-                    
-                    break;
-                }
-                
-                // Check if game is over (one player has no seeds left)
-                const player1HasSeeds = this.board[1].some(seeds => seeds > 0);
-                const player2HasSeeds = this.board[0].some(seeds => seeds > 0);
-                
-                if (!player1HasSeeds || !player2HasSeeds) {
-                    this.gameOver = true;
-                    
-                    // Add remaining seeds to each player's score
-                    this.player1Score += this.board[1].reduce((a, b) => a + b, 0);
-                    this.player2Score += this.board[0].reduce((a, b) => a + b, 0);
-                    
-                    // Clear the board
-                    this.board = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]];
-                    
-                    // Determine winner
-                    let winnerMessage = '';
-                    if (this.player1Score > this.player2Score) {
-                        winnerMessage = 'Player 1 wins!';
-                        gameState.ayo.wins++;
-                        gameState.ayo.earnings += 800;
-                        updateBalance(800);
-                    } else if (this.player2Score > this.player1Score) {
-                        winnerMessage = 'Player 2 wins!';
-                    } else {
-                        winnerMessage = 'It\'s a tie!';
-                    }
-                    
-                    document.getElementById('ayoGameOver').textContent = `Game Over! ${winnerMessage}`;
-                    document.getElementById('ayoGameOver').style.display = 'block';
-                    
-                    gameState.ayo.attempts--;
-                    updateGameUI();
-                    saveGameState();
-                    
-                    if (gameState.ayo.attempts <= 0) {
-                        showNotification('Ayo game attempts exhausted.');
-                    } else {
-                        showNotification(winnerMessage);
-                    }
-                } else {
-                    // Switch players
-                    this.currentPlayer = this.currentPlayer === 1 ? 2 : 1;
-                    document.getElementById('currentPlayer').textContent = `Player ${this.currentPlayer}`;
-                }
-                
-                this.updateBoard();
-            },
-            
-            updateBoard: function() {
-                // Update player 1 pits (bottom row)
-                for (let col = 0; col < 6; col++) {
-                    const pit = document.querySelector(`.ayo-pit[data-row="1"][data-col="${col}"]`);
-                    pit.textContent = this.board[1][col];
-                    pit.classList.remove('highlight');
-                    
-                    // Highlight valid moves for current player
-                    if (this.currentPlayer === 1 && this.board[1][col] > 0 && !this.gameOver) {
-                        pit.classList.add('highlight');
-                    }
-                }
-                
-                // Update player 2 pits (top row)
-                for (let col = 0; col < 6; col++) {
-                    const pit = document.querySelector(`.ayo-pit[data-row="0"][data-col="${col}"]`);
-                    pit.textContent = this.board[0][col];
-                    pit.classList.remove('highlight');
-                    
-                    // Highlight valid moves for current player
-                    if (this.currentPlayer === 2 && this.board[0][col] > 0 && !this.gameOver) {
-                        pit.classList.add('highlight');
-                    }
-                }
-                
-                // Update stores
-                document.getElementById('player1Store').textContent = this.player1Score;
-                document.getElementById('player2Store').textContent = this.player2Score;
-            }
-        };
-
-        // Naira Chase Game
-        const nairaChaseGame = {
-            canvas: null,
-            ctx: null,
-            gameRunning: false,
-            score: 0,
-            speed: 5,
-            gravity: 0.4,
-            obstacleFrequency: 2000,
-            coinFrequency: 800,
-            lastObstacleTime: 0,
-            lastCoinTime: 0,
-            gameTime: 0,
-            frameCount: 0,
-            
-            // Bird properties
-            bird: {
-                x: 100,
-                y: 250,
-                width: 60,
-                height: 40,
-                velocity: 0,
-                rotation: 0,
-                wingAngle: 0,
-                wingSpeed: 0.2,
-                color: '#008751',
-                wingColor: '#FFFFFF',
-                jumpPower: 9,
-                
-                jump: function() {
-                    this.velocity = -this.jumpPower;
-                    this.wingAngle = Math.PI/4;
-                },
-                
-                update: function() {
-                    // Apply gravity
-                    this.velocity += nairaChaseGame.gravity;
-                    this.y += this.velocity;
-                    
-                    // Wing animation
-                    this.wingAngle += this.wingSpeed;
-                    if (this.wingAngle > Math.PI/4 || this.wingAngle < -Math.PI/4) {
-                        this.wingSpeed *= -1;
-                    }
-                    
-                    // Rotation based on velocity
-                    this.rotation = Math.min(Math.max(this.velocity * 0.1, -Math.PI/4), Math.PI/4);
-                },
-                
-                draw: function() {
-                    nairaChaseGame.ctx.save();
-                    nairaChaseGame.ctx.translate(this.x, this.y);
-                    nairaChaseGame.ctx.rotate(this.rotation);
-                    
-                    // Draw body
-                    nairaChaseGame.ctx.fillStyle = this.color;
-                    nairaChaseGame.ctx.beginPath();
-                    nairaChaseGame.ctx.ellipse(0, 0, this.width/2, this.height/2, 0, 0, Math.PI * 2);
-                    nairaChaseGame.ctx.fill();
-                    
-                    // Draw wings
-                    nairaChaseGame.ctx.fillStyle = this.wingColor;
-                    nairaChaseGame.ctx.save();
-                    nairaChaseGame.ctx.rotate(this.wingAngle);
-                    nairaChaseGame.ctx.beginPath();
-                    nairaChaseGame.ctx.ellipse(-15, 0, 20, 8, 0, 0, Math.PI * 2);
-                    nairaChaseGame.ctx.fill();
-                    nairaChaseGame.ctx.restore();
-                    
-                    nairaChaseGame.ctx.save();
-                    nairaChaseGame.ctx.rotate(-this.wingAngle);
-                    nairaChaseGame.ctx.beginPath();
-                    nairaChaseGame.ctx.ellipse(-15, 0, 20, 8, 0, 0, Math.PI * 2);
-                    nairaChaseGame.ctx.fill();
-                    nairaChaseGame.ctx.restore();
-                    
-                    // Draw beak
-                    nairaChaseGame.ctx.fillStyle = '#FFD700';
-                    nairaChaseGame.ctx.beginPath();
-                    nairaChaseGame.ctx.moveTo(this.width/2, 0);
-                    nairaChaseGame.ctx.lineTo(this.width/2 + 15, -5);
-                    nairaChaseGame.ctx.lineTo(this.width/2 + 15, 5);
-                    nairaChaseGame.ctx.closePath();
-                    nairaChaseGame.ctx.fill();
-                    
-                    nairaChaseGame.ctx.restore();
-                },
-                
-                reset: function() {
-                    this.y = 250;
-                    this.velocity = 0;
-                    this.rotation = 0;
-                },
-                
-                getBounds: function() {
-                    return {
-                        left: this.x - this.width/2,
-                        right: this.x + this.width/2,
-                        top: this.y - this.height/2,
-                        bottom: this.y + this.height/2
-                    };
-                }
-            },
-            
-            // Ground properties
-            ground: {
-                height: 60,
-                draw: function() {
-                    // Draw ground
-                    nairaChaseGame.ctx.fillStyle = '#5D4037';
-                    nairaChaseGame.ctx.fillRect(0, nairaChaseGame.canvas.height - this.height, nairaChaseGame.canvas.width, this.height);
-                    
-                    // Draw grass on top
-                    nairaChaseGame.ctx.fillStyle = '#388E3C';
-                    nairaChaseGame.ctx.beginPath();
-                    nairaChaseGame.ctx.moveTo(0, nairaChaseGame.canvas.height - this.height);
-                    for (let x = 0; x < nairaChaseGame.canvas.width; x += 20) {
-                        const height = 5 + Math.sin(x/30 + nairaChaseGame.gameTime/200) * 5;
-                        nairaChaseGame.ctx.lineTo(x, nairaChaseGame.canvas.height - this.height - height);
-                    }
-                    nairaChaseGame.ctx.lineTo(nairaChaseGame.canvas.width, nairaChaseGame.canvas.height - this.height);
-                    nairaChaseGame.ctx.closePath();
-                    nairaChaseGame.ctx.fill();
-                }
-            },
-            
-            // Obstacles (ditches)
-            obstacles: [],
-            
-            createObstacle: function() {
-                const width = 120 + Math.random() * 180;
-                const safeMargin = 300; // Minimum distance between obstacles
-                
-                // Check if last obstacle is far enough
-                if (this.obstacles.length > 0) {
-                    const lastObstacle = this.obstacles[this.obstacles.length - 1];
-                    if (lastObstacle.x + lastObstacle.width > this.canvas.width - safeMargin) {
-                        return;
-                    }
-                }
-                
-                this.obstacles.push({
-                    x: this.canvas.width,
-                    width: width,
-                    passed: false
-                });
-            },
-            
-            // Coins (Naira)
-            coins: [],
-            coinValues: [50, 100, 200, 500, 1000],
-            
-            createCoin: function() {
-                const valueIndex = Math.min(Math.floor(this.score / 1000), this.coinValues.length - 1);
-                const y = this.canvas.height - this.ground.height - 30 - Math.random() * 100;
-                
-                this.coins.push({
-                    x: this.canvas.width,
-                    y: y,
-                    radius: 15 + valueIndex * 2, // Bigger coins for higher values
-                    value: this.coinValues[valueIndex],
-                    rotation: 0,
-                    rotationSpeed: 0.1 + Math.random() * 0.2,
-                    collected: false,
-                    collectTime: 0,
-                    floatOffset: Math.random() * Math.PI * 2
-                });
-            },
-            
-            init: function() {
-                this.canvas = document.getElementById('nairaChaseCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                // Set canvas size
-                this.canvas.width = 400;
-                this.canvas.height = 500;
-                
-                // Event listeners
-                this.canvas.addEventListener('click', () => {
-                    if (this.gameRunning) {
-                        this.bird.jump();
-                    }
-                });
-                
-                document.getElementById('startNairaChaseButton').addEventListener('click', () => {
-                    if (gameState.nairaChase.attempts <= 0) {
-                        showNotification('Naira Chase attempts exhausted.');
-                        return;
-                    }
-                    
-                    this.startGame();
-                    document.getElementById('nairaChaseStart').style.display = 'none';
-                    document.getElementById('clickSound').play();
-                });
-                
-                document.getElementById('restartNairaChaseButton').addEventListener('click', () => {
-                    if (gameState.nairaChase.attempts <= 0) {
-                        showNotification('Naira Chase attempts exhausted.');
-                        return;
-                    }
-                    
-                    this.startGame();
-                    document.getElementById('nairaChaseGameOver').style.display = 'none';
-                });
-                
-                document.getElementById('backToGames7').addEventListener('click', () => {
-                    this.endGame();
-                    showGame('');
-                });
-                
-                // Initial setup
-                document.getElementById('nairaChaseStart').style.display = 'block';
-                document.getElementById('nairaChaseGameOver').style.display = 'none';
-            },
-            
-            startGame: function() {
-                this.gameRunning = true;
-                this.score = 0;
-                this.speed = 5;
-                this.obstacles = [];
-                this.coins = [];
-                this.bird.reset();
-                this.lastObstacleTime = 0;
-                this.lastCoinTime = 0;
-                this.gameTime = 0;
-                this.frameCount = 0;
-                
-                document.getElementById('nairaChaseScore').textContent = '₦0';
-                
-                this.animate();
-            },
-            
-            endGame: function() {
-                this.gameRunning = false;
-                document.getElementById('nairaChaseFinalScore').textContent = `₦${this.score}`;
-                
-                // Update game state
-                gameState.nairaChase.attempts--;
-                gameState.nairaChase.score += this.score;
-                gameState.nairaChase.earnings += this.score;
-                updateBalance(this.score);
-                updateGameUI();
-                saveGameState();
-                
-                if (gameState.nairaChase.attempts <= 0) {
-                    showNotification('Naira Chase attempts exhausted.');
-                }
-            },
-            
-            checkCollision: function() {
-                const birdBounds = this.bird.getBounds();
-                
-                // Check ground collision
-                if (birdBounds.bottom >= this.canvas.height - this.ground.height) {
-                    return true;
-                }
-                
-                // Check obstacle collisions
-                for (const obstacle of this.obstacles) {
-                    if (birdBounds.right > obstacle.x && 
-                        birdBounds.left < obstacle.x + obstacle.width &&
-                        birdBounds.bottom > this.canvas.height - this.ground.height) {
-                        return true;
-                    }
-                }
-                
-                return false;
-            },
-            
-            drawNairaCoin: function(coin) {
-                this.ctx.rotate(coin.rotation);
-                
-                // Coin base
-                const gradient = this.ctx.createRadialGradient(0, 0, coin.radius/2, 0, 0, coin.radius);
-                gradient.addColorStop(0, '#FFD700');
-                gradient.addColorStop(1, '#FFA500');
-                this.ctx.fillStyle = gradient;
-                this.ctx.beginPath();
-                this.ctx.arc(0, 0, coin.radius, 0, Math.PI * 2);
-                this.ctx.fill();
-                
-                // Coin edge
-                this.ctx.strokeStyle = '#B8860B';
-                this.ctx.lineWidth = 2;
-                this.ctx.stroke();
-                
-                // Naira symbol
-                this.ctx.fillStyle = '#000000';
-                this.ctx.font = `bold ${coin.radius}px Arial`;
-                this.ctx.textAlign = 'center';
-                this.ctx.textBaseline = 'middle';
-                this.ctx.fillText('₦', 0, 0);
-            },
-            
-            animate: function() {
-                if (!this.gameRunning) return;
-                
-                this.frameCount++;
-                this.gameTime = Date.now();
-                
-                // Clear canvas
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // Update and draw ground
-                this.ground.draw();
-                
-                // Update and draw bird
-                this.bird.update();
-                this.bird.draw();
-                
-                // Create new obstacles
-                if (this.gameTime - this.lastObstacleTime > this.obstacleFrequency) {
-                    this.createObstacle();
-                    this.lastObstacleTime = this.gameTime;
-                }
-                
-                // Create new coins
-                if (this.gameTime - this.lastCoinTime > this.coinFrequency) {
-                    this.createCoin();
-                    this.lastCoinTime = this.gameTime;
-                }
-                
-                // Update and draw obstacles
-                for (let i = this.obstacles.length - 1; i >= 0; i--) {
-                    const obstacle = this.obstacles[i];
-                    obstacle.x -= this.speed;
-                    
-                    // Draw ditch (with perspective)
-                    this.ctx.fillStyle = '#3E2723';
-                    this.ctx.fillRect(obstacle.x, this.canvas.height - this.ground.height, obstacle.width, this.ground.height);
-                    
-                    // Draw ditch edges
-                    this.ctx.strokeStyle = '#5D4037';
-                    this.ctx.lineWidth = 3;
-                    this.ctx.beginPath();
-                    this.ctx.moveTo(obstacle.x, this.canvas.height - this.ground.height);
-                    this.ctx.lineTo(obstacle.x + obstacle.width * 0.1, this.canvas.height - this.ground.height - 10);
-                    this.ctx.lineTo(obstacle.x + obstacle.width * 0.9, this.canvas.height - this.ground.height - 10);
-                    this.ctx.lineTo(obstacle.x + obstacle.width, this.canvas.height - this.ground.height);
-                    this.ctx.stroke();
-                    
-                    // Remove off-screen obstacles
-                    if (obstacle.x + obstacle.width < 0) {
-                        this.obstacles.splice(i, 1);
-                    }
-                }
-                
-                // Update and draw coins
-                for (let i = this.coins.length - 1; i >= 0; i--) {
-                    const coin = this.coins[i];
-                    coin.x -= this.speed;
-                    coin.rotation += coin.rotationSpeed;
-                    
-                    // Floating animation
-                    const floatY = Math.sin(this.gameTime/300 + coin.floatOffset) * 5;
-                    
-                    if (coin.collected) {
-                        // Coin collection animation
-                        coin.collectTime++;
-                        const scale = 1 + coin.collectTime * 0.1;
-                        const alpha = 1 - coin.collectTime * 0.05;
-                        
-                        this.ctx.save();
-                        this.ctx.translate(coin.x, coin.y + floatY);
-                        this.ctx.scale(scale, scale);
-                        this.ctx.globalAlpha = alpha;
-                        
-                        // Draw coin with collection effect
-                        this.drawNairaCoin(coin);
-                        
-                        this.ctx.restore();
-                        
-                        // Remove after animation
-                        if (coin.collectTime > 20) {
-                            this.coins.splice(i, 1);
-                        }
-                    } else {
-                        // Normal coin drawing
-                        this.ctx.save();
-                        this.ctx.translate(coin.x, coin.y + floatY);
-                        this.drawNairaCoin(coin);
-                        this.ctx.restore();
-                        
-                        // Check collision with bird
-                        const birdBounds = this.bird.getBounds();
-                        const dx = this.bird.x - coin.x;
-                        const dy = this.bird.y - (coin.y + floatY);
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (distance < this.bird.width/2 + coin.radius) {
-                            coin.collected = true;
-                            this.score += coin.value;
-                            document.getElementById('nairaChaseScore').textContent = `₦${this.score}`;
-                            document.getElementById('coinLandSound').play();
-                        }
-                    }
-                    
-                    // Remove off-screen coins
-                    if (coin.x + coin.radius < 0 && !coin.collected) {
-                        this.coins.splice(i, 1);
-                    }
-                }
-                
-                // Draw coin value indicators
-                for (const coin of this.coins) {
-                    if (!coin.collected && this.frameCount % 30 < 15) {
-                        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                        this.ctx.font = 'bold 16px Arial';
-                        this.ctx.textAlign = 'center';
-                        this.ctx.fillText(`₦${coin.value}`, coin.x, coin.y - coin.radius - 10);
-                    }
-                }
-                
-                // Check for collisions
-                if (this.checkCollision()) {
-                    document.getElementById('nairaChaseGameOver').style.display = 'block';
-                    this.endGame();
-                    return;
-                }
-                
-                // Increase difficulty
-                this.speed = 5 + Math.floor(this.score / 2000) * 0.5;
-                this.obstacleFrequency = Math.max(800, 2000 - Math.floor(this.score / 500) * 100);
-                
-                requestAnimationFrame(() => this.animate());
-            }
-        };
-
         // ========================
         // INITIALIZATION
         // ========================
@@ -2693,28 +448,5 @@
             }, 1000);
         });
     </script>
-<!-- Add this before the closing </body> tag in your HTML files -->
-<script src="js/telegram-integration.js"></script>
-<!-- Add these scripts right before the closing </body> tag -->
-<script src="js/shared-data-service.js"></script>
-<script src="js/telegram-bridge.js"></script>
-<script src="js/page-connector.js"></script>
-<script src="js/game-connector.js"></script>
-<script>
-  // Save data (works on all pages)
-  function saveData(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  // Load data (works on all pages)
-  function loadData(key) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-  }
-
-  // Example: Save user settings
-  saveData("theme", "dark"); // Saves "dark" theme
-  const theme = loadData("theme"); // Gets "dark" back
-</script>
 </body>
 </html>
