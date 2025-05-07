@@ -117,7 +117,6 @@
             padding: 10px 15px;
             border-radius: 5px;
             margin-bottom: 20px;
-            display: none;
         }
         
         /* Access denied container */
@@ -190,6 +189,52 @@
             color: white;
         }
         
+        /* Snake game controls */
+        .snake-controls {
+            display: grid;
+            grid-template-areas:
+                ". up ."
+                "left . right"
+                ". down .";
+            gap: 10px;
+            margin: 20px auto;
+            width: 150px;
+        }
+        
+        .snake-btn {
+            width: 50px;
+            height: 50px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .snake-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .snake-btn.up {
+            grid-area: up;
+        }
+        
+        .snake-btn.left {
+            grid-area: left;
+        }
+        
+        .snake-btn.right {
+            grid-area: right;
+        }
+        
+        .snake-btn.down {
+            grid-area: down;
+        }
+        
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .game-grid {
@@ -222,7 +267,7 @@
         
         <!-- Session Info Display -->
         <div id="sessionInfo">
-            Game sessions left today: <span id="sessionsLeft">10</span> |
+            Game sessions left today: <span id="sessionsLeft">10</span> | 
             Total ads watched: <span id="totalAdsWatched">0</span>
         </div>
         
@@ -254,7 +299,7 @@
                 <div class="game-card" data-game="memory">
                     <img src="https://cdn-icons-png.flaticon.com/512/3522/3522697.png" alt="Memory Game">
                     <h3>Memory Match</h3>
-                    <p>Match pairs of cards to win money</p>
+                    <p>Match pairs of fruit cards to win ₦800 per match</p>
                     <p class="attempts-info">Attempts left: <span id="memoryAttempts">10</span></p>
                 </div>
                 
@@ -311,7 +356,7 @@
             <!-- Memory Game Container -->
             <div id="memoryGameContainer" class="game-container">
                 <h2>Memory Match Game</h2>
-                <p>Match pairs of cards to win ₦100 per match. Complete all pairs to win ₦500 bonus!</p>
+                <p>Match pairs of fruit cards to win ₦800 per match. Complete all pairs to win ₦5000 bonus!</p>
                 <div id="memoryGameBoard" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;"></div>
                 <button id="startMemoryGame" class="btn">Start Game</button>
                 <button id="backToGames1" class="btn" style="background-color: #7f8c8d; margin-left: 10px;">Back to Games</button>
@@ -348,6 +393,15 @@
                 <h2>Snake Game</h2>
                 <p>Eat the food to grow your snake. Earn ₦10 per food and ₦100 bonus for every 10 foods!</p>
                 <canvas id="snakeCanvas" width="400" height="400" style="border: 1px solid #ddd; display: block; margin: 20px auto;"></canvas>
+                
+                <!-- Snake Game Controls -->
+                <div class="snake-controls">
+                    <button class="snake-btn up" id="snakeUp">↑</button>
+                    <button class="snake-btn left" id="snakeLeft">←</button>
+                    <button class="snake-btn right" id="snakeRight">→</button>
+                    <button class="snake-btn down" id="snakeDown">↓</button>
+                </div>
+                
                 <div style="text-align: center;">
                     <button id="startSnakeGame" class="btn">Start Game</button>
                     <button id="backToGames3" class="btn" style="background-color: #7f8c8d; margin-left: 10px;">Back to Games</button>
@@ -867,7 +921,25 @@
         // Memory Game
         const memoryGame = {
             init: function() {
-                this.cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F', 'G', 'G', 'H', 'H'];
+                // Fruit images for memory game
+                this.fruits = [
+                    { name: 'Apple', emoji: '🍎' },
+                    { name: 'Banana', emoji: '🍌' },
+                    { name: 'Cherry', emoji: '🍒' },
+                    { name: 'Grapes', emoji: '🍇' },
+                    { name: 'Lemon', emoji: '🍋' },
+                    { name: 'Orange', emoji: '🍊' },
+                    { name: 'Peach', emoji: '🍑' },
+                    { name: 'Strawberry', emoji: '🍓' }
+                ];
+                
+                this.cards = [];
+                // Create pairs for each fruit
+                this.fruits.forEach(fruit => {
+                    this.cards.push({...fruit});
+                    this.cards.push({...fruit});
+                });
+                
                 this.shuffledCards = [];
                 this.flippedCards = [];
                 this.matchedPairs = 0;
@@ -903,7 +975,7 @@
                     const cardElement = document.createElement('div');
                     cardElement.className = 'memory-card';
                     cardElement.dataset.index = index;
-                    cardElement.dataset.value = card;
+                    cardElement.dataset.value = card.name;
                     cardElement.style.backgroundColor = '#3498db';
                     cardElement.style.color = 'white';
                     cardElement.style.display = 'flex';
@@ -919,6 +991,25 @@
                     
                     gameBoard.appendChild(cardElement);
                 });
+                
+                // Show all cards briefly at the start
+                this.showAllCardsBriefly();
+            },
+            
+            showAllCardsBriefly: function() {
+                const cards = document.querySelectorAll('.memory-card');
+                cards.forEach((card, index) => {
+                    const fruit = this.shuffledCards[index];
+                    card.textContent = fruit.emoji;
+                    card.style.backgroundColor = '#f1c40f';
+                });
+                
+                setTimeout(() => {
+                    cards.forEach(card => {
+                        card.textContent = '';
+                        card.style.backgroundColor = '#3498db';
+                    });
+                }, 2000); // Show cards for 2 seconds
             },
             
             shuffleCards: function(cards) {
@@ -939,12 +1030,12 @@
                 document.getElementById('flipSound').play();
                 
                 const index = parseInt(cardElement.dataset.index);
-                const value = cardElement.dataset.value;
+                const fruit = this.shuffledCards[index];
                 
-                cardElement.textContent = value;
+                cardElement.textContent = fruit.emoji;
                 cardElement.style.backgroundColor = '#f1c40f';
                 
-                this.flippedCards.push({ index, value, element: cardElement });
+                this.flippedCards.push({ index, name: fruit.name, element: cardElement });
                 
                 if (this.flippedCards.length === 2) {
                     this.checkForMatch();
@@ -954,10 +1045,10 @@
             checkForMatch: function() {
                 const [card1, card2] = this.flippedCards;
                 
-                if (card1.value === card2.value) {
+                if (card1.name === card2.name) {
                     // Match found
                     this.matchedPairs++;
-                    this.currentWin += 100;
+                    this.currentWin += 800; // 800 Naira per match
                     
                     document.getElementById('memoryMatches').textContent = this.matchedPairs;
                     document.getElementById('memoryCurrentWin').textContent = this.currentWin;
@@ -976,7 +1067,7 @@
                     
                     // Check if all pairs are matched
                     if (this.matchedPairs === 8) {
-                        this.currentWin += 500; // Bonus for completing all pairs
+                        this.currentWin += 5000; // Bonus for completing all pairs
                         document.getElementById('memoryCurrentWin').textContent = this.currentWin;
                         
                         setTimeout(() => {
@@ -1179,6 +1270,23 @@
                             if (this.direction !== 'left') this.direction = 'right';
                             break;
                     }
+                });
+                
+                // Button controls
+                document.getElementById('snakeUp').addEventListener('click', () => {
+                    if (this.direction !== 'down') this.direction = 'up';
+                });
+                
+                document.getElementById('snakeDown').addEventListener('click', () => {
+                    if (this.direction !== 'up') this.direction = 'down';
+                });
+                
+                document.getElementById('snakeLeft').addEventListener('click', () => {
+                    if (this.direction !== 'right') this.direction = 'left';
+                });
+                
+                document.getElementById('snakeRight').addEventListener('click', () => {
+                    if (this.direction !== 'left') this.direction = 'right';
                 });
             },
             
