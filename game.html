@@ -4,30 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI REF-TRADERS - Games</title>
-    <!-- Include common CSS -->
-    <link rel="stylesheet" href="common.css">
     <style>
-        /* [Previous CSS styles remain exactly the same] */
+        /* [All previous CSS styles remain exactly the same] */
     </style>
-    <!-- Include Dexie.js for IndexedDB -->
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 </head>
 <body>
-    <!-- [All previous HTML content remains exactly the same until the scripts] -->
+    <!-- [All previous HTML content remains exactly the same] -->
 
-    <!-- Audio elements for game sounds -->
-    <audio id="flipSound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3" preload="auto"></audio>
-    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
-    <audio id="loseSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-lose-2027.mp3" preload="auto"></audio>
-    <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" preload="auto"></audio>
-    <audio id="coinFlipSound" src="https://assets.mixkit.co/sfx/preview/mixkit-coin-flip-1940.mp3" preload="auto"></audio>
-    <audio id="coinLandSound" src="https://assets.mixkit.co/sfx/preview/mixkit-metal-hit-impact-2065.mp3" preload="auto"></audio>
-    
     <script>
-        // Initialize Dexie database with the same schema as ads.html and index.html
+        // Initialize Dexie database with same structure as ads.html
         const db = new Dexie("AI_REF_TRADERS_DB");
-        
-        // Define database schema (must match ads.html exactly)
         db.version(1).stores({
             users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements, referrer',
             announcements: '++id, title, content, time, unread',
@@ -36,10 +23,7 @@
             transactions: '++id, userId, type, amount, status, timestamp'
         });
 
-        // ========================
-        // GAME STATE MANAGEMENT
-        // ========================
-        
+        // Game state management
         const gameState = {
             balance: 0,
             memory: { attempts: 10, wins: 0, earnings: 0 },
@@ -54,23 +38,20 @@
             gameTimerStart: 0
         };
 
-        // Load user data from IndexedDB (same as ads.html)
+        // Load user data from IndexedDB
         async function loadUserData() {
             try {
                 const userEmail = localStorage.getItem('userEmail');
                 const userPhone = localStorage.getItem('userPhone');
                 
                 if (!userEmail && !userPhone) {
-                    // User not logged in, redirect to login
                     window.location.href = 'index.html';
                     return null;
                 }
                 
-                // Check if user exists in database
                 let user = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
                 
                 if (!user) {
-                    // Create new user with default values (matching ads.html schema)
                     user = {
                         email: userEmail,
                         phone: userPhone,
@@ -99,8 +80,6 @@
                         },
                         referrer: null
                     };
-                    
-                    // Add new user to database
                     await db.users.add(user);
                 }
                 
@@ -111,16 +90,13 @@
             }
         }
 
-        // Save user data to IndexedDB (same as ads.html)
+        // Save user data to IndexedDB
         async function saveUserData(userData) {
             try {
                 const userEmail = localStorage.getItem('userEmail');
                 const userPhone = localStorage.getItem('userPhone');
                 
-                if (!userEmail && !userPhone) {
-                    console.error('No user email or phone found in localStorage');
-                    return;
-                }
+                if (!userEmail && !userPhone) return;
                 
                 await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).modify(userData);
             } catch (error) {
@@ -128,7 +104,7 @@
             }
         }
 
-        // Initialize game state based on user data
+        // Initialize game state
         async function initializeGameState() {
             const urlParams = new URLSearchParams(window.location.search);
             const fromAds = urlParams.has('fromAds');
@@ -141,29 +117,28 @@
                     return false;
                 }
                 
-                // Check if user has watched 20 ads
+                // Check ads watched
                 if (userData.adsWatched < 20) {
                     showAccessDenied(`You've only watched ${userData.adsWatched}/20 ads. Please complete watching ads.`);
                     return false;
                 }
                 
-                // Check if coming from valid source
+                // Check referrer
                 if (!fromAds && !document.referrer.includes('ads.html')) {
                     showAccessDenied("Invalid access. Please use the game console button from ads page.");
                     return false;
                 }
                 
-                // Initialize game state from user data
+                // Initialize state
                 gameState.balance = userData.balance || 0;
                 gameState.adsWatched = userData.adsWatched || 0;
                 gameState.gameEarnings = userData.gameEarnings || 0;
                 
-                // Check if we need to reset attempts (55 minutes since last ad watch)
                 const now = Date.now();
                 const timeSinceLastAd = now - (userData.lastAdWatchTime || 0);
                 
                 if (fromAds || timeSinceLastAd >= 55 * 60 * 1000) {
-                    // Reset all attempts for fresh session
+                    // Reset game state for new session
                     gameState.memory.attempts = 10;
                     gameState.dice.attempts = 10;
                     gameState.snake.attempts = 10;
@@ -172,7 +147,6 @@
                     gameState.ayo.attempts = 10;
                     gameState.nairaChase.attempts = 10;
                     
-                    // Reset game stats
                     gameState.memory.wins = 0;
                     gameState.memory.earnings = 0;
                     gameState.dice.wins = 0;
@@ -189,7 +163,6 @@
                     gameState.nairaChase.score = 0;
                     gameState.nairaChase.earnings = 0;
                     
-                    // Start game timer
                     gameState.gameTimerStart = now;
                     await saveUserData({
                         ...userData,
@@ -197,12 +170,11 @@
                     });
                     startGameTimer();
                 } else {
-                    // Load existing game state if available
+                    // Load existing game state
                     if (userData.gameState) {
                         Object.assign(gameState, userData.gameState);
                     }
                     
-                    // Continue existing timer
                     if (userData.gameTimerStart) {
                         gameState.gameTimerStart = userData.gameTimerStart;
                         startGameTimer();
@@ -217,7 +189,6 @@
             }
         }
 
-        // Show access denied message
         function showAccessDenied(message) {
             document.getElementById('accessDeniedContainer').style.display = 'flex';
             document.getElementById('mainGameContainer').style.display = 'none';
@@ -229,7 +200,6 @@
             });
         }
 
-        // Start game timer (55 minutes)
         function startGameTimer() {
             const timerDisplay = document.getElementById('timerDisplay');
             const timeRemaining = document.getElementById('timeRemaining');
@@ -259,23 +229,17 @@
             timerInterval = setInterval(updateTimer, 1000);
         }
 
-        // Save game state to IndexedDB
         async function saveGameState() {
             try {
                 const userEmail = localStorage.getItem('userEmail');
                 const userPhone = localStorage.getItem('userPhone');
                 
-                if (!userEmail && !userPhone) {
-                    console.error('No user email or phone found in localStorage');
-                    return;
-                }
+                if (!userEmail && !userPhone) return;
                 
-                // Get current user data
                 let userData = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
                 
                 if (!userData) return;
                 
-                // Update user data with game state
                 userData = {
                     ...userData,
                     balance: gameState.balance,
@@ -288,49 +252,19 @@
                          gameState.ayo.earnings + 
                          gameState.nairaChase.earnings),
                     gameState: {
-                        memory: { 
-                            attempts: gameState.memory.attempts, 
-                            wins: gameState.memory.wins, 
-                            earnings: gameState.memory.earnings 
-                        },
-                        dice: { 
-                            attempts: gameState.dice.attempts, 
-                            wins: gameState.dice.wins, 
-                            earnings: gameState.dice.earnings 
-                        },
-                        snake: { 
-                            attempts: gameState.snake.attempts, 
-                            score: gameState.snake.score, 
-                            earnings: gameState.snake.earnings 
-                        },
-                        trivia: { 
-                            attempts: gameState.trivia.attempts, 
-                            correct: gameState.trivia.correct, 
-                            earnings: gameState.trivia.earnings,
-                            usedQuestions: gameState.trivia.usedQuestions
-                        },
-                        wheel: { 
-                            attempts: gameState.wheel.attempts, 
-                            wins: gameState.wheel.wins, 
-                            earnings: gameState.wheel.earnings 
-                        },
-                        ayo: { 
-                            attempts: gameState.ayo.attempts, 
-                            wins: gameState.ayo.wins, 
-                            earnings: gameState.ayo.earnings 
-                        },
-                        nairaChase: {
-                            attempts: gameState.nairaChase.attempts,
-                            score: gameState.nairaChase.score,
-                            earnings: gameState.nairaChase.earnings
-                        }
+                        memory: gameState.memory,
+                        dice: gameState.dice,
+                        snake: gameState.snake,
+                        trivia: gameState.trivia,
+                        wheel: gameState.wheel,
+                        ayo: gameState.ayo,
+                        nairaChase: gameState.nairaChase
                     },
                     gameTimerStart: gameState.gameTimerStart
                 };
                 
                 await saveUserData(userData);
                 
-                // Notify parent window (index.html) of balance update
                 if (window.opener) {
                     window.opener.postMessage({
                         type: 'balanceUpdate',
@@ -343,13 +277,11 @@
             }
         }
 
-        // Update balance and notify parent window
         function updateBalance(amount) {
             gameState.balance += amount;
             document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
             saveGameState();
 
-            // Notify parent window (index.html) of the balance update
             if (window.opener) {
                 window.opener.postMessage({
                     type: 'balanceUpdate',
@@ -358,7 +290,6 @@
             }
         }
 
-        // Listen for balance updates from parent window
         window.addEventListener('message', (event) => {
             if (event.data.type === 'balanceUpdate') {
                 gameState.balance = event.data.balance;
@@ -366,19 +297,85 @@
             }
         });
 
-        // [Rest of the game implementations (memoryGame, diceGame, snakeGame, etc.) remain exactly the same]
-        
-        // ========================
-        // INITIALIZATION
-        // ========================
-        
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function showGame(game) {
+            document.querySelectorAll('.game-container').forEach(container => {
+                container.classList.remove('active');
+            });
+            
+            if (game) {
+                const gameContainer = document.getElementById(`${game}Game`);
+                if (gameContainer) {
+                    gameContainer.classList.add('active');
+                    gameContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function updateGameUI() {
+            // Memory game
+            document.getElementById('memoryAttempts').textContent = gameState.memory.attempts;
+            document.getElementById('memoryAttemptsDisplay').textContent = gameState.memory.attempts;
+            document.getElementById('wins').textContent = gameState.memory.wins;
+            document.getElementById('gameEarnings').textContent = gameState.memory.earnings;
+            
+            // Dice game
+            document.getElementById('diceAttempts').textContent = gameState.dice.attempts;
+            document.getElementById('diceAttemptsDisplay').textContent = gameState.dice.attempts;
+            document.getElementById('diceWins').textContent = gameState.dice.wins;
+            document.getElementById('diceEarnings').textContent = gameState.dice.earnings;
+            
+            // Snake game
+            document.getElementById('snakeAttempts').textContent = gameState.snake.attempts;
+            document.getElementById('snakeAttemptsDisplay').textContent = gameState.snake.attempts;
+            document.getElementById('snakeScore').textContent = gameState.snake.score;
+            document.getElementById('snakeEarnings').textContent = gameState.snake.earnings;
+            
+            // Trivia game
+            document.getElementById('triviaAttempts').textContent = gameState.trivia.attempts;
+            document.getElementById('triviaAttemptsDisplay').textContent = gameState.trivia.attempts;
+            document.getElementById('triviaCorrect').textContent = gameState.trivia.correct;
+            document.getElementById('triviaEarnings').textContent = gameState.trivia.earnings;
+            
+            // Wheel game
+            document.getElementById('wheelAttempts').textContent = gameState.wheel.attempts;
+            document.getElementById('wheelAttemptsDisplay').textContent = gameState.wheel.attempts;
+            document.getElementById('wheelWins').textContent = gameState.wheel.wins;
+            document.getElementById('wheelEarnings').textContent = gameState.wheel.earnings;
+            
+            // Ayo game
+            document.getElementById('ayoAttempts').textContent = gameState.ayo.attempts;
+            document.getElementById('ayoAttemptsDisplay').textContent = gameState.ayo.attempts;
+            document.getElementById('ayoWins').textContent = gameState.ayo.wins;
+            document.getElementById('ayoEarnings').textContent = gameState.ayo.earnings;
+            
+            // Naira Chase game
+            document.getElementById('nairaChaseAttempts').textContent = gameState.nairaChase.attempts;
+            document.getElementById('nairaChaseAttemptsDisplay').textContent = gameState.nairaChase.attempts;
+            document.getElementById('nairaChaseGameScore').textContent = gameState.nairaChase.score;
+            document.getElementById('nairaChaseGameEarnings').textContent = gameState.nairaChase.earnings;
+        }
+
+        // [All game implementations (memoryGame, diceGame, snakeGame, etc.) remain exactly the same]
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize game state
             const accessGranted = await initializeGameState();
             
             if (!accessGranted) return;
             
-            // Show main game container
             document.getElementById('mainGameContainer').style.display = 'block';
             
             // Initialize games
@@ -390,11 +387,9 @@
             ayoGame.init();
             nairaChaseGame.init();
             
-            // Update UI with current state
             updateGameUI();
             document.getElementById('balanceDisplay').textContent = gameState.balance.toLocaleString();
             
-            // Set up online/offline detection
             window.addEventListener('online', updateSyncStatus);
             window.addEventListener('offline', updateSyncStatus);
             
@@ -409,17 +404,14 @@
                 }
             }
             
-            // Initial sync check
             updateSyncStatus();
             
-            // Game card click handlers
             document.querySelectorAll('.game-card').forEach(card => {
                 card.addEventListener('click', () => {
                     showGame(card.dataset.game);
                 });
             });
             
-            // Back to games buttons
             document.getElementById('backToGames1').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames2').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames3').addEventListener('click', () => showGame(''));
@@ -428,13 +420,11 @@
             document.getElementById('backToGames6').addEventListener('click', () => showGame(''));
             document.getElementById('backToGames7').addEventListener('click', () => showGame(''));
             
-            // Update FOMO timer
             setInterval(() => {
                 const now = new Date();
                 const minutes = now.getMinutes();
                 const seconds = now.getSeconds();
                 
-                // Show different messages based on time
                 if (minutes % 5 === 0 && seconds === 0) {
                     const messages = [
                         "🔥 PLAY NOW! Big wins happening!",
