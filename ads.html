@@ -575,5 +575,21 @@
             window.location.href = finalRedirectUrl;
         }
     </script>
+<script>
+  // Save data (works on all pages)
+  function saveData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  // Load data (works on all pages)
+  function loadData(key) {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  }
+
+  // Example: Save user settings
+  saveData("theme", "dark"); // Saves "dark" theme
+  const theme = loadData("theme"); // Gets "dark" back
+</script>
 </body>
 </html>
