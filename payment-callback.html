@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Verification - AI REF-TRADERS</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/api.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div id="loadingState">
+                <h2>Verifying Payment</h2>
+                <p>Please wait while we verify your payment...</p>
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="successState" style="display: none;">
+                <h2>Payment Successful!</h2>
+                <p>Your account has been verified successfully.</p>
+                <p>₦500 has been added to your withdrawable balance.</p>
+                <button class="primary" onclick="redirectToDashboard()">Continue to Dashboard</button>
+            </div>
+            
+            <div id="errorState" style="display: none;">
+                <h2>Payment Verification Failed</h2>
+                <p id="errorMessage">There was an error verifying your payment.</p>
+                <button class="primary" onclick="redirectToDashboard()">Return to Dashboard</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Get reference from URL query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const reference = urlParams.get('reference');
+            
+            if (!reference) {
+                showError('No payment reference found');
+                return;
+            }
+            
+            try {
+                // Get user data from localStorage
+                const userData = JSON.parse(localStorage.getItem('user_data'));
+                
+                if (!userData) {
+                    showError('User data not found. Please log in again.');
+                    return;
+                }
+                
+                // Verify payment with backend
+                const result = await window.api.verifyPayment(reference, userData.id);
+                
+                if (result.success) {
+                    // Payment verification successful
+                    showSuccess();
+                    
+                    // Update user data in localStorage
+                    userData.is_verified = true;
+                    localStorage.setItem('user_data', JSON.stringify(userData));
+                } else {
+                    showError(result.error || 'Payment verification failed');
+                }
+            } catch (error) {
+                console.error('Error verifying payment:', error);
+                showError('An error occurred while verifying your payment');
+            }
+        });
+        
+        function showSuccess() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('successState').style.display = 'block';
+        }
+        
+        function showError(message) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+        
+        function redirectToDashboard() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
