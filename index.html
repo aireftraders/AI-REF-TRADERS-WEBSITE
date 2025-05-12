@@ -41,6 +41,11 @@
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <!-- Include Paystack Payment -->
     <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- Add Firebase and Paystack scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://js.paystack.co/v1/inline.js"></script>
     <style>
         /* Splash Screen Styles */
         .splash-screen {
@@ -2309,7 +2314,8 @@
                 read: [2], // IDs of read announcements
                 unread: [1] // IDs of unread announcements
             },
-            referrer: null
+            referrer: null,
+            firebaseSynced: false // Flag to track sync status
         };
         
         // Announcements data
@@ -2373,7 +2379,8 @@
                             read: [2],
                             unread: [1]
                         },
-                        referrer: null
+                        referrer: null,
+                        firebaseSynced: false
                     };
                     
                     // Add new user to database
@@ -2906,12 +2913,29 @@
             }
         }
 
-        // Your existing splash screen initialization function
+        // Fix for splash screen progress bar and hanging issue
         function initSplashScreen() {
             const splashScreen = document.getElementById('splashScreen');
-            const progressBar = document.getElementById('progressBar');
+            const progressBarContainer = document.createElement('div');
+            const progressBar = document.createElement('div');
             const loadingText = document.getElementById('loadingText');
-            
+
+            // Add progress bar container and bar
+            progressBarContainer.style.width = '100%';
+            progressBarContainer.style.height = '5px';
+            progressBarContainer.style.backgroundColor = '#e0e0e0';
+            progressBarContainer.style.borderRadius = '5px';
+            progressBarContainer.style.overflow = 'hidden';
+            progressBarContainer.style.marginTop = '20px';
+
+            progressBar.style.width = '0%';
+            progressBar.style.height = '100%';
+            progressBar.style.backgroundColor = '#6C5CE7';
+            progressBar.style.transition = 'width 0.3s ease';
+
+            progressBarContainer.appendChild(progressBar);
+            splashScreen.querySelector('.splash-container').appendChild(progressBarContainer);
+
             // Professional loading messages
             const loadingMessages = [
                 "Initializing secure trading environment",
@@ -2921,25 +2945,24 @@
                 "Optimizing trading algorithms",
                 "Finalizing security protocols"
             ];
-            
-            // Simulate professional loading sequence
+
             let progress = 0;
             let currentMessage = 0;
-            
+
             function updateProgress() {
                 // Increment progress with realistic variation
                 const increment = 2 + Math.random() * 3;
                 progress = Math.min(progress + increment, 100);
-                
+
                 progressBar.style.width = progress + '%';
-                
+
                 // Update loading message at specific intervals
                 const messageThresholds = [15, 30, 45, 60, 75, 90];
                 if (currentMessage < messageThresholds.length && progress >= messageThresholds[currentMessage]) {
                     loadingText.textContent = loadingMessages[currentMessage];
                     currentMessage++;
                 }
-                
+
                 if (progress < 100) {
                     // Vary timing based on progress
                     const timing = progress < 30 || progress > 80 ? 100 : 200;
@@ -2950,7 +2973,7 @@
                     completeLoading();
                 }
             }
-            
+
             function completeLoading() {
                 // Add slight delay before transition
                 setTimeout(() => {
@@ -2961,7 +2984,7 @@
                     }, 800);
                 }, 500);
             }
-            
+
             // Start loading process
             setTimeout(updateProgress, 800);
         }
@@ -3095,7 +3118,8 @@
                             read: [2],
                             unread: [1]
                         },
-                        referrer: null
+                        referrer: null,
+                        firebaseSynced: false
                     };
                     
                     await db.users.add(newUser);
