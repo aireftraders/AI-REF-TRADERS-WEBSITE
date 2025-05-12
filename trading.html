@@ -1,563 +1,1424 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Ref_Traders - Profile</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AI REF-TRADERS - AI Trading</title>
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --primary: #3a86ff;
-            --secondary: #8338ec;
-            --success: #06d6a0;
-            --danger: #ef476f;
-            --warning: #ffd166;
-            --dark: #212529;
-            --light: #f8f9fa;
-            --gray: #6c757d;
+            --primary: #6C5CE7;
+            --secondary: #00CEFF;
+            --dark: #2D3436;
+            --light: #F5F6FA;
+            --success: #00B894;
+            --danger: #D63031;
+            --warning: #FDCB6E;
+            --nigerian-green: #008753;
+            --nigerian-white: #FFFFFF;
+            --nigerian-green-light: #E5F5EE;
+            
+            /* Dark mode variables */
+            --bg-color: #F5F6FA;
+            --text-color: #2D3436;
+            --card-bg: #FFFFFF;
+            --border-color: #e0e0e0;
+            --shadow-color: rgba(0,0,0,0.1);
+            --input-bg: #FFFFFF;
         }
 
         [data-theme="dark"] {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #f5f5f5;
-            --border-color: #333;
-            --hover-color: #2a2a2a;
+            --bg-color: #1A1A1A;
+            --text-color: #F5F6FA;
+            --card-bg: #2D2D2D;
+            --border-color: #444;
+            --shadow-color: rgba(0,0,0,0.3);
+            --input-bg: #333;
+            --primary: #7D6AE8;
+            --secondary: #00B4D8;
+            --dark: #E0E0E0;
+            --light: #2D2D2D;
+            --nigerian-green-light: #1E3A2F;
         }
-
-        [data-theme="light"] {
-            --bg-color: #f5f5f5;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #ddd;
-            --hover-color: #f0f0f0;
-        }
-
-        * {
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
-
+        
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+            max-width: 100%;
+            padding: 15px;
+            padding-bottom: 70px;
         }
-
-        .header {
+        
+        .app-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+        
+        .user-chip {
+            background: var(--nigerian-green);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+        }
+        
+        .nigeria-badge {
+            background: linear-gradient(to right, var(--nigerian-green) 33%, var(--nigerian-white) 33%, var(--nigerian-white) 66%, var(--nigerian-green) 66%);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        
+        .status-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .status-card.accent {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        progress {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 10px;
+            appearance: none;
+        }
+        
+        progress::-webkit-progress-bar {
+            background-color: rgba(255,255,255,0.3);
+            border-radius: 4px;
+        }
+        
+        progress::-webkit-progress-value {
+            background-color: white;
+            border-radius: 4px;
+        }
+        
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        
+        button:active {
+            transform: scale(0.98);
+        }
+        
+        .primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .profit-chart {
+            display: flex;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .chart-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            position: relative;
+        }
+        
+        .chart-bar.user {
+            background-color: var(--success);
+        }
+        
+        .chart-bar.company {
+            background-color: var(--primary);
+        }
+        
+        .chart-bar.system {
+            background-color: var(--dark);
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            color: var(--text-color);
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .notification.show {
+            opacity: 1;
+        }
+        
+        /* Trading Guide Styles */
+        .trading-guide {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .guide-section {
+            margin-bottom: 20px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
         }
-
-        .profile-header {
+        
+        .guide-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .guide-title {
+            color: var(--primary);
+            margin-top: 0;
             display: flex;
             align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 10px;
         }
-
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary);
-        }
-
-        .profile-info h1 {
+        
+        .guide-icon {
             font-size: 24px;
-            margin-bottom: 5px;
         }
-
-        .profile-info p {
-            color: var(--gray);
-            margin-bottom: 5px;
+        
+        .guide-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 10px;
         }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 20px;
-            font-size: 12px;
+        
+        .guide-bullet {
+            font-size: 20px;
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        .profit-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .profit-table th, .profit-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .profit-table th {
+            background: var(--light);
             font-weight: bold;
-            margin-left: 10px;
+            color: var(--text-color);
         }
-
-        .badge-primary {
+        
+        .profit-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .time-emoji {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        .profit-emoji {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            width: 100%;
+            height: 250px;
+            margin: 20px 0;
+        }
+        
+        /* Trading Activity */
+        .trading-activity {
+            margin-top: 20px;
+        }
+        
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .activity-time {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .activity-profit {
+            font-weight: bold;
+            color: var(--success);
+        }
+        
+        .activity-loss {
+            font-weight: bold;
+            color: var(--danger);
+        }
+        
+        /* Ads Progress */
+        .ads-progress-container {
+            margin-top: 10px;
+        }
+        
+        .ads-progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: var(--light);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .ads-progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .ads-progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
+        
+        /* Market Indicators */
+        .market-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+        }
+        
+        .indicator {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--card-bg);
+            flex: 1;
+            margin: 0 5px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .indicator-value {
+            font-weight: bold;
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        
+        .indicator-up {
+            color: var(--success);
+        }
+        
+        .indicator-down {
+            color: var(--danger);
+        }
+        
+        .indicator-neutral {
+            color: var(--text-color);
+        }
+        
+        /* Navigation Bar */
+        .navigation-bar {
             background-color: var(--primary);
             color: white;
-        }
-
-        .badge-success {
-            background-color: var(--success);
-            color: var(--dark);
-        }
-
-        .badge-warning {
-            background-color: var(--warning);
-            color: var(--dark);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            color: var(--gray);
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-card .value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-card .change {
-            font-size: 14px;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
             display: flex;
-            align-items: center;
+            justify-content: center;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .change.positive {
+        .navigation-bar ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navigation-bar li {
+            display: inline;
+        }
+
+        .navigation-bar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .navigation-bar a:hover {
+            background-color: var(--secondary);
+        }
+
+        .navigation-bar a.active {
+            background-color: var(--secondary);
+        }
+
+        /* Trading Instruments Styles */
+        .trading-instruments {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .instrument-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .instrument-name {
+            font-weight: bold;
+        }
+
+        .instrument-value {
+            font-weight: bold;
+        }
+
+        .instrument-up {
             color: var(--success);
         }
 
-        .change.negative {
+        .instrument-down {
             color: var(--danger);
         }
 
-        .section {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-title {
-            font-size: 18px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .progress-container {
-            margin-bottom: 15px;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .progress-bar {
-            height: 10px;
-            background-color: var(--border-color);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            border-radius: 5px;
-        }
-
-        .referral-box {
-            display: flex;
-            align-items: center;
-            background-color: var(--hover-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .referral-code {
-            font-family: monospace;
-            font-size: 18px;
-            letter-spacing: 2px;
-            margin-right: 15px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2a75e6;
-        }
-
-        .btn-success {
-            background-color: var(--success);
-            color: var(--dark);
-        }
-
-        .btn-success:hover {
-            background-color: #05c494;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab.active {
-            border-bottom: 2px solid var(--primary);
-            font-weight: bold;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
+        /* Theme Toggle */
         .theme-toggle {
-            background: none;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .theme-toggle-btn {
+            background: var(--primary);
+            color: white;
             border: none;
-            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 14px;
         }
 
-        .ai-status {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .status-active {
-            background-color: var(--success);
-            box-shadow: 0 0 10px var(--success);
-        }
-
-        .status-inactive {
-            background-color: var(--danger);
-        }
-
-        .bank-info {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .bank-icon {
-            font-size: 24px;
-            margin-right: 15px;
-            color: var(--primary);
-        }
-
-        .verification-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: var(--success);
-            color: var(--dark);
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: var(--card-bg);
             padding: 5px 10px;
             border-radius: 20px;
-            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid var(--border-color);
+        }
+
+        .language-selector label {
             font-size: 14px;
+        }
+
+        .language-selector select {
+            background: var(--input-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 3px;
+        }
+
+        @media (max-width: 600px) {
+            .action-bar {
+                flex-direction: column;
+            }
+            
+            .profit-table {
+                font-size: 14px;
+            }
+            
+            .profit-table th, .profit-table td {
+                padding: 8px 10px;
+            }
+            
+            .market-indicators {
+                flex-wrap: wrap;
+            }
+            
+            .indicator {
+                min-width: calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+
+            .theme-toggle, .language-selector {
+                position: static;
+                margin: 10px;
+            }
+
+            .theme-toggle-btn, .language-selector {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>AI Ref_Traders</h1>
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
-        </div>
-
-        <div class="profile-header">
-            <img src="https://ui-avatars.com/api/?name=John+Doe&background=3a86ff&color=fff" alt="Avatar" class="avatar">
-            <div class="profile-info">
-                <h1>John Doe <span class="badge badge-success">PRO</span></h1>
-                <p>@johndoe</p>
-                <p><i class="fas fa-envelope"></i> us****@example.com</p>
-                <p><i class="fab fa-telegram"></i> Telegram: *****6789</p>
-            </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Withdrawable Balance</h3>
-                <div class="value">$7,100.00</div>
-                <button class="btn btn-primary">Withdraw</button>
-            </div>
-            <div class="stat-card">
-                <h3>AI Trading Capital</h3>
-                <div class="value">$35,000.00</div>
-                <div class="change positive">
-                    <i class="fas fa-arrow-up"></i> $5,600.00 today
-                </div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Profit</h3>
-                <div class="value">$9,500.00</div>
-                <div class="change positive">
-                    <i class="fas fa-arrow-up"></i> 12.5% all time
-                </div>
-            </div>
-            <div class="stat-card">
-                <h3>Referral Earnings</h3>
-                <div class="value">3 users</div>
-                <div class="change positive">
-                    <i class="fas fa-arrow-up"></i> 2 active
-                </div>
-            </div>
-        </div>
-
-        <div class="tabs">
-            <div class="tab active" data-tab="dashboard">Dashboard</div>
-            <div class="tab" data-tab="ai-trading">AI Trading</div>
-            <div class="tab" data-tab="referrals">Referrals</div>
-            <div class="tab" data-tab="settings">Settings</div>
-        </div>
-
-        <div class="tab-content active" id="dashboard">
-            <div class="section">
-                <h2 class="section-title">Today's Activity</h2>
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>Ad Sessions</span>
-                        <span>2/5</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 40%"></div>
-                    </div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>Games Played</span>
-                        <span>8/10</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 80%"></div>
-                    </div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-label">
-                        <span>Login Streak</span>
-                        <span>4 days</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 57%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section">
-                <h2 class="section-title">Referral Program</h2>
-                <div class="referral-box">
-                    <div>
-                        <h3>Your Referral Code</h3>
-                        <div class="referral-code">ABC123</div>
-                    </div>
-                    <button class="btn btn-primary">Copy</button>
-                </div>
-                <p>Earn 10% of your referrals' profits. You were referred by <strong>XYZ999</strong>.</p>
-            </div>
-        </div>
-
-        <div class="tab-content" id="ai-trading">
-            <div class="section">
-                <h2 class="section-title">AI Trading Status</h2>
-                <div class="ai-status">
-                    <div class="status-indicator status-active"></div>
-                    <div>
-                        <h3>AI Trading Active</h3>
-                        <p>Your AI trader is currently running</p>
-                    </div>
-                </div>
-                <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
-                    <div class="stat-card">
-                        <h3>Today's Profit</h3>
-                        <div class="value">$5,600.00</div>
-                        <div class="change positive">
-                            <i class="fas fa-arrow-up"></i> 16% ROI
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total Capital</h3>
-                        <div class="value">$35,000.00</div>
-                        <div class="change positive">
-                            <i class="fas fa-arrow-up"></i> $9,500.00 all time
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-success" style="width: 100%; margin-top: 15px;">
-                    <i class="fas fa-chart-line"></i> View Trading Dashboard
-                </button>
-            </div>
-        </div>
-
-        <div class="tab-content" id="referrals">
-            <div class="section">
-                <h2 class="section-title">Your Referrals (3)</h2>
-                <div style="margin-bottom: 15px;">
-                    <div class="progress-label">
-                        <span>Referral Tier Progress</span>
-                        <span>3/10</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 30%"></div>
-                    </div>
-                    <p style="margin-top: 5px; font-size: 14px;">Refer 7 more users to unlock Tier 2 bonuses</p>
-                </div>
-                <div style="background-color: var(--hover-color); padding: 15px; border-radius: 8px;">
-                    <h3 style="margin-bottom: 10px;">Referral Link</h3>
-                    <p style="margin-bottom: 10px; word-break: break-all;">https://aireftraders.com/ref/ABC123</p>
-                    <button class="btn btn-primary">Copy Link</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-content" id="settings">
-            <div class="section">
-                <h2 class="section-title">Account Settings</h2>
-                <div class="bank-info">
-                    <i class="fas fa-university bank-icon"></i>
-                    <div>
-                        <h3>Bank Account</h3>
-                        <p>Account ****6789 (Verified)</p>
-                    </div>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">Verification Status</h3>
-                    <div class="verification-badge">
-                        <i class="fas fa-check-circle" style="margin-right: 5px;"></i>
-                        Verified Account
-                    </div>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">Appearance</h3>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <button class="btn" data-theme="light">
-                            <i class="fas fa-sun"></i> Light Mode
-                        </button>
-                        <button class="btn" data-theme="dark">
-                            <i class="fas fa-moon"></i> Dark Mode
-                        </button>
-                    </div>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 10px;">Language</h3>
-                    <select style="padding: 8px; border-radius: 5px; background-color: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); width: 200px;">
-                        <option value="english">English</option>
-                        <option value="spanish">Spanish</option>
-                        <option value="french">French</option>
-                        <option value="german">German</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle">
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span class="theme-icon" id="themeIcon">🌙</span>
+            <span id="themeText">Dark Mode</span>
+        </button>
     </div>
 
-    <script>
-        // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <label for="languageDropdown">🌐</label>
+        <select id="languageDropdown">
+            <option value="en">English</option>
+            <option value="ha">Hausa</option>
+            <option value="yo">Yoruba</option>
+            <option value="ig">Igbo</option>
+        </select>
+    </div>
+
+    <div class="container">
+        <div class="app-bar">
+            <h1>AI REF-TRADERS <span class="nigeria-badge">AI TRADING</span></h1>
+            <div class="user-chip">
+                <span>📊 ₦<span id="balance">800</span></span>
+                <span id="verifiedBadge">❌</span>
+            </div>
+        </div>
         
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        <div class="status-card accent">
+            <h3>🚀 Trading Status</h3>
+            <p id="tradingStatus">AI Bot: <b>Inactive</b> (Complete 6 referrals and 20 ads)</p>
+            <progress id="referralProgress" value="0" max="6"></progress>
+            <small><span id="completedReferrals">0</span>/6 Referrals</small>
             
-            // Save preference to localStorage
-            localStorage.setItem('theme', newTheme);
-        });
-
-        // Check for saved theme preference
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        html.setAttribute('data-theme', savedTheme);
-        themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-
-        // Tab functionality
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // Remove active class from all tabs and content
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            <!-- Ads progress bar -->
+            <div class="ads-progress-container">
+                <small><span id="adsWatched">0</span>/20 Ads Watched</small>
+                <div class="ads-progress-bar">
+                    <div class="ads-progress-fill" id="adsProgressFill" style="width: 0%"></div>
+                    <div class="ads-progress-text" id="adsProgressText">0/20</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Market Indicators -->
+        <div class="market-indicators">
+            <div class="indicator">
+                <div>BTC</div>
+                <div class="indicator-value indicator-up" id="btcPrice">Loading...</div>
+                <div id="btcChange">0%</div>
+            </div>
+            <div class="indicator">
+                <div>ETH</div>
+                <div class="indicator-value indicator-up" id="ethPrice">Loading...</div>
+                <div id="ethChange">0%</div>
+            </div>
+            <div class="indicator">
+                <div>GOLD</div>
+                <div class="indicator-value indicator-neutral" id="goldPrice">Loading...</div>
+                <div id="goldChange">0%</div>
+            </div>
+            <div class="indicator">
+                <div>OIL</div>
+                <div class="indicator-value indicator-down" id="oilPrice">Loading...</div>
+                <div id="oilChange">0%</div>
+            </div>
+        </div>
+        
+        <!-- Trading Chart -->
+        <div class="status-card">
+            <h3>📈 Trading Performance</h3>
+            <div class="chart-container">
+                <canvas id="tradingChart"></canvas>
+            </div>
+            <p id="chartTimeframe">Showing last 24 hours</p>
+        </div>
+        
+        <!-- Trading Instruments -->
+        <div class="trading-instruments">
+            <h3>📊 Trading Instruments</h3>
+            <div class="instrument-item">
+                <div class="instrument-name">Daily ROI</div>
+                <div class="instrument-value" id="dailyRoi">20-50%</div>
+            </div>
+            <div class="instrument-item">
+                <div class="instrument-name">Risk Level</div>
+                <div class="instrument-value" id="riskLevel">Medium</div>
+            </div>
+            <div class="instrument-item">
+                <div class="instrument-name">Strategy</div>
+                <div class="instrument-value" id="strategy">AI-Powered Algorithm</div>
+            </div>
+            <div class="instrument-item">
+                <div class="instrument-name">Markets</div>
+                <div class="instrument-value" id="markets">Crypto, Forex, Commodities</div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <h3>📊 Trading Dashboard</h3>
+            <p id="tradingCapital">Trading Capital: ₦800</p>
+            <p id="dailyProfit">Daily Profit: ₦0</p>
+            <p id="totalProfit">Total Profit: ₦0</p>
+            <p id="withdrawableProfit">Withdrawable: ₦0</p>
+            <button id="toggleTrading" class="primary" style="background-color: var(--danger); color: white;" disabled>Activate Trading</button>
+        </div>
+        
+        <!-- Trading Activity Log -->
+        <div class="status-card">
+            <h3>📝 Trading Activity</h3>
+            <div class="trading-activity" id="tradingActivity">
+                <div class="activity-item">
+                    <div>
+                        <span>No trading activity yet</span>
+                        <div class="activity-time">Complete requirements to activate trading</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-card">
+            <h3>📊 Profit Distribution</h3>
+            <div class="profit-chart">
+                <div class="chart-bar user" style="width: 70%;">You (70%)</div>
+                <div class="chart-bar company" style="width: 25%;">Company (25%)</div>
+                <div class="chart-bar system" style="width: 5%;">System (5%)</div>
+            </div>
+            <p>70% of all profits go directly to you</p>
+        </div>
+        
+        <div class="status-card">
+            <h3>💰 Payment Circle</h3>
+            <p>Batch: <span id="paidUsers">0</span>/1,000 users</p>
+            <progress id="paymentCircleProgress" value="0" max="1000"></progress>
+            <small>Next payment batch at 1,000 users</small>
+        </div>
+        
+        <!-- Trading Guide -->
+        <div class="trading-guide">
+            <div class="guide-section">
+                <h3 class="guide-title"><span class="guide-icon">📚</span> AI Trading Guide</h3>
+                <p>Learn how to maximize your earnings with our AI trading system:</p>
+            </div>
+            
+            <div class="guide-section">
+                <h3 class="guide-title"><span class="guide-icon">🔘</span> Trading Button Behavior</h3>
+                <div class="guide-item">
+                    <div class="guide-bullet">🔴</div>
+                    <div><b>Red Button</b> - "Activate Trading" means trading is currently OFF</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-bullet">🟢</div>
+                    <div><b>Green Button</b> - "Trading Activated" means trading is currently ON</div>
+                </div>
+            </div>
+            
+            <div class="guide-section">
+                <h3 class="guide-title"><span class="guide-icon">⏳</span> Daily Reset</h3>
+                <div class="guide-item">
+                    <div class="guide-bullet">🔄</div>
+                    <div>Trading automatically turns OFF at 12:00 AM (Nigerian Time)</div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-bullet">👀</div>
+                    <div>To turn it back ON, you must watch 20 ads daily</div>
+                </div>
+            </div>
+            
+            <div class="guide-section">
+                <h3 class="guide-title"><span class="guide-icon">💵</span> Profit Timing Strategy</h3>
+                <p>Your profit percentage depends on when you complete your 20 daily ads:</p>
                 
-                // Add active class to clicked tab and corresponding content
-                tab.classList.add('active');
-                const tabId = tab.getAttribute('data-tab');
-                document.getElementById(tabId).classList.add('active');
-            });
+                <table class="profit-table">
+                    <thead>
+                        <tr>
+                            <th>Time Range</th>
+                            <th>Profit %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="time-emoji">🌅</span> 12:01 AM – 7:00 AM</td>
+                            <td><span class="profit-emoji">🔥</span> 35% – 50%</td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-emoji">🌞</span> 8:00 AM – 4:00 PM</td>
+                            <td><span class="profit-emoji">⚡</span> 21% – 34%</td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-emoji">🌆</span> 5:00 PM – 11:30 PM</td>
+                            <td><span class="profit-emoji">💸</span> 20% Flat</td>
+                        </tr>
+                        <tr>
+                            <td><span class="time-emoji">🚫</span> No Ads Watched</td>
+                            <td><span class="profit-emoji">❌</span> 0% Profit</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="action-bar">
+            <button class="primary" id="bankBindingBtn" onclick="window.location.href='index.html#bankModal'">🏦 Bank Binding</button>
+            <button class="secondary" id="withdrawBtn" onclick="window.location.href='index.html#withdrawalModal'">📤 Withdraw</button>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span id="notificationText">Notification message</span>
+    </div>
+
+    <nav class="navigation-bar">
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="trading.html" class="active">AI Trading</a></li>
+            <li><a href="ads.html">Ads</a></li>
+        </ul>
+    </nav>
+    
+    <script>
+        // Initialize Dexie database
+        const db = new Dexie("AI_REF_TRADERS_DB");
+        
+        // Define database schema (must match index.html)
+        db.version(1).stores({
+            users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
+            announcements: '++id, title, content, time, unread',
+            supportTickets: '++id, userId, subject, message, status, createdAt',
+            transactions: '++id, userId, type, amount, status, timestamp'
         });
 
-        // Theme buttons in settings
-        document.querySelectorAll('[data-theme]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const theme = btn.getAttribute('data-theme');
-                html.setAttribute('data-theme', theme);
-                localStorage.setItem('theme', theme);
-                themeToggle.innerHTML = theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        // DOM Elements
+        const elements = {
+            balance: document.getElementById('balance'),
+            verifiedBadge: document.getElementById('verifiedBadge'),
+            tradingStatus: document.getElementById('tradingStatus'),
+            referralProgress: document.getElementById('referralProgress'),
+            completedReferrals: document.getElementById('completedReferrals'),
+            adsWatched: document.getElementById('adsWatched'),
+            adsProgressFill: document.getElementById('adsProgressFill'),
+            adsProgressText: document.getElementById('adsProgressText'),
+            toggleTrading: document.getElementById('toggleTrading'),
+            tradingCapital: document.getElementById('tradingCapital'),
+            dailyProfit: document.getElementById('dailyProfit'),
+            totalProfit: document.getElementById('totalProfit'),
+            withdrawableProfit: document.getElementById('withdrawableProfit'),
+            bankBindingBtn: document.getElementById('bankBindingBtn'),
+            withdrawBtn: document.getElementById('withdrawBtn'),
+            tradingActivity: document.getElementById('tradingActivity'),
+            btcPrice: document.getElementById('btcPrice'),
+            btcChange: document.getElementById('btcChange'),
+            ethPrice: document.getElementById('ethPrice'),
+            ethChange: document.getElementById('ethChange'),
+            goldPrice: document.getElementById('goldPrice'),
+            goldChange: document.getElementById('goldChange'),
+            oilPrice: document.getElementById('oilPrice'),
+            oilChange: document.getElementById('oilChange'),
+            dailyRoi: document.getElementById('dailyRoi'),
+            riskLevel: document.getElementById('riskLevel'),
+            strategy: document.getElementById('strategy'),
+            markets: document.getElementById('markets'),
+            themeToggle: document.getElementById('themeToggle'),
+            themeIcon: document.getElementById('themeIcon'),
+            themeText: document.getElementById('themeText'),
+            languageDropdown: document.getElementById('languageDropdown'),
+            notification: document.getElementById('notification'),
+            notificationText: document.getElementById('notificationText'),
+            paidUsers: document.getElementById('paidUsers'),
+            paymentCircleProgress: document.getElementById('paymentCircleProgress')
+        };
+
+        // Trading chart variables
+        let tradingChart;
+        let tradingActivityLog = [];
+        let lastPrices = {};
+        
+        // Theme management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            
+            if (theme === 'dark') {
+                elements.themeIcon.textContent = '☀️';
+                elements.themeText.textContent = 'Light Mode';
+            } else {
+                elements.themeIcon.textContent = '🌙';
+                elements.themeText.textContent = 'Dark Mode';
+            }
+        }
+        
+        // Language management
+        function setLanguage(lang) {
+            localStorage.setItem('language', lang);
+            // In a real app, you would update all text elements here
+            // For this demo, we'll just show a notification
+            showNotification(`Language set to ${lang}`);
+        }
+        
+        // Fetch live prices from CoinGecko API
+        async function fetchLivePrices() {
+            try {
+                // Fetch crypto prices from CoinGecko
+                const cryptoResponse = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');
+                const cryptoData = await cryptoResponse.json();
+
+                // Update prices
+                lastPrices = {
+                    btc: {
+                        price: cryptoData.bitcoin.usd,
+                        change: cryptoData.bitcoin.usd_24h_change
+                    },
+                    eth: {
+                        price: cryptoData.ethereum.usd,
+                        change: cryptoData.ethereum.usd_24h_change
+                    },
+                    gold: {
+                        price: 1800 + (Math.random() - 0.5) * 50,
+                        change: (Math.random() - 0.5) * 2
+                    },
+                    oil: {
+                        price: 80 + (Math.random() - 0.5) * 5,
+                        change: (Math.random() - 0.5) * 3
+                    }
+                };
+
+                updateMarketIndicators();
+            } catch (error) {
+                console.error('Error fetching live prices:', error);
+                // Fallback to simulated data if API fails
+                lastPrices = {
+                    btc: {
+                        price: 93000 + (Math.random() - 0.5) * 2000,
+                        change: (Math.random() - 0.4) * 5
+                    },
+                    eth: {
+                        price: 3000 + (Math.random() - 0.5) * 200,
+                        change: (Math.random() - 0.4) * 5
+                    },
+                    gold: {
+                        price: 1800 + (Math.random() - 0.5) * 50,
+                        change: (Math.random() - 0.5) * 2
+                    },
+                    oil: {
+                        price: 80 + (Math.random() - 0.5) * 5,
+                        change: (Math.random() - 0.5) * 3
+                    }
+                };
+                updateMarketIndicators();
+            }
+        }
+        
+        // Load user data from IndexedDB
+        async function loadUserData() {
+            try {
+                // For demo purposes, we'll use a default user if no Telegram user
+                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
+                const user = await db.users.where('telegramId').equals(userId).first();
+                
+                if (user) {
+                    return user;
+                } else {
+                    // Create new user with default values
+                    const newUser = {
+                        telegramId: userId,
+                        balance: 800,
+                        referrals: 0,
+                        adsWatched: 0,
+                        tradingActive: false,
+                        verified: false,
+                        tradingCapital: 800,
+                        dailyProfit: 0,
+                        totalProfit: 0,
+                        withdrawableProfit: 0,
+                        totalWithdrawn: 0,
+                        bankDetails: null,
+                        paymentCircle: { current: 0, total: 1000 },
+                        gameEarnings: 0,
+                        lastAdWatchTime: null,
+                        lastTradingUpdate: null
+                    };
+                    
+                    await db.users.add(newUser);
+                    return newUser;
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                return null;
+            }
+        }
+
+        // Save user data to IndexedDB
+        async function saveUserData(userData) {
+            try {
+                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
+                await db.users.where('telegramId').equals(userId).modify(userData);
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
+        }
+
+        // Update UI with current data
+        async function updateUI() {
+            const userData = await loadUserData();
+            if (!userData) return;
+            
+            // Ensure trading capital matches the balance (from referrals, game play, daily streaks)
+            userData.tradingCapital = userData.balance;
+            
+            // Update all displays
+            elements.balance.textContent = userData.balance.toLocaleString();
+            elements.tradingCapital.textContent = 'Trading Capital: ₦' + userData.tradingCapital.toLocaleString();
+            elements.dailyProfit.textContent = 'Daily Profit: ₦' + userData.dailyProfit.toLocaleString();
+            elements.totalProfit.textContent = 'Total Profit: ₦' + (userData.totalProfit + (userData.totalWithdrawn || 0)).toLocaleString();
+            elements.withdrawableProfit.textContent = 'Withdrawable: ₦' + userData.withdrawableProfit.toLocaleString();
+            
+            // Update referral and ads status
+            elements.completedReferrals.textContent = userData.referrals;
+            elements.adsWatched.textContent = userData.adsWatched;
+            elements.referralProgress.value = userData.referrals;
+            
+            // Update ads progress bar
+            const adsPercentage = (userData.adsWatched / 20) * 100;
+            elements.adsProgressFill.style.width = `${adsPercentage}%`;
+            elements.adsProgressText.textContent = `${userData.adsWatched}/20`;
+            
+            // Update verification status
+            elements.verifiedBadge.textContent = userData.verified ? '✅' : '❌';
+            elements.paidUsers.textContent = userData.paymentCircle.current.toLocaleString();
+            elements.paymentCircleProgress.value = userData.paymentCircle.current;
+            
+            // Trading status
+            if (userData.referrals >= 6 && userData.adsWatched >= 20) {
+                userData.tradingActive = true;
+                elements.tradingStatus.innerHTML = 'AI Bot: <b>Active</b> (24h Profit: ₦' + userData.dailyProfit.toLocaleString() + ')';
+                elements.toggleTrading.textContent = 'Deactivate Trading';
+                elements.toggleTrading.disabled = false;
+                elements.toggleTrading.style.backgroundColor = 'var(--success)';
+            } else {
+                userData.tradingActive = false;
+                elements.tradingStatus.innerHTML = 'AI Bot: <b>Inactive</b> (Complete 6 referrals and 20 ads)';
+                elements.toggleTrading.textContent = 'Activate Trading';
+                elements.toggleTrading.disabled = userData.referrals < 6 || userData.adsWatched < 20;
+                elements.toggleTrading.style.backgroundColor = 'var(--danger)';
+            }
+            
+            // Save any changes to user data
+            await saveUserData(userData);
+            
+            // Check for daily reset
+            checkDailyReset();
+        }
+
+        // Check if we need to reset trading for a new day
+        async function checkDailyReset() {
+            const userData = await loadUserData();
+            if (!userData) return;
+            
+            const today = new Date().toLocaleDateString();
+            const now = new Date();
+            
+            // Check if we've crossed midnight (Nigerian Time)
+            if (userData.lastTradingUpdate !== today) {
+                // New day - reset trading
+                userData.tradingActive = false;
+                userData.dailyProfit = 0;
+                userData.lastTradingUpdate = today;
+                userData.adsWatched = 0;
+                await saveUserData(userData);
+                updateUI();
+                showNotification('New day! Watch 20 ads to activate trading.');
+            }
+        }
+
+        // Get current profit percentage based on last ad watch time
+        function getCurrentProfitPercentage(userData) {
+            if (!userData.lastAdWatchTime || userData.adsWatched < 20) {
+                return 0; // No ads watched or not enough ads
+            }
+            
+            const watchTime = new Date(userData.lastAdWatchTime);
+            const hours = watchTime.getHours();
+            
+            if (hours >= 0 && hours < 7) {
+                // Early morning bonus (35-50%)
+                return Math.random() * 0.15 + 0.35;
+            } else if (hours >= 7 && hours < 16) {
+                // Daytime rate (21-34%)
+                return Math.random() * 0.13 + 0.21;
+            } else {
+                // Evening rate (20% flat)
+                return 0.20;
+            }
+        }
+
+        // Simulate trading profits
+        async function simulateTrading() {
+            const userData = await loadUserData();
+            if (!userData) return;
+            
+            if (userData.tradingActive && userData.tradingCapital > 0) {
+                // Get current profit percentage based on ad watch time
+                const dailyReturn = getCurrentProfitPercentage(userData);
+                
+                // Calculate profits based on trading capital
+                const profit = userData.tradingCapital * dailyReturn;
+                userData.dailyProfit = profit;
+                userData.totalProfit += profit;
+                
+                // Distribute profits (70% to user)
+                const userShare = profit * 0.7;
+                userData.withdrawableProfit += userShare;
+                
+                // Update total balance to match trading capital (only from referrals, games, streaks)
+                userData.balance = userData.tradingCapital;
+                
+                // Add to activity log
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                tradingActivityLog.unshift({
+                    type: 'profit',
+                    amount: userShare,
+                    time: timeString,
+                    message: `AI Trading Profit (${Math.round(dailyReturn * 100)}%)`
+                });
+                
+                // Keep only last 10 activities
+                if (tradingActivityLog.length > 10) {
+                    tradingActivityLog.pop();
+                }
+                
+                // Update activity log display
+                updateActivityLog();
+                
+                await saveUserData(userData);
+                updateUI();
+                
+                // Show notification occasionally
+                if (Math.random() > 0.5) {
+                    showNotification('💸 Profit earned: ₦' + Math.floor(userShare).toLocaleString());
+                }
+            }
+        }
+
+        // Update activity log display
+        function updateActivityLog() {
+            const activityContainer = elements.tradingActivity;
+            activityContainer.innerHTML = '';
+            
+            if (tradingActivityLog.length === 0) {
+                activityContainer.innerHTML = `
+                    <div class="activity-item">
+                        <div>
+                            <span>No trading activity yet</span>
+                            <div class="activity-time">Complete requirements to activate trading</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            tradingActivityLog.forEach(activity => {
+                const activityEl = document.createElement('div');
+                activityEl.className = 'activity-item';
+                
+                activityEl.innerHTML = `
+                    <div>
+                        <span>${activity.message}</span>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                    <div class="activity-${activity.type}">₦${Math.floor(activity.amount).toLocaleString()}</div>
+                `;
+                
+                activityContainer.appendChild(activityEl);
             });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            elements.notificationText.textContent = message;
+            elements.notification.classList.add('show');
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize trading chart
+        function initTradingChart() {
+            const ctx = document.getElementById('tradingChart').getContext('2d');
+            
+            // Generate sample data for the chart
+            const labels = [];
+            const data = [];
+            
+            const now = new Date();
+            for (let i = 24; i >= 0; i--) {
+                const time = new Date(now.getTime() - i * 60 * 60 * 1000);
+                labels.push(time.getHours() + ':00');
+                
+                // Simulate price movements
+                const prevValue = data.length > 0 ? data[data.length - 1] : 800;
+                const change = (Math.random() - 0.5) * 0.1; // -5% to +5% change
+                data.push(prevValue * (1 + change));
+            }
+            
+            tradingChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Trading Capital',
+                        data: data,
+                        borderColor: 'var(--primary)',
+                        backgroundColor: 'rgba(108, 92, 231, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return '₦' + context.raw.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₦' + value.toFixed(0);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update market indicators with live data
+        function updateMarketIndicators() {
+            // BTC
+            if (lastPrices.btc) {
+                elements.btcPrice.textContent = '$' + lastPrices.btc.price.toLocaleString(undefined, {maximumFractionDigits: 2});
+                elements.btcChange.textContent = lastPrices.btc.change.toFixed(2) + '%';
+                elements.btcPrice.className = lastPrices.btc.change >= 0 ? 'indicator-value indicator-up' : 'indicator-value indicator-down';
+            }
+            
+            // ETH
+            if (lastPrices.eth) {
+                elements.ethPrice.textContent = '$' + lastPrices.eth.price.toLocaleString(undefined, {maximumFractionDigits: 2});
+                elements.ethChange.textContent = lastPrices.eth.change.toFixed(2) + '%';
+                elements.ethPrice.className = lastPrices.eth.change >= 0 ? 'indicator-value indicator-up' : 'indicator-value indicator-down';
+            }
+            
+            // GOLD
+            if (lastPrices.gold) {
+                elements.goldPrice.textContent = '$' + lastPrices.gold.price.toLocaleString(undefined, {maximumFractionDigits: 2});
+                elements.goldChange.textContent = lastPrices.gold.change.toFixed(2) + '%';
+                elements.goldPrice.className = lastPrices.gold.change >= 0 ? 'indicator-value indicator-up' : 'indicator-value indicator-down';
+            }
+            
+            // OIL
+            if (lastPrices.oil) {
+                elements.oilPrice.textContent = '$' + lastPrices.oil.price.toLocaleString(undefined, {maximumFractionDigits: 2});
+                elements.oilChange.textContent = lastPrices.oil.change.toFixed(2) + '%';
+                elements.oilPrice.className = lastPrices.oil.change >= 0 ? 'indicator-value indicator-up' : 'indicator-value indicator-down';
+            }
+            
+            // Update trading instruments with live data
+            updateTradingInstruments();
+        }
+
+        // Update trading instruments with live data
+        function updateTradingInstruments() {
+            // Generate dynamic ROI based on market conditions
+            const volatility = lastPrices.btc ? Math.abs(lastPrices.btc.change) / 100 : 0;
+            const roiBase = 20 + (volatility * 100); // 20-50%
+            const minRoi = Math.max(20, roiBase - 5);
+            const maxRoi = Math.min(50, roiBase + 5);
+            const roiText = `${minRoi.toFixed(0)}-${maxRoi.toFixed(0)}%`;
+            elements.dailyRoi.textContent = roiText;
+
+            // Update ROI color based on range
+            const averageRoi = (minRoi + maxRoi) / 2;
+            if (averageRoi > 40) {
+                elements.dailyRoi.style.color = 'var(--success)'; // Green
+            } else if (averageRoi >= 30) {
+                elements.dailyRoi.style.color = 'var(--text-color)'; // Black
+            } else {
+                elements.dailyRoi.style.color = 'var(--danger)'; // Red
+            }
+
+            // Update risk level based on volatility
+            if (volatility > 0.05) {
+                elements.riskLevel.textContent = 'High';
+                elements.riskLevel.className = 'instrument-value indicator-down';
+            } else if (volatility > 0.02) {
+                elements.riskLevel.textContent = 'Medium';
+                elements.riskLevel.className = 'instrument-value indicator-neutral';
+            } else {
+                elements.riskLevel.textContent = 'Low';
+                elements.riskLevel.className = 'instrument-value indicator-up';
+            }
+
+            // Update strategy based on time of day
+            const hours = new Date().getHours();
+            if (hours >= 0 && hours < 7) {
+                elements.strategy.textContent = 'AI-Powered Algorithm (Aggressive)';
+            } else if (hours >= 7 && hours < 16) {
+                elements.strategy.textContent = 'AI-Powered Algorithm (Balanced)';
+            } else {
+                elements.strategy.textContent = 'AI-Powered Algorithm (Conservative)';
+            }
+
+            // Update markets based on performance
+            const btcPerformance = lastPrices.btc ? lastPrices.btc.change : 0;
+            if (btcPerformance > 5) {
+                elements.markets.textContent = 'Crypto, Forex, Commodities (Hot)';
+            } else if (btcPerformance > 0) {
+                elements.markets.textContent = 'Crypto, Forex, Commodities';
+            } else {
+                elements.markets.textContent = 'Crypto, Forex, Commodities (Cooling)';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set up theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+            
+            // Set up language
+            const savedLanguage = localStorage.getItem('language') || 'en';
+            elements.languageDropdown.value = savedLanguage;
+            
+            // Theme toggle
+            elements.themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            });
+            
+            // Language selector
+            elements.languageDropdown.addEventListener('change', (e) => {
+                setLanguage(e.target.value);
+            });
+            
+            // Initial UI update
+            await updateUI();
+            
+            // Initialize trading chart
+            initTradingChart();
+            
+            // Fetch live prices immediately and then every 30 seconds
+            fetchLivePrices();
+            setInterval(fetchLivePrices, 30000);
+            
+            // Set up trading simulation (every 15 seconds)
+            setInterval(simulateTrading, 15000);
+            
+            // Toggle trading
+            elements.toggleTrading.addEventListener('click', async () => {
+                const userData = await loadUserData();
+                if (!userData) return;
+                
+                userData.tradingActive = !userData.tradingActive;
+                if (userData.tradingActive) {
+                    showNotification('AI trading is now active and generating profits!');
+                    elements.toggleTrading.textContent = 'Deactivate Trading';
+                    elements.toggleTrading.style.backgroundColor = 'var(--success)';
+                } else {
+                    showNotification('AI trading has been paused.');
+                    elements.toggleTrading.textContent = 'Activate Trading';
+                    elements.toggleTrading.style.backgroundColor = 'var(--danger)';
+                }
+                await saveUserData(userData);
+            });
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification('Welcome to AI Trading!');
+            }, 1000);
         });
+
+        // Make the updateTradingEarnings function available globally
+        window.updateTradingEarnings = async function(amount) {
+            const userData = await loadUserData();
+            if (!userData) return;
+            
+            if (!userData.totalProfit) {
+                userData.totalProfit = 0;
+            }
+            
+            // Calculate user's share (70%)
+            const userShare = amount * 0.7;
+            userData.totalProfit += amount;
+            userData.withdrawableProfit = (userData.withdrawableProfit || 0) + userShare;
+            // Don't update trading capital/balance as it's not reinvestable
+            
+            // Update UI and save data
+            await saveUserData(userData);
+            updateUI();
+            
+            showNotification(`💰 Trading profit: ₦${userShare.toLocaleString()} added to your withdrawable balance`);
+        };
     </script>
+<!-- Add this before the closing </body> tag in your HTML files -->
+<script src="js/telegram-integration.js"></script>
+<!-- Add these scripts right before the closing </body> tag -->
+<script src="js/shared-data-service.js"></script>
+<script src="js/telegram-bridge.js"></script>
+<script src="js/page-connector.js"></script>
+<script src="js/trading-connector.js"></script>
 </body>
 </html>
