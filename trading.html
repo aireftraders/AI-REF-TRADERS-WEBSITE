@@ -6,6 +6,9 @@
     <title>AI REF-TRADERS - AI Trading</title>
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --primary: #6C5CE7;
@@ -817,11 +820,26 @@
     </nav>
     
     <script>
+        // Firebase initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyC3ES2T4KR0OLu9CmiN_jjo_S3WC3NwFxQ",
+            authDomain: "lifesolves-871fd.firebaseapp.com",
+            projectId: "lifesolves-871fd",
+            storageBucket: "lifesolves-871fd.firebasestorage.app",
+            messagingSenderId: "431511488986",
+            appId: "1:431511488986:web:59858226d1f3d9d30fd8e3",
+            measurementId: "G-FXJN02G5XD"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         // Initialize Dexie database
-        const db = new Dexie("AI_REF_TRADERS_DB");
+        const dbDexie = new Dexie("AI_REF_TRADERS_DB");
         
         // Define database schema (must match index.html)
-        db.version(1).stores({
+        dbDexie.version(1).stores({
             users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
             announcements: '++id, title, content, time, unread',
             supportTickets: '++id, userId, subject, message, status, createdAt',
@@ -953,7 +971,7 @@
             try {
                 // For demo purposes, we'll use a default user if no Telegram user
                 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
-                const user = await db.users.where('telegramId').equals(userId).first();
+                const user = await dbDexie.users.where('telegramId').equals(userId).first();
                 
                 if (user) {
                     return user;
@@ -978,7 +996,7 @@
                         lastTradingUpdate: null
                     };
                     
-                    await db.users.add(newUser);
+                    await dbDexie.users.add(newUser);
                     return newUser;
                 }
             } catch (error) {
@@ -991,7 +1009,7 @@
         async function saveUserData(userData) {
             try {
                 const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
-                await db.users.where('telegramId').equals(userId).modify(userData);
+                await dbDexie.users.where('telegramId').equals(userId).modify(userData);
             } catch (error) {
                 console.error('Error saving user data:', error);
             }
