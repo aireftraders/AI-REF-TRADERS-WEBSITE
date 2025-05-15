@@ -2794,15 +2794,12 @@
         // Function to verify account details with backend
         async function verifyAccount(accountNumber, bankCode) {
             try {
-                // In a real app, this would call your backend API
-                // For demo purposes, we'll simulate a successful verification
-                return { 
-                    status: true, 
-                    data: {
-                        account_name: "Verified Account",
-                        bank_name: bankCode
-                    } 
-                };
+                const response = await fetch(`${API_BASE_URL}/api/verify-bank`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ accountNumber, bankCode }),
+                });
+                return response.json();
             } catch (error) {
                 console.error('Error verifying account:', error);
                 return { status: false, message: 'Failed to verify account' };
@@ -2810,17 +2807,14 @@
         }
 
         // Function to initiate payment with backend
-        async function initiatePayment(email, accountNumber, bankCode, accountName) {
+        async function initiatePayment(email, amount) {
             try {
-                // In a real app, this would call your backend API which would then call Paystack
-                // For demo purposes, we'll simulate a successful payment initiation
-                return { 
-                    status: true, 
-                    data: {
-                        authorization_url: "#", // In real app, this would be the Paystack payment URL
-                        access_code: "demo_access_code"
-                    } 
-                };
+                const response = await fetch(`${API_BASE_URL}/api/initiate-payment`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, amount }),
+                });
+                return response.json();
             } catch (error) {
                 console.error('Error initiating payment:', error);
                 return { status: false, message: 'Failed to initiate payment' };
@@ -2828,28 +2822,10 @@
         }
 
         // Function to verify payment on the success page
-        async function verifyPayment() {
+        async function verifyPayment(reference) {
             try {
-                // Get reference from URL query parameters
-                const urlParams = new URLSearchParams(window.location.search);
-                const reference = urlParams.get('reference');
-                
-                if (!reference) {
-                    return { status: false, message: 'No reference found' };
-                }
-                
-                // In a real app, this would call your backend API to verify with Paystack
-                // For demo purposes, we'll simulate a successful verification
-                return { 
-                    status: true,
-                    data: {
-                        status: "success",
-                        message: "Verification successful",
-                        bankName: document.getElementById('bankName').value,
-                        accountNumber: document.getElementById('accountNumber').value,
-                        accountName: document.getElementById('accountName').value
-                    }
-                };
+                const response = await fetch(`${API_BASE_URL}/api/verify-payment?reference=${reference}`);
+                return response.json();
             } catch (error) {
                 console.error('Error verifying payment:', error);
                 return { status: false, message: 'Failed to verify payment' };
@@ -3221,7 +3197,7 @@
             
             // Close deposit modal
             document.getElementById('closeDepositModal').addEventListener('click', function() {
-                document.getElementById('depositModal').class.classList.remove('active');
+                document.getElementById('depositModal').classList.remove('active');
             });
             
             // Verify account from withdrawal modal
@@ -3231,11 +3207,12 @@
             });
             
             // Updated bank binding handler with Paystack
-            document.getElementById('paystackVerifyBtn').addEventListener('click', async function() {
+            document.getElementById('paystackVerifyBtn').addEventListener('click', async function () {
                 const bankName = document.getElementById('bankName').value === 'Other'
                     ? document.getElementById('otherBankName').value
                     : document.getElementById('bankName').value;
                 const accountNumber = document.getElementById('accountNumber').value;
+                const accountName = document.getElementById('accountName').value;
 
                 if (!bankName || !accountNumber || accountNumber.length !== 10) {
                     alert('Please provide valid bank details (10-digit account number).');
@@ -3247,42 +3224,63 @@
                     this.disabled = true;
                     this.innerHTML = 'Verifying...';
 
-                    // First verify account details with backend
-                    const verificationResponse = await verifyAccount(accountNumber, bankName);
-                    
+                    // First verify account details with Paystack
+                    const verificationResponse = await verifyBankAccount(accountNumber, bankName);
+
                     if (!verificationResponse.status) {
                         alert('Account verification failed: ' + verificationResponse.message);
                         this.disabled = false;
+                     
                         this.innerHTML = 'Pay ₦1,050 with Paystack';
                         return;
                     }
-                    
+
                     // Update the account name field with the verified name
                     document.getElementById('accountName').value = verificationResponse.data.account_name;
-                    
+
                     // Get user email from localStorage
-                    const userEmail = localStorage.getItem('userEmail');
-                    
-                    // Initialize payment with backend
+                    const userEmail = localStorage.getItem('userEmail') || 'user@example.com';
+
+                    // Initialize payment with Paystack
                     this.innerHTML = 'Initializing payment...';
-                    const paymentResponse = await initiatePayment(
-                        userEmail || 'user@example.com',
-                        accountNumber,
-                        bankName,
-                        verificationResponse.data.account_name
-                    );
-                    
-                    if (!paymentResponse.status) {
-                        alert('Payment initialization failed: ' + paymentResponse.message);
-                        this.disabled = false;
-                        this.innerHTML = 'Pay ₦1,050 with Paystack';
-                        return;
-                    }
-                    
-                    // In a real app, this would redirect to Paystack
-                    // For demo, we'll simulate a successful payment
-                    simulatePaystackPayment();
-                    
+
+                    payWithPaystack(userEmail, 1050, async function (response) {
+                        if (response.status === 'success') {
+                            // Payment successful - update user as verified
+                            userData.verified = true;
+                            userData.bankDetails = {
+                                bankName: bankName,
+                                accountNumber: accountNumber,
+                                accountName: verificationResponse.data.account_name
+                            };
+
+                            // Add the ₦500 to withdrawable balance
+                            userData.withdrawableProfit = (userData.withdrawableProfit || 0) + 500;
+                            userData.balance += 500;
+
+                            // Save the updated data
+                            await saveUserData();
+
+                            // Close the modal
+                            document.getElementById('bankModal').classList.remove('active');
+
+                            // Update the UI
+                            updateUI();
+
+                            // Show success message
+                            showSuccess(
+                                'Verification Successful',
+                                'Your bank account has been verified and ₦500 has been added to your withdrawable balance.'
+                            );
+                        } else {
+                            alert('Payment failed: ' + response.message);
+                        }
+
+                        // Reset button
+                        document.getElementById('paystackVerifyBtn').disabled = false;
+                        document.getElementById('paystackVerifyBtn').innerHTML = 'Pay ₦1,050 with Paystack';
+                    });
+
                 } catch (error) {
                     console.error('Error during verification:', error);
                     alert('An error occurred during verification. Please try again.');
@@ -3290,7 +3288,7 @@
                     this.innerHTML = 'Pay ₦1,050 with Paystack';
                 }
             });
-            
+
             // Simulate Paystack payment flow (for demo only)
             function simulatePaystackPayment() {
                 // Show a confirmation dialog
@@ -3327,7 +3325,7 @@
                     document.getElementById('paystackVerifyBtn').innerHTML = 'Pay ₦1,050 with Paystack';
                 }
             }
-            
+
             // Event listener for account number input
             document.getElementById('accountNumber').addEventListener('blur', async function () {
                 const bankName = document.getElementById('bankName').value === 'Other'
@@ -3346,7 +3344,7 @@
 
                 try {
                     // Verify account with backend
-                    const verificationResponse = await verifyAccount(accountNumber, bankName);
+                    const verificationResponse = await verifyBankAccount(accountNumber, bankName);
                     
                     if (verificationResponse.status) {
                         accountNameField.value = verificationResponse.data.account_name;
@@ -3611,16 +3609,21 @@
         }
         
         // Show notification
-        function showNotification(message) {
+        function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
-            document.getElementById('notificationText').textContent = message;
+            const notificationText = document.getElementById('notificationText');
+
+            // Set notification message and style
+            notificationText.textContent = message;
+            notification.className = `notification ${type}`;
             notification.classList.add('show');
-            
+
+            // Hide notification after 3 seconds
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
-        
+
         // Show success modal
         function showSuccess(title, message) {
             document.getElementById('successTitle').textContent = title;
@@ -3848,6 +3851,138 @@
                 document.querySelector('.investment-section').scrollIntoView({ behavior: 'smooth' });
             }, 100);
         }
+
+        // Paystack public key
+        const paystackPublicKey = 'pk_live_afebedf32b931abd3b35ab6b4d63e62bc6d1d3e2'; // Replace with your actual key
+
+        // Verify bank account
+        async function verifyBankAccount(accountNumber, bankCode) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/verify-bank`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ accountNumber, bankCode }),
+                });
+                return response.json();
+            } catch (error) {
+                console.error('Error verifying account:', error);
+                return { status: false, message: 'Network error while verifying account' };
+            }
+        }
+
+        // Function to handle Paystack payment
+        function payWithPaystack(email, amount, callback) {
+            const handler = PaystackPop.setup({
+                key: paystackPublicKey,
+                email: email,
+                amount: amount * 100, // Paystack amounts are in kobo (multiply by 100)
+                currency: 'NGN',
+                ref: 'REF' + Math.floor(Math.random() * 1000000000 + 1),
+                callback: function (response) {
+                    callback(response);
+                },
+                onClose: function () {
+                    alert('Payment window closed');
+                }
+            });
+            handler.openIframe();
+        }
+
+        // Updated bank binding handler with Paystack
+        document.getElementById('paystackVerifyBtn').addEventListener('click', async function () {
+            const bankName = document.getElementById('bankName').value === 'Other'
+                ? document.getElementById('otherBankName').value
+                : document.getElementById('bankName').value;
+            const accountNumber = document.getElementById('accountNumber').value;
+            const accountName = document.getElementById('accountName').value;
+
+            if (!bankName || !accountNumber || accountNumber.length !== 10) {
+                alert('Please provide valid bank details (10-digit account number).');
+                return;
+            }
+
+            try {
+                // Show loading state
+                this.disabled = true;
+                this.innerHTML = 'Verifying...';
+
+                // First verify account details with Paystack
+                const verificationResponse = await verifyBankAccount(accountNumber, bankName);
+
+                if (!verificationResponse.status) {
+                    alert('Account verification failed: ' + verificationResponse.message);
+                    this.disabled = false;
+                    this.innerHTML = 'Pay ₦1,050 with Paystack';
+                    return;
+                }
+
+                // Update the account name field with the verified name
+                document.getElementById('accountName').value = verificationResponse.data.account_name;
+
+                // Get user email from localStorage
+                const userEmail = localStorage.getItem('userEmail') || 'user@example.com';
+
+                // Initialize payment with Paystack
+                this.innerHTML = 'Initializing payment...';
+
+                payWithPaystack(userEmail, 1050, async function (response) {
+                    if (response.status === 'success') {
+                        // Payment successful - update user as verified
+                        userData.verified = true;
+                        userData.bankDetails = {
+                            bankName: bankName,
+                            accountNumber: accountNumber,
+                            accountName: verificationResponse.data.account_name
+                        };
+
+                        // Add the ₦500 to withdrawable balance
+                        userData.withdrawableProfit = (userData.withdrawableProfit || 0) + 500;
+                        userData.balance += 500;
+
+                        // Save the updated data
+                        await saveUserData();
+
+                        // Close the modal
+                        document.getElementById('bankModal').classList.remove('active');
+
+                        // Update the UI
+                        updateUI();
+
+                        // Show success message
+                        showSuccess(
+                            'Verification Successful',
+                            'Your bank account has been verified and ₦500 has been added to your withdrawable balance.'
+                        );
+                    } else {
+                        alert('Payment failed: ' + response.message);
+                    }
+
+                    // Reset button
+                    document.getElementById('paystackVerifyBtn').disabled = false;
+                    document.getElementById('paystackVerifyBtn').innerHTML = 'Pay ₦1,050 with Paystack';
+                });
+
+            } catch (error) {
+                console.error('Error during verification:', error);
+                alert('An error occurred during verification. Please try again.');
+                this.disabled = false;
+                this.innerHTML = 'Pay ₦1,050 with Paystack';
+            }
+        });
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCx8Uvhoimdahoggu6Ucn-Lb1Q59T2Ef9s",
+  authDomain: "ai-ref-traders-c27e3.firebaseapp.com",
+  projectId: "ai-ref-traders-c27e3",
+  storageBucket: "ai-ref-traders-c27e3.firebasestorage.app",
+  messagingSenderId: "437331346504",
+  appId: "1:437331346504:web:283761903d3c161d81047d",
+  measurementId: "G-06L4SNDMPZ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
     </script>
 <script>
   // Save data (works on all pages)
@@ -3865,6 +4000,30 @@
   saveData("theme", "dark"); // Saves "dark" theme
   const theme = loadData("theme"); // Gets "dark" back
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add event listeners for dashboard buttons
+        document.getElementById('adsButton').addEventListener('click', () => {
+            window.location.href = 'ads.html';
+        });
+
+        document.getElementById('gamesButton').addEventListener('click', () => {
+            window.location.href = 'game.html';
+        });
+
+        document.getElementById('profileButton').addEventListener('click', () => {
+            window.location.href = 'profile.html';
+        });
+
+        document.getElementById('tradingButton').addEventListener('click', () => {
+            window.location.href = 'trading.html';
+        });
+
+        // Trigger a notification for testing
+        showNotification('Welcome to AI REF-TRADERS!', 'success');
+    });
+</script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
 <script src="js/api.js"></script>
 </body>
 </html>
