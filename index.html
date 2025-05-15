@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI REF-TRADERS - SPA</title>
-    <!-- Nigeria-Focused SEO Meta Tags -->
-    <meta name="description" content="AI REF-TRADERS: Make money online in Nigeria through AI trading, referrals & games">
-    <meta name="keywords" content="make money online Nigeria, Lagos side hustle, Abuja online business">
-    <meta name="author" content="AI REF-TRADERS Nigeria">
-    
+    <title>AI REF-TRADERS</title>
     <style>
         :root {
             --primary: #6C5CE7;
@@ -21,61 +16,16 @@
         }
         
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--light);
-            color: var(--dark);
-        }
-        
-        #app-container {
-            position: relative;
-            width: 100%;
-            min-height: 100vh;
-            padding-bottom: 60px;
+            background-color: #f5f6fa;
+            color: #2d3436;
             overflow-x: hidden;
         }
         
-        #content-container {
-            width: 100%;
-            min-height: calc(100vh - 60px);
-        }
-        
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-around;
-            background-color: var(--primary);
-            padding: 10px 0;
-            z-index: 1000;
-        }
-        
-        .nav-item {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 20px;
-            transition: all 0.3s;
-            font-size: 12px;
-            text-align: center;
-        }
-        
-        .nav-item.active {
-            background-color: var(--secondary);
-            transform: scale(1.05);
-        }
-        
-        .nav-item i {
-            display: block;
-            font-size: 20px;
-            margin-bottom: 3px;
-        }
-        
         /* Splash Screen Styles */
-        #splash-screen {
+        .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
@@ -91,31 +41,43 @@
             transition: opacity 0.8s ease-out;
         }
         
-        .splash-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
+        .splash-container {
+            text-align: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 0 24px;
         }
         
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
         }
         
-        /* Login Modal Styles */
-        #login-modal {
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #6C5CE7, #00CEFF);
+            border-radius: 3px;
+            transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        /* Login Modal */
+        .login-modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
+            background: rgba(0,0,0,0.5);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 9998;
+            z-index: 1000;
         }
         
         .login-content {
@@ -124,371 +86,472 @@
             padding: 20px;
             width: 90%;
             max-width: 400px;
-            color: var(--dark);
         }
         
-        /* Loading Screen */
-        #page-loading {
+        .login-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .login-tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .login-tab.active {
+            border-bottom: 3px solid var(--primary);
+            font-weight: bold;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        /* Main App Styles */
+        #app-container {
+            display: none; /* Initially hidden until login */
+            max-width: 100%;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        
+        #content-container {
+            padding: 15px;
+        }
+        
+        /* Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--primary);
+            padding: 10px 0;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
+            background-color: var(--secondary);
+            transform: translateY(-5px);
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        
+        /* Loading indicator */
+        .page-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            height: 3px;
+            background-color: var(--primary);
+            z-index: 999;
             display: none;
-            justify-content: center;
+        }
+        
+        .page-loader-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1001;
+            background: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
             align-items: center;
-            z-index: 9997;
-            color: white;
-            font-size: 24px;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <!-- Splash Screen -->
-    <div id="splash-screen">
-        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Apr%2030%2C%202025%2C%2002_36_32%20AM-1wDDnne5fpylqjmbzveVpRiAKxNNkS.png" class="splash-logo" alt="AI REF-TRADERS Logo">
-        <h2>AI REF-TRADERS</h2>
-        <p>Nigeria's Premier AI Trading Platform</p>
-        <div style="width: 200px; height: 4px; background: rgba(255,255,255,0.2); margin-top: 20px;">
-            <div id="splash-progress" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;"></div>
+    <div class="splash-screen" id="splashScreen">
+        <div class="splash-container">
+            <h1>AI REF-TRADERS</h1>
+            <p>Nigeria's Premier AI Trading Platform</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
         </div>
     </div>
     
     <!-- Login Modal -->
-    <div id="login-modal">
+    <div class="login-modal" id="loginModal" style="display: none;">
         <div class="login-content">
-            <h2 style="text-align: center; color: var(--primary);">Welcome Back</h2>
-            <div id="login-tabs" style="display: flex; margin-bottom: 20px;">
-                <div id="login-tab" style="flex: 1; text-align: center; padding: 10px; background: var(--primary); color: white; border-radius: 8px 0 0 8px; cursor: pointer;">Login</div>
-                <div id="register-tab" style="flex: 1; text-align: center; padding: 10px; background: #ddd; border-radius: 0 8px 8px 0; cursor: pointer;">Register</div>
+            <div class="login-tabs">
+                <div class="login-tab active" data-tab="login">Login</div>
+                <div class="login-tab" data-tab="register">Register</div>
             </div>
             
-            <div id="login-form">
-                <input type="email" id="login-email" placeholder="Email" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <input type="password" id="login-password" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <button id="login-btn" style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Login</button>
+            <div id="loginForm" class="login-form">
+                <input type="email" id="loginEmail" placeholder="Email">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button class="btn-primary" id="loginBtn" style="width: 100%;">Login</button>
             </div>
             
-            <div id="register-form" style="display: none;">
-                <input type="text" id="register-name" placeholder="Full Name" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <input type="email" id="register-email" placeholder="Email" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <input type="tel" id="register-phone" placeholder="Phone Number" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <input type="password" id="register-password" placeholder="Password" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <input type="password" id="register-confirm" placeholder="Confirm Password" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #ddd;">
-                <button id="register-btn" style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Register</button>
+            <div id="registerForm" class="login-form" style="display: none;">
+                <input type="text" id="registerName" placeholder="Full Name">
+                <input type="email" id="registerEmail" placeholder="Email">
+                <input type="password" id="registerPassword" placeholder="Password">
+                <input type="password" id="confirmPassword" placeholder="Confirm Password">
+                <button class="btn-primary" id="registerBtn" style="width: 100%;">Register</button>
             </div>
-            
-            <p id="auth-message" style="text-align: center; margin-top: 15px; color: var(--danger);"></p>
         </div>
     </div>
     
-    <!-- Page Loading Indicator -->
-    <div id="page-loading">
-        <div style="text-align: center;">
-            <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s linear infinite; margin: 0 auto 15px;"></div>
-            <p>Loading...</p>
-        </div>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="page-loader-bar" id="pageLoaderBar"></div>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        🌙
     </div>
     
     <!-- Main App Container -->
     <div id="app-container">
-        <div id="content-container">
-            <!-- Dynamic content will be loaded here -->
-        </div>
-        
-        <div class="nav-bar">
-            <a href="#dashboard" class="nav-item active" onclick="loadPage('dashboard')">
-                <i>🏠</i> Dashboard
-            </a>
-            <a href="#trading" class="nav-item" onclick="loadPage('trading')">
-                <i>📈</i> Trading
-            </a>
-            <a href="#games" class="nav-item" onclick="loadPage('games')">
-                <i>🎮</i> Games
-            </a>
-            <a href="#ads" class="nav-item" onclick="loadPage('ads')">
-                <i>📺</i> Ads
-            </a>
-            <a href="#profile" class="nav-item" onclick="loadPage('profile')">
-                <i>👤</i> Profile
-            </a>
-        </div>
+        <!-- Content will be dynamically loaded here -->
+        <div id="content-container"></div>
     </div>
-
+    
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-page="trading">
+            <span class="nav-icon">📈</span>
+            <span>Trading</span>
+        </a>
+        <a href="#" class="nav-item" data-page="games">
+            <span class="nav-icon">🎮</span>
+            <span>Games</span>
+        </a>
+        <a href="#" class="nav-item" data-page="ads">
+            <span class="nav-icon">📺</span>
+            <span>Ads</span>
+        </a>
+        <a href="#" class="nav-item" data-page="profile">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+    
     <script>
         // Configuration
         const PAGES = {
             dashboard: 'dashboard-index.html',
             trading: 'trading.html',
-            games: 'game.html',
+            games: 'games.html',
             ads: 'ads.html',
-            profile: 'profile.html'
+            profile: 'profile.html',
+            admin: 'admin.html'
         };
         
-        // Global state
+        // State management
         let currentPage = 'dashboard';
+        let isDarkMode = false;
         let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         
-        // Initialize the SPA
-        document.addEventListener('DOMContentLoaded', function() {
+        // DOM elements
+        const splashScreen = document.getElementById('splashScreen');
+        const progressBar = document.getElementById('progressBar');
+        const loginModal = document.getElementById('loginModal');
+        const contentContainer = document.getElementById('content-container');
+        const pageLoader = document.getElementById('pageLoader');
+        const pageLoaderBar = document.getElementById('pageLoaderBar');
+        const navItems = document.querySelectorAll('.nav-item');
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', async () => {
             // Show splash screen
-            showSplashScreen();
+            await showSplashScreen();
             
-            // Initialize login modal tabs
-            document.getElementById('login-tab').addEventListener('click', function() {
-                document.getElementById('login-form').style.display = 'block';
-                document.getElementById('register-form').style.display = 'none';
-                document.getElementById('login-tab').style.background = 'var(--primary)';
-                document.getElementById('login-tab').style.color = 'white';
-                document.getElementById('register-tab').style.background = '#ddd';
-                document.getElementById('register-tab').style.color = 'var(--dark)';
-            });
+            // Check login status
+            if (isLoggedIn) {
+                showApp();
+                loadPage(currentPage);
+            } else {
+                showLoginModal();
+            }
             
-            document.getElementById('register-tab').addEventListener('click', function() {
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('register-form').style.display = 'block';
-                document.getElementById('register-tab').style.background = 'var(--primary)';
-                document.getElementById('register-tab').style.color = 'white';
-                document.getElementById('login-tab').style.background = '#ddd';
-                document.getElementById('login-tab').style.color = 'var(--dark)';
-            });
+            // Set up navigation
+            setupNavigation();
             
-            // Initialize login/register buttons
-            document.getElementById('login-btn').addEventListener('click', handleLogin);
-            document.getElementById('register-btn').addEventListener('click', handleRegister);
+            // Set up login/register tabs
+            setupLoginTabs();
             
-            // Check authentication status after splash screen
-            setTimeout(() => {
-                checkAuthStatus();
-            }, 2500);
+            // Set up theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Initialize theme
+            initTheme();
         });
         
         // Show splash screen animation
-        function showSplashScreen() {
-            const splashProgress = document.getElementById('splash-progress');
-            let progress = 0;
-            
-            const interval = setInterval(() => {
-                progress += 5;
-                splashProgress.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('splash-screen').style.opacity = '0';
+        async function showSplashScreen() {
+            return new Promise(resolve => {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
                         setTimeout(() => {
-                            document.getElementById('splash-screen').style.display = 'none';
+                            splashScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                splashScreen.style.display = 'none';
+                                resolve();
+                            }, 500);
                         }, 500);
-                    }, 300);
-                }
-            }, 100);
+                    }
+                }, 50);
+            });
         }
         
-        // Check authentication status
-        function checkAuthStatus() {
-            if (!isLoggedIn) {
-                document.getElementById('login-modal').style.display = 'flex';
-            } else {
-                // Check URL hash for initial page
-                const hash = window.location.hash.substring(1);
-                if (hash && PAGES[hash]) {
-                    currentPage = hash;
-                    document.querySelector(`.nav-item[href="#${currentPage}"]`).classList.add('active');
-                    document.querySelector(`.nav-item[href="#dashboard"]`).classList.remove('active');
+        // Show login modal
+        function showLoginModal() {
+            loginModal.style.display = 'flex';
+        }
+        
+        // Hide login modal
+        function hideLoginModal() {
+            loginModal.style.display = 'none';
+        }
+        
+        // Show main app
+        function showApp() {
+            document.getElementById('app-container').style.display = 'block';
+        }
+        
+        // Load a page dynamically
+        async function loadPage(pageName) {
+            currentPage = pageName;
+            showPageLoader();
+            
+            try {
+                const response = await fetch(PAGES[pageName]);
+                const html = await response.text();
+                
+                // Create a temporary container to parse the HTML
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Extract the main content (adjust selector as needed)
+                const mainContent = tempDiv.querySelector('.container') || tempDiv.querySelector('main') || tempDiv;
+                
+                // Update the content container
+                contentContainer.innerHTML = mainContent.innerHTML;
+                
+                // Reinitialize any scripts
+                reinitializeScripts();
+                
+                hidePageLoader();
+            } catch (error) {
+                console.error('Error loading page:', error);
+                contentContainer.innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <h3>Error loading page</h3>
+                        <p>Could not load ${pageName}. Please try again.</p>
+                        <button onclick="loadPage('dashboard')">Return to Dashboard</button>
+                    </div>
+                `;
+                hidePageLoader();
+            }
+        }
+        
+        // Reinitialize scripts after page load
+        function reinitializeScripts() {
+            // Remove any existing script tags to prevent duplication
+            const oldScripts = contentContainer.querySelectorAll('script');
+            oldScripts.forEach(script => script.remove());
+            
+            // Find all script tags in the loaded content
+            const scripts = contentContainer.querySelectorAll('script');
+            
+            scripts.forEach(script => {
+                const newScript = document.createElement('script');
+                if (script.src) {
+                    newScript.src = script.src;
+                } else {
+                    newScript.textContent = script.textContent;
                 }
-                
-                // Load the initial page
-                loadPage(currentPage, true);
-                
-                // Handle hash changes
-                window.addEventListener('hashchange', function() {
-                    const newPage = window.location.hash.substring(1);
-                    if (newPage && PAGES[newPage] && newPage !== currentPage) {
-                        currentPage = newPage;
-                        loadPage(currentPage);
+                contentContainer.appendChild(newScript);
+            });
+        }
+        
+        // Setup navigation
+        function setupNavigation() {
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.dataset.page;
+                    if (page !== currentPage) {
+                        setActiveNav(item);
+                        loadPage(page);
                     }
                 });
-            }
+            });
         }
         
-        // Handle login
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const message = document.getElementById('auth-message');
+        // Set active navigation item
+        function setActiveNav(activeItem) {
+            navItems.forEach(item => item.classList.remove('active'));
+            activeItem.classList.add('active');
+        }
+        
+        // Setup login/register tabs
+        function setupLoginTabs() {
+            const loginTab = document.querySelector('.login-tab[data-tab="login"]');
+            const registerTab = document.querySelector('.login-tab[data-tab="register"]');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
             
-            if (!email || !password) {
-                message.textContent = 'Please enter both email and password';
-                return;
-            }
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            });
             
-            // Simulate login (replace with actual API call)
-            try {
-                showLoading(true);
-                // const response = await fetch('https://v0-paystack-serverless-backend.vercel.app/api/login', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ email, password })
-                // });
-                // const data = await response.json();
+            registerTab.addEventListener('click', () => {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.style.display = 'block';
+                loginForm.style.display = 'none';
+            });
+            
+            // Login button
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
                 
-                // Simulated successful login
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const data = { success: true, user: { email, name: "Demo User" } };
-                
-                if (data.success) {
+                // Simple validation
+                if (email && password) {
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('userEmail', email);
-                    localStorage.setItem('userName', data.user.name || 'User');
                     isLoggedIn = true;
-                    
-                    document.getElementById('login-modal').style.display = 'none';
-                    loadPage('dashboard', true);
-                } else {
-                    message.textContent = data.message || 'Login failed';
+                    hideLoginModal();
+                    showApp();
+                    loadPage(currentPage);
                 }
-            } catch (error) {
-                message.textContent = 'Login failed. Please try again.';
-                console.error('Login error:', error);
-            } finally {
-                showLoading(false);
-            }
-        }
-        
-        // Handle registration
-        async function handleRegister() {
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const phone = document.getElementById('register-phone').value;
-            const password = document.getElementById('register-password').value;
-            const confirm = document.getElementById('register-confirm').value;
-            const message = document.getElementById('auth-message');
+            });
             
-            if (!name || !email || !phone || !password || !confirm) {
-                message.textContent = 'Please fill all fields';
-                return;
-            }
-            
-            if (password !== confirm) {
-                message.textContent = 'Passwords do not match';
-                return;
-            }
-            
-            // Simulate registration (replace with actual API call)
-            try {
-                showLoading(true);
-                // const response = await fetch('https://v0-paystack-serverless-backend.vercel.app/api/register', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify({ name, email, phone, password })
-                // });
-                // const data = await response.json();
+            // Register button
+            document.getElementById('registerBtn').addEventListener('click', () => {
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirm = document.getElementById('confirmPassword').value;
                 
-                // Simulated successful registration
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const data = { success: true, user: { email, name } };
+                if (password !== confirm) {
+                    alert("Passwords don't match!");
+                    return;
+                }
                 
-                if (data.success) {
+                if (name && email && password) {
                     localStorage.setItem('isLoggedIn', 'true');
                     localStorage.setItem('userEmail', email);
                     localStorage.setItem('userName', name);
                     isLoggedIn = true;
-                    
-                    document.getElementById('login-modal').style.display = 'none';
-                    loadPage('dashboard', true);
-                } else {
-                    message.textContent = data.message || 'Registration failed';
+                    hideLoginModal();
+                    showApp();
+                    loadPage(currentPage);
                 }
-            } catch (error) {
-                message.textContent = 'Registration failed. Please try again.';
-                console.error('Registration error:', error);
-            } finally {
-                showLoading(false);
-            }
+            });
         }
         
-        // Load a page dynamically
-        async function loadPage(pageName, isInitialLoad = false) {
-            if (!PAGES[pageName]) return;
-            
-            showPageLoading(true);
-            
-            try {
-                // Fetch the page content
-                const response = await fetch(PAGES[pageName]);
-                if (!response.ok) throw new Error('Failed to load page');
-                
-                const html = await response.text();
-                
-                // Extract the full document structure
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                
-                // Replace the content container with the new page's body
-                const newContent = document.createElement('div');
-                newContent.innerHTML = doc.body.innerHTML;
-                
-                // Preserve scripts by recreating them
-                const scripts = newContent.querySelectorAll('script');
-                scripts.forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    if (oldScript.src) {
-                        newScript.src = oldScript.src;
-                    } else {
-                        newScript.textContent = oldScript.textContent;
-                    }
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-                
-                const container = document.getElementById('content-container');
-                container.innerHTML = '';
-                container.appendChild(newContent);
-                
-                // Update active nav item
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                document.querySelector(`.nav-item[href="#${pageName}"]`).classList.add('active');
-                
-                // Update URL hash if this wasn't triggered by a hash change
-                if (!isInitialLoad) {
-                    window.location.hash = pageName;
-                }
-                
-                // Scroll to top
-                window.scrollTo(0, 0);
-                
-            } catch (error) {
-                console.error('Error loading page:', error);
-                document.getElementById('content-container').innerHTML = `
-                    <div style="text-align: center; padding: 50px;">
-                        <h2>Error loading page</h2>
-                        <p>Failed to load ${pageName}. Please try again.</p>
-                        <button onclick="loadPage('${pageName}')" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer;">Retry</button>
-                    </div>
-                `;
-            } finally {
-                showPageLoading(false);
-            }
+        // Page loader functions
+        function showPageLoader() {
+            pageLoader.style.display = 'block';
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                pageLoaderBar.style.width = `${progress}%`;
+                if (progress >= 90) clearInterval(interval);
+            }, 50);
         }
         
-        // Show/hide loading indicator
-        function showPageLoading(show) {
-            document.getElementById('page-loading').style.display = show ? 'flex' : 'none';
+        function hidePageLoader() {
+            pageLoaderBar.style.width = '100%';
+            setTimeout(() => {
+                pageLoader.style.display = 'none';
+                pageLoaderBar.style.width = '0%';
+            }, 300);
         }
         
-        function showLoading(show) {
-            if (show) {
-                document.getElementById('page-loading').style.display = 'flex';
-                document.getElementById('page-loading').style.zIndex = '9999';
+        // Theme management
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDarkMode);
+        }
+        
+        function applyTheme() {
+            if (isDarkMode) {
+                document.documentElement.style.setProperty('--bg-color', '#121212');
+                document.documentElement.style.setProperty('--text-color', '#E0E0E0');
             } else {
-                document.getElementById('page-loading').style.display = 'none';
+                document.documentElement.style.setProperty('--bg-color', '#F5F6FA');
+                document.documentElement.style.setProperty('--text-color', '#2D3436');
             }
         }
         
-        // Make loadPage available globally for HTML onclick handlers
-        window.loadPage = loadPage;
+        function initTheme() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                isDarkMode = true;
+                themeToggle.textContent = '☀️';
+                applyTheme();
+            }
+        }
+        
+        // Global navigation function
+        window.navigateTo = function(pageName) {
+            const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
+            if (navItem) {
+                setActiveNav(navItem);
+                loadPage(pageName);
+            }
+        };
     </script>
 </body>
 </html>
