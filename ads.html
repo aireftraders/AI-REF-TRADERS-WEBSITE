@@ -246,12 +246,12 @@
     </div>
 
     <script>
-        // Initialize Dexie database with the same schema as index.html
+        // Initialize Dexie database
         const db = new Dexie("AI_REF_TRADERS_DB");
         
-        // Define database schema (must match index.html exactly)
+        // Define database schema (must match index.html)
         db.version(1).stores({
-            users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements, referrer',
+            users: '++id, telegramId, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements',
             announcements: '++id, title, content, time, unread',
             supportTickets: '++id, userId, subject, message, status, createdAt',
             adminCredentials: '++id, username, password',
@@ -277,23 +277,16 @@
         // Load user data from IndexedDB
         async function loadUserData() {
             try {
-                const userEmail = localStorage.getItem('userEmail');
-                const userPhone = localStorage.getItem('userPhone');
-                
-                if (!userEmail && !userPhone) {
-                    // User not logged in, redirect to login
-                    window.location.href = 'index.html';
-                    return null;
-                }
+                // For demo purposes, we'll use a default user if not in Telegram
+                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
                 
                 // Check if user exists in database
-                let user = await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).first();
+                let user = await db.users.where('telegramId').equals(userId).first();
                 
                 if (!user) {
-                    // Create new user with default values (matching index.html schema)
+                    // Create new user with default values
                     user = {
-                        email: userEmail,
-                        phone: userPhone,
+                        telegramId: userId,
                         balance: 5000,
                         referrals: 0,
                         adsWatched: 0,
@@ -317,7 +310,8 @@
                             read: [2],
                             unread: [1]
                         },
-                        referrer: null
+                        showGamesButton: false,
+                        gameTimerStart: 0
                     };
                     
                     // Add new user to database
@@ -338,25 +332,8 @@
         // Save user data to IndexedDB
         async function saveUserData() {
             try {
-                const userEmail = localStorage.getItem('userEmail');
-                const userPhone = localStorage.getItem('userPhone');
-                
-                if (!userEmail && !userPhone) {
-                    console.error('No user email or phone found in localStorage');
-                    return;
-                }
-                
-                await db.users.where('email').equals(userEmail).or('phone').equals(userPhone).modify(userData);
-                
-                // Notify index.html of the update
-                if (window.opener) {
-                    window.opener.postMessage({
-                        type: 'adCountUpdate',
-                        adsWatched: userData.adsWatched,
-                        totalAdsWatched: userData.totalAdsWatched,
-                        lastAdWatchTime: userData.lastAdWatchTime
-                    }, '*');
-                }
+                const userId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'demo-user';
+                await db.users.where('telegramId').equals(userId).modify(userData);
             } catch (error) {
                 console.error('Error saving user data:', error);
             }
@@ -402,13 +379,18 @@
                 </div>
                 
                 <button class="watch-ad-btn" id="returnBtn">Return to Previous Page</button>
+                <button class="watch-ad-btn" id="gameConsoleBtn" style="background-color: var(--success); margin-top: 1rem;">Go to Game Console</button>
             `;
-            
+
             updateCooldownTimer(expiryTime);
             cooldownInterval = setInterval(() => updateCooldownTimer(expiryTime), 1000);
-            
+
             document.getElementById('returnBtn').addEventListener('click', () => {
                 window.location.href = document.referrer || 'index.html';
+            });
+
+            document.getElementById('gameConsoleBtn').addEventListener('click', () => {
+                window.location.href = 'game.html';
             });
         }
 
@@ -566,13 +548,6 @@
             userData.adsWatched = currentAdCount;
             userData.totalAdsWatched = (userData.totalAdsWatched || 0) + 1;
             userData.lastAdWatchTime = Date.now();
-            
-            // Check if trading should be activated (6 referrals + 20 ads)
-            if (userData.adsWatched >= 20 && userData.referrals >= 6) {
-                userData.tradingActive = true;
-                userData.tradingCapital = 35000; // ₦5k signup + ₦30k from 6 referrals
-            }
-            
             await saveUserData();
             
             // Notify parent/opener window (index.html) if exists
@@ -582,9 +557,7 @@
                     type: 'adCountUpdate',
                     adsWatched: currentAdCount,
                     totalAdsWatched: userData.totalAdsWatched,
-                    lastAdWatchTime: userData.lastAdWatchTime,
-                    tradingActive: userData.tradingActive,
-                    tradingCapital: userData.tradingCapital
+                    lastAdWatchTime: userData.lastAdWatchTime
                 }, '*');
             }
 
@@ -604,19 +577,47 @@
             const finalRedirectUrl = redirectUrl.includes('?') 
                 ? `${redirectUrl}&fromAds=true` 
                 : `${redirectUrl}?fromAds=true`;
-            window.location.href = finalRedirectUrl;
+
+            // Ensure the redirection URL is logged for debugging
+            console.log('Redirecting to:', finalRedirectUrl);
+
+            // Show the game console button
+            showGameConsoleButton();
+
+            // Use a timeout to ensure any pending operations complete before redirecting
+            setTimeout(() => {
+                window.location.href = finalRedirectUrl;
+            }, 100);
         }
 
-        // Listen for messages from index.html (for real-time updates)
-        window.addEventListener('message', function(event) {
-            if (event.data.type === 'balanceUpdate') {
-                // Update balance if received from parent
-                if (userData) {
-                    userData.balance = event.data.balance;
-                    saveUserData();
-                }
-            }
-        });
+        function showGameConsoleButton() {
+            const mainContainer = document.getElementById('mainContainer');
+            const gameButton = document.createElement('button');
+            gameButton.className = 'watch-ad-btn';
+            gameButton.textContent = 'Go to Game Console';
+            gameButton.style.backgroundColor = 'var(--success)';
+            gameButton.style.marginTop = '1.5rem';
+
+            gameButton.addEventListener('click', () => {
+                window.location.href = 'game.html';
+            });
+
+            mainContainer.appendChild(gameButton);
+
+            // Disable the button after 55 minutes
+            setTimeout(() => {
+                gameButton.disabled = true;
+                gameButton.textContent = 'Game Console Access Expired';
+                gameButton.style.backgroundColor = 'var(--danger)';
+            }, 55 * 60 * 1000); // 55 minutes in milliseconds
+        }
     </script>
+<!-- Add this before the closing </body> tag in your HTML files -->
+<script src="js/telegram-integration.js"></script>
+<!-- Add these scripts right before the closing </body> tag -->
+<script src="js/shared-data-service.js"></script>
+<script src="js/telegram-bridge.js"></script>
+<script src="js/page-connector.js"></script>
+<script src="js/ads-connector.js"></script>
 </body>
 </html>
