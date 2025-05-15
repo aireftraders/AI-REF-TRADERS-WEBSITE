@@ -12,29 +12,29 @@
             --light: #F5F6FA;
             --success: #00B894;
             --danger: #D63031;
-            --warning: #FDCB6E;
             --nigerian-green: #008753;
         }
         
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--light);
-            color: var(--dark);
+            background-color: #f5f6fa;
+            color: #2d3436;
         }
         
         #app-container {
             max-width: 100%;
             min-height: 100vh;
-            padding-bottom: 60px;
+            padding-bottom: 60px; /* Space for nav */
         }
         
         #content-container {
             padding: 15px;
         }
         
-        .nav-bar {
+        /* Navigation */
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
@@ -48,206 +48,297 @@
         .nav-item {
             color: white;
             text-decoration: none;
-            font-weight: bold;
-            padding: 8px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            padding: 5px 10px;
             border-radius: 20px;
             transition: all 0.3s;
         }
         
         .nav-item.active {
             background-color: var(--secondary);
+            transform: translateY(-5px);
         }
         
-        .loading-screen {
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+        
+        /* Loading indicator */
+        .loader {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 3px;
+            background-color: var(--primary);
             z-index: 9999;
-            color: white;
-            font-size: 24px;
+        }
+        
+        .loader-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        /* Theme toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1001;
+            background: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="app-container">
-        <div id="content-container">
-            <!-- Dynamic content will be loaded here -->
-        </div>
-        
-        <div class="nav-bar">
-            <a href="#dashboard" class="nav-item active" onclick="loadPage('dashboard')">🏠 Dashboard</a>
-            <a href="#trading" class="nav-item" onclick="loadPage('trading')">📈 Trading</a>
-            <a href="#games" class="nav-item" onclick="loadPage('games')">🎮 Games</a>
-            <a href="#ads" class="nav-item" onclick="loadPage('ads')">📺 Ads</a>
-            <a href="#profile" class="nav-item" onclick="loadPage('profile')">👤 Profile</a>
-            <a href="#admin" class="nav-item" onclick="loadPage('admin')">🛠️ Admin</a>
-        </div>
+    <!-- Loading indicator -->
+    <div class="loader" id="loader">
+        <div class="loader-bar" id="loaderBar"></div>
     </div>
     
-    <div id="loading-screen" class="loading-screen" style="display: none;">
-        Loading...
+    <!-- Theme toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        🌙
     </div>
-
+    
+    <!-- Main app container -->
+    <div id="app-container">
+        <!-- Content will be dynamically loaded here -->
+        <div id="content-container"></div>
+    </div>
+    
+    <!-- Bottom navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" data-page="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-page="trading">
+            <span class="nav-icon">📈</span>
+            <span>Trading</span>
+        </a>
+        <a href="#" class="nav-item" data-page="games">
+            <span class="nav-icon">🎮</span>
+            <span>Games</span>
+        </a>
+        <a href="#" class="nav-item" data-page="ads">
+            <span class="nav-icon">📺</span>
+            <span>Ads</span>
+        </a>
+        <a href="#" class="nav-item" data-page="profile">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </div>
+    
     <script>
         // Configuration
         const PAGES = {
             dashboard: 'index.html',
             trading: 'trading.html',
-            games: 'game.html',
+            games: 'games.html',
             ads: 'ads.html',
             profile: 'profile.html',
             admin: 'admin.html'
         };
         
-        // Global state
+        // State management
         let currentPage = 'dashboard';
-        let isInitialLoad = true;
+        let isDarkMode = false;
         
-        // Initialize the SPA
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check URL hash for initial page
-            const hash = window.location.hash.substring(1);
-            if (hash && PAGES[hash]) {
-                currentPage = hash;
-                document.querySelector(`.nav-item[href="#${currentPage}"]`).classList.add('active');
-                document.querySelector(`.nav-item[href="#dashboard"]`).classList.remove('active');
-            }
+        // DOM elements
+        const contentContainer = document.getElementById('content-container');
+        const loader = document.getElementById('loader');
+        const loaderBar = document.getElementById('loaderBar');
+        const navItems = document.querySelectorAll('.nav-item');
+        const themeToggle = document.getElementById('themeToggle');
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load the default page
+            loadPage(currentPage);
             
-            // Load the initial page
-            loadPage(currentPage, true);
-            
-            // Handle hash changes
-            window.addEventListener('hashchange', function() {
-                const newPage = window.location.hash.substring(1);
-                if (newPage && PAGES[newPage] && newPage !== currentPage) {
-                    currentPage = newPage;
-                    loadPage(currentPage);
-                }
+            // Set up navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.dataset.page;
+                    if (page !== currentPage) {
+                        setActiveNav(item);
+                        loadPage(page);
+                    }
+                });
             });
+            
+            // Set up theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Check for admin (you can implement your own logic)
+            checkAdminAccess();
         });
         
         // Load a page dynamically
-        async function loadPage(pageName, isInitialLoad = false) {
-            if (!PAGES[pageName]) return;
-            
-            // Show loading screen
-            document.getElementById('loading-screen').style.display = 'flex';
+        async function loadPage(pageName) {
+            currentPage = pageName;
+            showLoader();
             
             try {
-                // Fetch the page content
                 const response = await fetch(PAGES[pageName]);
-                if (!response.ok) throw new Error('Failed to load page');
-                
                 const html = await response.text();
                 
                 // Extract just the content we need (between <body> tags)
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const bodyContent = doc.body.innerHTML;
+                const bodyContent = extractBodyContent(html);
                 
                 // Update the content container
-                const container = document.getElementById('content-container');
-                container.innerHTML = bodyContent;
-                
-                // Update active nav item
-                document.querySelectorAll('.nav-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                document.querySelector(`.nav-item[href="#${pageName}"]`).classList.add('active');
+                contentContainer.innerHTML = bodyContent;
                 
                 // Initialize scripts for the loaded page
                 initPageScripts(pageName);
                 
-                // Update URL hash if this wasn't triggered by a hash change
-                if (!isInitialLoad) {
-                    window.location.hash = pageName;
-                }
-                
-                // Scroll to top
-                window.scrollTo(0, 0);
-                
+                // Hide loader when content is ready
+                hideLoader();
             } catch (error) {
                 console.error('Error loading page:', error);
-                document.getElementById('content-container').innerHTML = `
+                contentContainer.innerHTML = `
                     <div style="text-align: center; padding: 50px;">
-                        <h2>Error loading page</h2>
-                        <p>Failed to load ${pageName}. Please try again.</p>
-                        <button onclick="loadPage('${pageName}')">Retry</button>
+                        <h3>Error loading page</h3>
+                        <p>Could not load ${pageName}. Please try again.</p>
+                        <button onclick="loadPage('dashboard')">Return to Dashboard</button>
                     </div>
                 `;
-            } finally {
-                // Hide loading screen
-                document.getElementById('loading-screen').style.display = 'none';
+                hideLoader();
             }
         }
         
-        // Initialize scripts for the loaded page
+        // Extract body content from full HTML
+        function extractBodyContent(html) {
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            return doc.body.innerHTML;
+        }
+        
+        // Initialize scripts for specific pages
         function initPageScripts(pageName) {
-            // This function would contain initialization code specific to each page
-            // For example:
+            // You can add page-specific initialization here
+            console.log(`Initializing ${pageName} scripts`);
             
-            if (pageName === 'dashboard') {
-                initDashboard();
-            } else if (pageName === 'trading') {
-                initTrading();
-            } else if (pageName === 'games') {
-                initGames();
-            } else if (pageName === 'ads') {
-                initAds();
-            } else if (pageName === 'profile') {
-                initProfile();
-            } else if (pageName === 'admin') {
-                initAdmin();
+            // Example: Initialize trading page scripts
+            if (pageName === 'trading') {
+                initTradingPage();
             }
             
-            // Initialize any global components that might be in the loaded page
-            initGlobalComponents();
+            // Example: Initialize games page scripts
+            if (pageName === 'games') {
+                initGamesPage();
+            }
+            
+            // Reapply theme when new page loads
+            applyTheme();
         }
         
-        // Example page initialization functions
-        function initDashboard() {
-            console.log('Initializing dashboard...');
-            // Initialize any dashboard-specific functionality
+        // Example page-specific initializers
+        function initTradingPage() {
+            console.log('Trading page scripts initialized');
+            // Add trading-specific JS here or load external scripts
         }
         
-        function initTrading() {
-            console.log('Initializing trading...');
-            // Initialize trading page
+        function initGamesPage() {
+            console.log('Games page scripts initialized');
+            // Add games-specific JS here or load external scripts
         }
         
-        function initGames() {
-            console.log('Initializing games...');
-            // Initialize games page
+        // Navigation helpers
+        function setActiveNav(activeItem) {
+            navItems.forEach(item => item.classList.remove('active'));
+            activeItem.classList.add('active');
         }
         
-        function initAds() {
-            console.log('Initializing ads...');
-            // Initialize ads page
+        // Loader animation
+        function showLoader() {
+            loader.style.display = 'block';
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                loaderBar.style.width = `${progress}%`;
+                if (progress >= 90) clearInterval(interval);
+            }, 50);
         }
         
-        function initProfile() {
-            console.log('Initializing profile...');
-            // Initialize profile page
+        function hideLoader() {
+            loaderBar.style.width = '100%';
+            setTimeout(() => {
+                loader.style.display = 'none';
+                loaderBar.style.width = '0%';
+            }, 300);
         }
         
-        function initAdmin() {
-            console.log('Initializing admin...');
-            // Initialize admin page
+        // Theme management
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', isDarkMode);
         }
         
-        function initGlobalComponents() {
-            console.log('Initializing global components...');
-            // Initialize components that might exist on multiple pages
+        function applyTheme() {
+            if (isDarkMode) {
+                document.documentElement.style.setProperty('--bg-color', '#121212');
+                document.documentElement.style.setProperty('--text-color', '#E0E0E0');
+                document.documentElement.style.setProperty('--card-bg', '#1E1E1E');
+            } else {
+                document.documentElement.style.setProperty('--bg-color', '#F5F6FA');
+                document.documentElement.style.setProperty('--text-color', '#2D3436');
+                document.documentElement.style.setProperty('--card-bg', '#FFFFFF');
+            }
         }
         
-        // Make loadPage available globally for HTML onclick handlers
-        window.loadPage = loadPage;
+        // Check for admin access
+        function checkAdminAccess() {
+            // Implement your admin check logic
+            const isAdmin = localStorage.getItem('admin') === 'true';
+            if (isAdmin) {
+                const adminNav = document.createElement('a');
+                adminNav.href = '#';
+                adminNav.className = 'nav-item';
+                adminNav.dataset.page = 'admin';
+                adminNav.innerHTML = '<span class="nav-icon">🔒</span><span>Admin</span>';
+                adminNav.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setActiveNav(adminNav);
+                    loadPage('admin');
+                });
+                document.querySelector('.bottom-nav').appendChild(adminNav);
+            }
+        }
+        
+        // Global function to navigate between pages
+        window.navigateTo = function(pageName) {
+            const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
+            if (navItem) {
+                setActiveNav(navItem);
+                loadPage(pageName);
+            }
+        };
+        
+        // Initialize theme from localStorage
+        if (localStorage.getItem('darkMode') === 'true') {
+            isDarkMode = true;
+            themeToggle.textContent = '☀️';
+            applyTheme();
+        }
     </script>
 </body>
 </html>
