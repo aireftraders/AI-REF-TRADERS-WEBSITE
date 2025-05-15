@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI REF-TRADERS - SPA</title>
+    <title>AI REF-TRADERS</title>
     <style>
         :root {
             --primary: #6C5CE7;
@@ -15,55 +15,164 @@
             --nigerian-green: #008753;
         }
         
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f6fa;
-            color: #2d3436;
-        }
-        
-        #app-container {
-            max-width: 100%;
-            min-height: 100vh;
-            padding-bottom: 60px; /* Space for nav */
-        }
-        
-        /* Splash Screen */
-        #splashScreen {
+        /* Splash Screen Styles */
+        .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--primary);
+            background: linear-gradient(135deg, #121212, #1E1E1E);
             color: white;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-out;
+        }
+        
+        .splash-logo {
+            width: 160px;
+            height: 160px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .splash-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, white, #00CEFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .splash-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 40px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #6C5CE7, #00CEFF);
+            border-radius: 3px;
+            transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-        
-        #splashScreen.hidden {
+            z-index: 1000;
             opacity: 0;
-            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s;
         }
         
-        #splashScreen img {
-            width: 150px;
-            height: auto;
-            margin-bottom: 1rem;
+        .login-modal.active {
+            opacity: 1;
+            pointer-events: all;
         }
         
-        #splashScreen h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+        .login-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
         }
         
-        #splashScreen p {
-            font-size: 1.2rem;
+        .login-modal.active .login-content {
+            transform: translateY(0);
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .login-tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .login-tab.active {
+            border-bottom: 3px solid var(--primary);
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .login-form button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .login-form button:hover {
+            background: #5a4bd6;
+        }
+        
+        /* Main App Styles */
+        #app-container {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding-bottom: 70px;
         }
         
         /* Navigation */
@@ -74,8 +183,9 @@
             display: flex;
             justify-content: space-around;
             background-color: var(--primary);
-            padding: 10px 0;
+            padding: 12px 0;
             z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
         
         .nav-item {
@@ -85,34 +195,34 @@
             flex-direction: column;
             align-items: center;
             font-size: 12px;
-            padding: 5px 10px;
+            padding: 5px 15px;
             border-radius: 20px;
             transition: all 0.3s;
         }
         
         .nav-item.active {
             background-color: var(--secondary);
-            transform: translateY(-5px);
+            transform: translateY(-8px);
         }
         
         .nav-icon {
-            font-size: 20px;
+            font-size: 22px;
             margin-bottom: 3px;
         }
         
         /* Loading indicator */
-        .loader {
-            display: none;
+        .page-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 3px;
             background-color: var(--primary);
-            z-index: 9999;
+            z-index: 999;
+            display: none;
         }
         
-        .loader-bar {
+        .page-loader-bar {
             height: 100%;
             width: 0%;
             background-color: var(--secondary);
@@ -122,8 +232,8 @@
         /* Theme toggle */
         .theme-toggle {
             position: fixed;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             z-index: 1001;
             background: white;
             border-radius: 50%;
@@ -132,61 +242,92 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             cursor: pointer;
         }
         
-        /* Iframe container */
-        #iframe-container {
+        /* Iframe container for full page loading */
+        .page-iframe {
             width: 100%;
-            height: calc(100vh - 60px); /* Adjust for bottom nav */
+            height: calc(100vh - 70px);
             border: none;
+            margin-bottom: 70px;
         }
     </style>
 </head>
 <body>
     <!-- Splash Screen -->
-    <div id="splashScreen">
-        <img src="c:/Users/USER/Downloads/ChatGPT Image Apr 30, 2025, 02_36_32 AM.png" alt="AI REF-TRADERS Logo">
-        <h1>AI REF-TRADERS</h1>
-        <p>Loading your experience...</p>
+    <div class="splash-screen" id="splashScreen">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Apr%2030%2C%202025%2C%2002_36_32%20AM-1wDDnne5fpylqjmbzveVpRiAKxNNkS.png" 
+             alt="AI REF-TRADERS Logo" 
+             class="splash-logo">
+        
+        <h1 class="splash-title">AI REF-TRADERS</h1>
+        <p class="splash-subtitle">Nigeria's Premier AI Trading Platform</p>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
     </div>
     
-    <!-- Loading indicator -->
-    <div class="loader" id="loader">
-        <div class="loader-bar" id="loaderBar"></div>
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal">
+        <div class="login-content">
+            <div class="login-tabs">
+                <div class="login-tab active" data-tab="login">Login</div>
+                <div class="login-tab" data-tab="register">Register</div>
+            </div>
+            
+            <div id="loginForm" class="login-form active">
+                <input type="email" id="loginEmail" placeholder="Email Address">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button id="loginBtn">Login</button>
+            </div>
+            
+            <div id="registerForm" class="login-form">
+                <input type="text" id="registerName" placeholder="Full Name">
+                <input type="email" id="registerEmail" placeholder="Email Address">
+                <input type="password" id="registerPassword" placeholder="Password">
+                <input type="password" id="confirmPassword" placeholder="Confirm Password">
+                <button id="registerBtn">Create Account</button>
+            </div>
+        </div>
     </div>
     
-    <!-- Theme toggle -->
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="page-loader-bar" id="pageLoaderBar"></div>
+    </div>
+    
+    <!-- Theme Toggle -->
     <div class="theme-toggle" id="themeToggle">
         🌙
     </div>
     
-    <!-- Main app container -->
+    <!-- Main App Container - Now using iframe for full page loading -->
     <div id="app-container">
-        <!-- Iframe for dynamically loading pages -->
-        <iframe id="iframe-container" src="dashboard-index.html"></iframe>
+        <iframe id="pageFrame" class="page-iframe" src="about:blank"></iframe>
     </div>
     
-    <!-- Bottom navigation -->
+    <!-- Bottom Navigation -->
     <div class="bottom-nav">
-        <a href="#" class="nav-item active" data-page="dashboard-index.html">
+        <a href="#" class="nav-item active" data-page="dashboard-index">
             <span class="nav-icon">🏠</span>
             <span>Dashboard</span>
         </a>
-        <a href="#" class="nav-item" data-page="trading.html">
+        <a href="#" class="nav-item" data-page="trading">
             <span class="nav-icon">📈</span>
             <span>Trading</span>
         </a>
-        <a href="#" class="nav-item" data-page="games.html">
+        <a href="#" class="nav-item" data-page="games">
             <span class="nav-icon">🎮</span>
             <span>Games</span>
         </a>
-        <a href="#" class="nav-item" data-page="ads.html">
+        <a href="#" class="nav-item" data-page="ads">
             <span class="nav-icon">📺</span>
             <span>Ads</span>
         </a>
-        <a href="#" class="nav-item" data-page="profile.html">
+        <a href="#" class="nav-item" data-page="profile">
             <span class="nav-icon">👤</span>
             <span>Profile</span>
         </a>
@@ -194,86 +335,347 @@
     
     <script>
         // Configuration
-        const navItems = document.querySelectorAll('.nav-item');
-        const iframeContainer = document.getElementById('iframe-container');
-        const loader = document.getElementById('loader');
-        const loaderBar = document.getElementById('loaderBar');
-        const themeToggle = document.getElementById('themeToggle');
-        const splashScreen = document.getElementById('splashScreen');
+        const PAGES = {
+            'dashboard-index': 'dashboard-index.html',
+            'trading': 'trading.html',
+            'games': 'games.html',
+            'ads': 'ads.html',
+            'profile': 'profile.html',
+            'admin': 'admin.html'
+        };
+        
+        // State management
+        let currentPage = 'dashboard-index';
         let isDarkMode = false;
-
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        
+        // DOM elements
+        const splashScreen = document.getElementById('splashScreen');
+        const progressBar = document.getElementById('progressBar');
+        const loginModal = document.getElementById('loginModal');
+        const pageLoader = document.getElementById('pageLoader');
+        const pageLoaderBar = document.getElementById('pageLoaderBar');
+        const navItems = document.querySelectorAll('.nav-item');
+        const themeToggle = document.getElementById('themeToggle');
+        const pageFrame = document.getElementById('pageFrame');
+        
         // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => {
-            // Show splash screen for 2 seconds
-            setTimeout(() => {
-                splashScreen.classList.add('hidden');
-            }, 2000);
-
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Show splash screen animation
+            await showSplashScreen();
+            
+            // Check authentication
+            checkAuth();
+            
             // Set up navigation
+            setupNavigation();
+            
+            // Set up login/register tabs
+            setupLoginTabs();
+            
+            // Set up theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+            
+            // Initialize theme
+            initTheme();
+        });
+        
+        // Show splash screen animation
+        async function showSplashScreen() {
+            return new Promise(resolve => {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 2;
+                    progressBar.style.width = `${progress}%`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            splashScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                splashScreen.style.display = 'none';
+                                resolve();
+                            }, 500);
+                        }, 500);
+                    }
+                }, 50);
+            });
+        }
+        
+        // Check authentication state
+        function checkAuth() {
+            if (isLoggedIn) {
+                showApp();
+                loadPage(currentPage);
+            } else {
+                showLoginModal();
+            }
+        }
+        
+        // Show login modal
+        function showLoginModal() {
+            setTimeout(() => {
+                loginModal.classList.add('active');
+            }, 300);
+        }
+        
+        // Hide login modal
+        function hideLoginModal() {
+            loginModal.classList.remove('active');
+        }
+        
+        // Show main app
+        function showApp() {
+            document.getElementById('app-container').style.display = 'block';
+        }
+        
+        // Load a page dynamically using iframe
+        async function loadPage(pageName) {
+            currentPage = pageName;
+            showPageLoader();
+            
+            try {
+                // Load the page in the iframe
+                pageFrame.src = PAGES[pageName];
+                
+                // Hide loader when iframe is loaded
+                pageFrame.onload = function() {
+                    hidePageLoader();
+                };
+                
+                // Handle iframe errors
+                pageFrame.onerror = function() {
+                    console.error('Error loading page:', pageName);
+                    pageFrame.srcdoc = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    height: 100vh;
+                                    margin: 0;
+                                    background-color: #f5f5f5;
+                                }
+                                .error-container {
+                                    text-align: center;
+                                    padding: 20px;
+                                    background: white;
+                                    border-radius: 10px;
+                                    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+                                }
+                                button {
+                                    padding: 10px 20px;
+                                    background: #6C5CE7;
+                                    color: white;
+                                    border: none;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    margin-top: 15px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="error-container">
+                                <h3>Error loading page</h3>
+                                <p>Could not load ${pageName}. Please try again.</p>
+                                <button onclick="window.parent.navigateTo('dashboard-index')">Return to Dashboard</button>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+                    hidePageLoader();
+                };
+            } catch (error) {
+                console.error('Error loading page:', error);
+                hidePageLoader();
+            }
+        }
+        
+        // Setup navigation
+        function setupNavigation() {
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     const page = item.dataset.page;
-                    setActiveNav(item);
-                    loadPage(page);
+                    if (page !== currentPage) {
+                        setActiveNav(item);
+                        loadPage(page);
+                    }
                 });
             });
-
-            // Set up theme toggle
-            themeToggle.addEventListener('click', toggleTheme);
-
-            // Initialize theme
-            if (localStorage.getItem('darkMode') === 'true') {
-                isDarkMode = true;
-                applyTheme();
-            }
-        });
-
-        // Load a page into the iframe
-        function loadPage(page) {
-            showLoader();
-            iframeContainer.src = page;
-            iframeContainer.onload = hideLoader;
         }
-
+        
         // Set active navigation item
         function setActiveNav(activeItem) {
             navItems.forEach(item => item.classList.remove('active'));
             activeItem.classList.add('active');
         }
-
-        // Loader animation
-        function showLoader() {
-            loader.style.display = 'block';
-            loaderBar.style.width = '0%';
+        
+        // Setup login/register tabs
+        function setupLoginTabs() {
+            const loginTab = document.querySelector('.login-tab[data-tab="login"]');
+            const registerTab = document.querySelector('.login-tab[data-tab="register"]');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            // Tab switching
+            loginTab.addEventListener('click', () => {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            });
+            
+            registerTab.addEventListener('click', () => {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+            });
+            
+            // Login button
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (email && password) {
+                    // In a real app, you would verify credentials with your backend
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userEmail', email);
+                    isLoggedIn = true;
+                    hideLoginModal();
+                    showApp();
+                    loadPage(currentPage);
+                    
+                    // Show welcome notification
+                    showNotification(`Welcome back!`, 3000);
+                } else {
+                    showNotification('Please enter both email and password', 3000);
+                }
+            });
+            
+            // Register button
+            document.getElementById('registerBtn').addEventListener('click', () => {
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirm = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirm) {
+                    showNotification("Passwords don't match!", 3000);
+                    return;
+                }
+                
+                if (name && email && password) {
+                    // In a real app, you would register the user with your backend
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userName', name);
+                    isLoggedIn = true;
+                    hideLoginModal();
+                    showApp();
+                    loadPage(currentPage);
+                    
+                    // Show welcome notification
+                    showNotification(`Welcome to AI REF-TRADERS, ${name}!`, 3000);
+                } else {
+                    showNotification('Please fill all fields', 3000);
+                }
+            });
+        }
+        
+        // Show notification
+        function showNotification(message, duration = 3000) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '80px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = 'var(--primary)';
+            notification.style.color = 'white';
+            notification.style.padding = '12px 24px';
+            notification.style.borderRadius = '8px';
+            notification.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            notification.style.zIndex = '1000';
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 10);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, duration);
+        }
+        
+        // Page loader functions
+        function showPageLoader() {
+            pageLoader.style.display = 'block';
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 10;
-                loaderBar.style.width = `${progress}%`;
+                progress += 5;
+                pageLoaderBar.style.width = `${progress}%`;
                 if (progress >= 90) clearInterval(interval);
             }, 50);
         }
-
-        function hideLoader() {
-            loaderBar.style.width = '100%';
+        
+        function hidePageLoader() {
+            pageLoaderBar.style.width = '100%';
             setTimeout(() => {
-                loader.style.display = 'none';
-                loaderBar.style.width = '0%';
+                pageLoader.style.display = 'none';
+                pageLoaderBar.style.width = '0%';
             }, 300);
         }
-
+        
         // Theme management
         function toggleTheme() {
             isDarkMode = !isDarkMode;
             applyTheme();
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
             localStorage.setItem('darkMode', isDarkMode);
         }
-
+        
         function applyTheme() {
-            document.body.style.backgroundColor = isDarkMode ? '#121212' : '#F5F6FA';
-            document.body.style.color = isDarkMode ? '#E0E0E0' : '#2D3436';
-            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+            if (isDarkMode) {
+                document.documentElement.style.setProperty('--bg-color', '#121212');
+                document.documentElement.style.setProperty('--text-color', '#E0E0E0');
+                document.documentElement.style.setProperty('--card-bg', '#1E1E1E');
+                document.documentElement.style.setProperty('--border-color', '#333');
+            } else {
+                document.documentElement.style.setProperty('--bg-color', '#F5F6FA');
+                document.documentElement.style.setProperty('--text-color', '#2D3436');
+                document.documentElement.style.setProperty('--card-bg', '#FFFFFF');
+                document.documentElement.style.setProperty('--border-color', '#e0e0e0');
+            }
         }
+        
+        function initTheme() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                isDarkMode = true;
+                themeToggle.textContent = '☀️';
+                applyTheme();
+            }
+        }
+        
+        // Global navigation function
+        window.navigateTo = function(pageName) {
+            const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
+            if (navItem) {
+                setActiveNav(navItem);
+                loadPage(pageName);
+            }
+        };
     </script>
 </body>
 </html>
