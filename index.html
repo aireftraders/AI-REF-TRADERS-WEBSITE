@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI REF-TRADERS</title>
+    <title>AI REF-TRADERS - SPA</title>
     <style>
         :root {
             --primary: #6C5CE7;
@@ -21,108 +21,49 @@
             padding: 0;
             background-color: #f5f6fa;
             color: #2d3436;
-            overflow-x: hidden;
         }
         
-        /* Splash Screen Styles */
-        .splash-screen {
+        #app-container {
+            max-width: 100%;
+            min-height: 100vh;
+            padding-bottom: 60px; /* Space for nav */
+        }
+        
+        /* Splash Screen */
+        #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #121212, #1E1E1E);
+            background-color: var(--primary);
             color: white;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.8s ease-out;
-        }
-        
-        .splash-container {
-            text-align: center;
-            width: 100%;
-            max-width: 480px;
-            padding: 0 24px;
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 3px;
-            margin: 0 auto;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            width: 0;
-            background: linear-gradient(90deg, #6C5CE7, #00CEFF);
-            border-radius: 3px;
-            transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-        }
-        
-        /* Login Modal */
-        .login-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 10000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
         
-        .login-content {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
+        #splashScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
         
-        .login-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
+        #splashScreen img {
+            width: 150px;
+            height: auto;
+            margin-bottom: 1rem;
         }
         
-        .login-tab {
-            padding: 10px 15px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
+        #splashScreen h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
         }
         
-        .login-tab.active {
-            border-bottom: 3px solid var(--primary);
-            font-weight: bold;
-        }
-        
-        .login-form input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-        }
-        
-        /* Main App Styles */
-        #app-container {
-            display: none; /* Initially hidden until login */
-            max-width: 100%;
-            min-height: 100vh;
-            padding-bottom: 60px;
-        }
-        
-        #content-container {
-            padding: 15px;
+        #splashScreen p {
+            font-size: 1.2rem;
         }
         
         /* Navigation */
@@ -160,18 +101,18 @@
         }
         
         /* Loading indicator */
-        .page-loader {
+        .loader {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 3px;
             background-color: var(--primary);
-            z-index: 999;
-            display: none;
+            z-index: 9999;
         }
         
-        .page-loader-bar {
+        .loader-bar {
             height: 100%;
             width: 0%;
             background-color: var(--secondary);
@@ -194,80 +135,58 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             cursor: pointer;
         }
+        
+        /* Iframe container */
+        #iframe-container {
+            width: 100%;
+            height: calc(100vh - 60px); /* Adjust for bottom nav */
+            border: none;
+        }
     </style>
 </head>
 <body>
     <!-- Splash Screen -->
-    <div class="splash-screen" id="splashScreen">
-        <div class="splash-container">
-            <h1>AI REF-TRADERS</h1>
-            <p>Nigeria's Premier AI Trading Platform</p>
-            
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-        </div>
+    <div id="splashScreen">
+        <img src="c:/Users/USER/Downloads/ChatGPT Image Apr 30, 2025, 02_36_32 AM.png" alt="AI REF-TRADERS Logo">
+        <h1>AI REF-TRADERS</h1>
+        <p>Loading your experience...</p>
     </div>
     
-    <!-- Login Modal -->
-    <div class="login-modal" id="loginModal" style="display: none;">
-        <div class="login-content">
-            <div class="login-tabs">
-                <div class="login-tab active" data-tab="login">Login</div>
-                <div class="login-tab" data-tab="register">Register</div>
-            </div>
-            
-            <div id="loginForm" class="login-form">
-                <input type="email" id="loginEmail" placeholder="Email">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button class="btn-primary" id="loginBtn" style="width: 100%;">Login</button>
-            </div>
-            
-            <div id="registerForm" class="login-form" style="display: none;">
-                <input type="text" id="registerName" placeholder="Full Name">
-                <input type="email" id="registerEmail" placeholder="Email">
-                <input type="password" id="registerPassword" placeholder="Password">
-                <input type="password" id="confirmPassword" placeholder="Confirm Password">
-                <button class="btn-primary" id="registerBtn" style="width: 100%;">Register</button>
-            </div>
-        </div>
+    <!-- Loading indicator -->
+    <div class="loader" id="loader">
+        <div class="loader-bar" id="loaderBar"></div>
     </div>
     
-    <!-- Page Loader -->
-    <div class="page-loader" id="pageLoader">
-        <div class="page-loader-bar" id="pageLoaderBar"></div>
-    </div>
-    
-    <!-- Theme Toggle -->
+    <!-- Theme toggle -->
     <div class="theme-toggle" id="themeToggle">
         🌙
     </div>
     
-    <!-- Main App Container -->
+    <!-- Main app container -->
     <div id="app-container">
-        <!-- Content will be dynamically loaded here -->
-        <div id="content-container"></div>
+        <!-- Iframe for dynamically loading pages -->
+        <iframe id="iframe-container" src="dashboard-index.html"></iframe>
     </div>
     
-    <!-- Bottom Navigation -->
+    <!-- Bottom navigation -->
     <div class="bottom-nav">
-        <a href="#" class="nav-item active" data-page="dashboard">
+        <a href="#" class="nav-item active" data-page="dashboard-index.html">
             <span class="nav-icon">🏠</span>
             <span>Dashboard</span>
         </a>
-        <a href="#" class="nav-item" data-page="trading">
+        <a href="#" class="nav-item" data-page="trading.html">
             <span class="nav-icon">📈</span>
             <span>Trading</span>
         </a>
-        <a href="#" class="nav-item" data-page="games">
+        <a href="#" class="nav-item" data-page="games.html">
             <span class="nav-icon">🎮</span>
             <span>Games</span>
         </a>
-        <a href="#" class="nav-item" data-page="ads">
+        <a href="#" class="nav-item" data-page="ads.html">
             <span class="nav-icon">📺</span>
             <span>Ads</span>
         </a>
-        <a href="#" class="nav-item" data-page="profile">
+        <a href="#" class="nav-item" data-page="profile.html">
             <span class="nav-icon">👤</span>
             <span>Profile</span>
         </a>
@@ -275,283 +194,86 @@
     
     <script>
         // Configuration
-        const PAGES = {
-            dashboard: 'dashboard-index.html',
-            trading: 'trading.html',
-            games: 'games.html',
-            ads: 'ads.html',
-            profile: 'profile.html',
-            admin: 'admin.html'
-        };
-        
-        // State management
-        let currentPage = 'dashboard';
-        let isDarkMode = false;
-        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        
-        // DOM elements
-        const splashScreen = document.getElementById('splashScreen');
-        const progressBar = document.getElementById('progressBar');
-        const loginModal = document.getElementById('loginModal');
-        const contentContainer = document.getElementById('content-container');
-        const pageLoader = document.getElementById('pageLoader');
-        const pageLoaderBar = document.getElementById('pageLoaderBar');
         const navItems = document.querySelectorAll('.nav-item');
+        const iframeContainer = document.getElementById('iframe-container');
+        const loader = document.getElementById('loader');
+        const loaderBar = document.getElementById('loaderBar');
         const themeToggle = document.getElementById('themeToggle');
-        
+        const splashScreen = document.getElementById('splashScreen');
+        let isDarkMode = false;
+
         // Initialize the app
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Show splash screen
-            await showSplashScreen();
-            
-            // Check login status
-            if (isLoggedIn) {
-                showApp();
-                loadPage(currentPage);
-            } else {
-                showLoginModal();
-            }
-            
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show splash screen for 2 seconds
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+            }, 2000);
+
             // Set up navigation
-            setupNavigation();
-            
-            // Set up login/register tabs
-            setupLoginTabs();
-            
-            // Set up theme toggle
-            themeToggle.addEventListener('click', toggleTheme);
-            
-            // Initialize theme
-            initTheme();
-        });
-        
-        // Show splash screen animation
-        async function showSplashScreen() {
-            return new Promise(resolve => {
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 2;
-                    progressBar.style.width = `${progress}%`;
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        setTimeout(() => {
-                            splashScreen.style.opacity = '0';
-                            setTimeout(() => {
-                                splashScreen.style.display = 'none';
-                                resolve();
-                            }, 500);
-                        }, 500);
-                    }
-                }, 50);
-            });
-        }
-        
-        // Show login modal
-        function showLoginModal() {
-            loginModal.style.display = 'flex';
-        }
-        
-        // Hide login modal
-        function hideLoginModal() {
-            loginModal.style.display = 'none';
-        }
-        
-        // Show main app
-        function showApp() {
-            document.getElementById('app-container').style.display = 'block';
-        }
-        
-        // Load a page dynamically
-        async function loadPage(pageName) {
-            currentPage = pageName;
-            showPageLoader();
-            
-            try {
-                const response = await fetch(PAGES[pageName]);
-                const html = await response.text();
-                
-                // Create a temporary container to parse the HTML
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = html;
-                
-                // Extract the main content (adjust selector as needed)
-                const mainContent = tempDiv.querySelector('.container') || tempDiv.querySelector('main') || tempDiv;
-                
-                // Update the content container
-                contentContainer.innerHTML = mainContent.innerHTML;
-                
-                // Reinitialize any scripts
-                reinitializeScripts();
-                
-                hidePageLoader();
-            } catch (error) {
-                console.error('Error loading page:', error);
-                contentContainer.innerHTML = `
-                    <div style="text-align: center; padding: 50px;">
-                        <h3>Error loading page</h3>
-                        <p>Could not load ${pageName}. Please try again.</p>
-                        <button onclick="loadPage('dashboard')">Return to Dashboard</button>
-                    </div>
-                `;
-                hidePageLoader();
-            }
-        }
-        
-        // Reinitialize scripts after page load
-        function reinitializeScripts() {
-            // Remove any existing script tags to prevent duplication
-            const oldScripts = contentContainer.querySelectorAll('script');
-            oldScripts.forEach(script => script.remove());
-            
-            // Find all script tags in the loaded content
-            const scripts = contentContainer.querySelectorAll('script');
-            
-            scripts.forEach(script => {
-                const newScript = document.createElement('script');
-                if (script.src) {
-                    newScript.src = script.src;
-                } else {
-                    newScript.textContent = script.textContent;
-                }
-                contentContainer.appendChild(newScript);
-            });
-        }
-        
-        // Setup navigation
-        function setupNavigation() {
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     const page = item.dataset.page;
-                    if (page !== currentPage) {
-                        setActiveNav(item);
-                        loadPage(page);
-                    }
+                    setActiveNav(item);
+                    loadPage(page);
                 });
             });
+
+            // Set up theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Initialize theme
+            if (localStorage.getItem('darkMode') === 'true') {
+                isDarkMode = true;
+                applyTheme();
+            }
+        });
+
+        // Load a page into the iframe
+        function loadPage(page) {
+            showLoader();
+            iframeContainer.src = page;
+            iframeContainer.onload = hideLoader;
         }
-        
+
         // Set active navigation item
         function setActiveNav(activeItem) {
             navItems.forEach(item => item.classList.remove('active'));
             activeItem.classList.add('active');
         }
-        
-        // Setup login/register tabs
-        function setupLoginTabs() {
-            const loginTab = document.querySelector('.login-tab[data-tab="login"]');
-            const registerTab = document.querySelector('.login-tab[data-tab="register"]');
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            
-            loginTab.addEventListener('click', () => {
-                loginTab.classList.add('active');
-                registerTab.classList.remove('active');
-                loginForm.style.display = 'block';
-                registerForm.style.display = 'none';
-            });
-            
-            registerTab.addEventListener('click', () => {
-                registerTab.classList.add('active');
-                loginTab.classList.remove('active');
-                registerForm.style.display = 'block';
-                loginForm.style.display = 'none';
-            });
-            
-            // Login button
-            document.getElementById('loginBtn').addEventListener('click', () => {
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                
-                // Simple validation
-                if (email && password) {
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userEmail', email);
-                    isLoggedIn = true;
-                    hideLoginModal();
-                    showApp();
-                    loadPage(currentPage);
-                }
-            });
-            
-            // Register button
-            document.getElementById('registerBtn').addEventListener('click', () => {
-                const name = document.getElementById('registerName').value;
-                const email = document.getElementById('registerEmail').value;
-                const password = document.getElementById('registerPassword').value;
-                const confirm = document.getElementById('confirmPassword').value;
-                
-                if (password !== confirm) {
-                    alert("Passwords don't match!");
-                    return;
-                }
-                
-                if (name && email && password) {
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userEmail', email);
-                    localStorage.setItem('userName', name);
-                    isLoggedIn = true;
-                    hideLoginModal();
-                    showApp();
-                    loadPage(currentPage);
-                }
-            });
-        }
-        
-        // Page loader functions
-        function showPageLoader() {
-            pageLoader.style.display = 'block';
+
+        // Loader animation
+        function showLoader() {
+            loader.style.display = 'block';
+            loaderBar.style.width = '0%';
             let progress = 0;
             const interval = setInterval(() => {
-                progress += 5;
-                pageLoaderBar.style.width = `${progress}%`;
+                progress += 10;
+                loaderBar.style.width = `${progress}%`;
                 if (progress >= 90) clearInterval(interval);
             }, 50);
         }
-        
-        function hidePageLoader() {
-            pageLoaderBar.style.width = '100%';
+
+        function hideLoader() {
+            loaderBar.style.width = '100%';
             setTimeout(() => {
-                pageLoader.style.display = 'none';
-                pageLoaderBar.style.width = '0%';
+                loader.style.display = 'none';
+                loaderBar.style.width = '0%';
             }, 300);
         }
-        
+
         // Theme management
         function toggleTheme() {
             isDarkMode = !isDarkMode;
             applyTheme();
-            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
             localStorage.setItem('darkMode', isDarkMode);
         }
-        
+
         function applyTheme() {
-            if (isDarkMode) {
-                document.documentElement.style.setProperty('--bg-color', '#121212');
-                document.documentElement.style.setProperty('--text-color', '#E0E0E0');
-            } else {
-                document.documentElement.style.setProperty('--bg-color', '#F5F6FA');
-                document.documentElement.style.setProperty('--text-color', '#2D3436');
-            }
+            document.body.style.backgroundColor = isDarkMode ? '#121212' : '#F5F6FA';
+            document.body.style.color = isDarkMode ? '#E0E0E0' : '#2D3436';
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
         }
-        
-        function initTheme() {
-            if (localStorage.getItem('darkMode') === 'true') {
-                isDarkMode = true;
-                themeToggle.textContent = '☀️';
-                applyTheme();
-            }
-        }
-        
-        // Global navigation function
-        window.navigateTo = function(pageName) {
-            const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
-            if (navItem) {
-                setActiveNav(navItem);
-                loadPage(pageName);
-            }
-        };
     </script>
 </body>
 </html>
