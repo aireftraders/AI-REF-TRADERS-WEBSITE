@@ -737,8 +737,8 @@
                 
                 if (friendsShared !== null && groupsShared !== null) {
                     const shares = {
-                        friends: Math.min(parseInt(friendsShared) || 0,
-                        groups: Math.min(parseInt(groupsShared) || 0
+                        friends: Math.min(parseInt(friendsShared) || 0, 10),
+                        groups: Math.min(parseInt(groupsShared) || 0, 2)
                     };
                     
                     localStorage.setItem('whatsappShares', JSON.stringify(shares));
