@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>My Profile - AI REF-TRADERS</title>
+    <!-- Include Dexie.js for IndexedDB -->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<script>
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI REF-TRADERS - AI Trading</title>
-    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
             --primary: #6C5CE7;
@@ -820,31 +822,16 @@
     </nav>
     
     <script>
-        // Firebase initialization
-        const firebaseConfig = {
-            apiKey: "AIzaSyC3ES2T4KR0OLu9CmiN_jjo_S3WC3NwFxQ",
-            authDomain: "lifesolves-871fd.firebaseapp.com",
-            projectId: "lifesolves-871fd",
-            storageBucket: "lifesolves-871fd.firebasestorage.app",
-            messagingSenderId: "431511488986",
-            appId: "1:431511488986:web:59858226d1f3d9d30fd8e3",
-            measurementId: "G-FXJN02G5XD"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-
-        // Initialize Dexie database
-        const dbDexie = new Dexie("AI_REF_TRADERS_DB");
-        
-        // Define database schema (must match index.html)
-        dbDexie.version(1).stores({
-            users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
-            announcements: '++id, title, content, time, unread',
-            supportTickets: '++id, userId, subject, message, status, createdAt',
-            transactions: '++id, userId, type, amount, status, timestamp'
-        });
+        // Dexie Database Initialization (ensure it's declared only once)
+        if (typeof dbDexie === 'undefined') {
+            const dbDexie = new Dexie("AI_REF_TRADERS_DB");
+            dbDexie.version(1).stores({
+                users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
+                announcements: '++id, title, content, time, unread',
+                supportTickets: '++id, userId, subject, message, status, createdAt',
+                transactions: '++id, userId, type, amount, status, timestamp'
+            });
+        }
 
         // DOM Elements
         const elements = {

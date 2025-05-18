@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
+<script>
+
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Nigeria-Focused SEO Meta Tags -->
-    <meta name="description" content="AI REF-TRADERS: User Profile - Manage your account, view earnings, and track your referrals on Nigeria's premier AI trading platform.">
-    <meta name="keywords" content="AI REF-TRADERS profile, Nigerian trading account, manage earnings Nigeria, Lagos trading profile, Abuja user account">
+    <meta name="description" content="AI REF-TRADERS: User profile for Nigeria's premier AI trading platform. Manage your account, track earnings, and view transaction history.">
+    <meta name="keywords" content="AI trading profile, Nigeria online earnings, Lagos trading account, Abuja user profile, Nigerian digital income">
     <meta name="author" content="AI REF-TRADERS Nigeria">
     
     <!-- Nigeria Geo Targeting -->
@@ -16,8 +21,8 @@
     <meta name="ICBM" content="6.524379, 3.379206" />
     
     <!-- Open Graph / Social Media -->
-    <meta property="og:title" content="User Profile - AI REF-TRADERS Nigeria">
-    <meta property="og:description" content="Manage your AI trading account, view earnings, and track referrals on Nigeria's premier trading platform">
+    <meta property="og:title" content="AI REF-TRADERS - User Profile">
+    <meta property="og:description" content="Manage your AI trading account and track your earnings in Nigeria">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://aireftraders.ng/profile">
     <meta property="og:image" content="https://aireftraders.ng/images/profile-preview.jpg">
@@ -26,8 +31,8 @@
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="User Profile - AI REF-TRADERS Nigeria">
-    <meta name="twitter:description" content="Manage your AI trading account and track earnings on Nigeria's premier platform">
+    <meta name="twitter:title" content="AI REF-TRADERS User Profile">
+    <meta name="twitter:description" content="Manage your AI trading account and track your Nigerian earnings">
     <meta name="twitter:image" content="https://aireftraders.ng/images/profile-twitter-card.jpg">
     
     <!-- Canonical URL -->
@@ -119,19 +124,19 @@
             margin-left: 5px;
         }
         
-        /* Profile Header Styles */
+        /* Profile Header */
         .profile-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
         }
         
         .profile-title {
-            color: var(--primary);
             margin: 0;
+            color: var(--primary);
             font-size: 24px;
         }
         
@@ -139,18 +144,13 @@
             background-color: var(--danger);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 20px;
             font-weight: bold;
-            transition: all 0.2s;
+            cursor: pointer;
         }
         
-        .logout-btn:hover {
-            background-color: #c0392b;
-        }
-        
-        /* Profile Section Styles */
+        /* Profile Sections */
         .profile-section {
             background: var(--card-bg);
             border-radius: 12px;
@@ -160,19 +160,17 @@
         }
         
         .section-title {
-            color: var(--primary);
             margin-top: 0;
-            margin-bottom: 20px;
+            color: var(--primary);
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
         }
         
-        /* Info Grid Layout */
+        /* Profile Info Grid */
         .info-grid {
             display: grid;
             grid-template-columns: 150px 1fr;
             gap: 15px 20px;
-            margin-bottom: 20px;
         }
         
         @media (max-width: 600px) {
@@ -201,76 +199,75 @@
             font-weight: 600;
         }
         
-        /* Login History Table */
-        .login-history {
+        /* Transactions Table */
+        .transactions-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
         }
         
-        .login-history th {
+        .transactions-table th {
             text-align: left;
             padding: 12px 15px;
-            background: var(--bg-color);
+            background: var(--light);
             color: var(--text-color);
             font-weight: bold;
         }
         
-        .login-history td {
+        .transactions-table td {
             padding: 12px 15px;
             border-bottom: 1px solid var(--border-color);
         }
         
-        .login-history tr:last-child td {
+        .transactions-table tr:last-child td {
             border-bottom: none;
         }
         
-        /* Transaction History */
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .transaction-details {
-            flex: 1;
-        }
-        
-        .transaction-amount {
-            font-weight: bold;
-        }
-        
-        .transaction-positive {
+        .transaction-credit {
             color: var(--success);
         }
         
-        .transaction-negative {
+        .transaction-debit {
             color: var(--danger);
         }
         
-        /* Edit Profile Button */
-        .edit-profile-btn {
+        /* Navigation Bar */
+        .navigation-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 20px;
-            display: inline-block;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px var(--shadow-color);
         }
         
-        /* Theme Toggle Switch */
+        .nav-item {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .nav-item.active {
+            color: var(--secondary);
+        }
+        
+        /* Theme Toggle */
         .theme-toggle {
             position: fixed;
             top: 10px;
             left: 10px;
-            z-index: 1100;
+            z-index: 1000;
         }
         
         .theme-toggle-btn {
@@ -294,159 +291,96 @@
         .theme-icon {
             font-size: 16px;
         }
-
-        /* Navigation Bar */
-        .navigation-bar {
-            background-color: var(--primary);
-            color: white;
-            padding: 10px 0;
+        
+        /* Language Selector */
+        .language-selector {
             position: fixed;
-            bottom: 0;
-            width: 100%;
+            top: 10px;
+            right: 10px;
+            background: var(--card-bg);
+            padding: 5px 10px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            z-index: 1100;
             display: flex;
-            justify-content: center;
-            box-shadow: 0 -2px 10px var(--shadow-color);
-        }
-
-        .navigation-bar ul {
-            list-style: none;
-            display: flex;
-            gap: 15px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .navigation-bar li {
-            display: inline;
-        }
-
-        .navigation-bar a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 8px 12px;
-            border-radius: 8px;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
             align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .language-selector select {
+            border: none;
+            background: none;
+            font-size: 14px;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+        
+        /* Edit Profile Button */
+        .edit-profile-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        
+        /* Verification Status */
+        .verification-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .verification-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
             font-size: 12px;
+            font-weight: bold;
         }
-
-        .navigation-bar a:hover {
-            background-color: var(--secondary);
+        
+        .verified {
+            background-color: var(--success);
+            color: white;
         }
-
-        .navigation-bar a.active {
-            background-color: var(--secondary);
+        
+        .unverified {
+            background-color: var(--danger);
+            color: white;
         }
-
-        .nav-icon {
-            font-size: 18px;
-            margin-bottom: 3px;
+        
+        /* Bank Details */
+        .bank-details {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
         }
-
+        
         /* Responsive Design */
         @media (max-width: 600px) {
+            .container {
+                padding-bottom: 80px;
+            }
+            
             .info-grid {
                 grid-template-columns: 1fr;
             }
             
-            .navigation-bar ul {
-                gap: 5px;
+            .transactions-table {
+                font-size: 14px;
             }
             
-            .navigation-bar a {
-                padding: 5px 8px;
-                font-size: 11px;
+            .transactions-table th, 
+            .transactions-table td {
+                padding: 8px 10px;
             }
-            
-            .nav-icon {
-                font-size: 16px;
-            }
-        }
-
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        
-        .modal.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-        
-        .modal-content {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            width: 90%;
-            max-width: 400px;
-            transform: translateY(20px);
-            transition: transform 0.3s;
-        }
-        
-        .modal.active .modal-content {
-            transform: translateY(0);
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        /* Form Input Styles */
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: var(--card-bg);
-            color: var(--text-color);
-        }
-        
-        /* Notification Styles */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--success);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px var(--shadow-color);
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .notification.show {
-            opacity: 1;
         }
     </style>
 </head>
@@ -458,12 +392,23 @@
             <span id="themeText">Dark Mode</span>
         </button>
     </div>
+    
+    <!-- Language Selector -->
+    <div class="language-selector" id="languageSelector">
+        🌐 <select id="languageDropdown">
+            <option value="en" selected>EN</option>
+            <option value="ha">HA</option>
+            <option value="yo">YO</option>
+            <option value="ig">IG</option>
+        </select>
+    </div>
 
-    <div class="container">
+    <div class="container" id="mainContent">
         <div class="app-bar">
             <h1>AI REF-TRADERS <span class="nigeria-badge">PROFILE</span></h1>
             <div class="user-chip">
-                <span>👤 <span id="usernameDisplay">User</span></span>
+                <span>📊 ₦<span id="balanceDisplay">0</span></span>
+                <span id="verifiedBadge">❌</span>
             </div>
         </div>
         
@@ -472,211 +417,204 @@
             <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
         
-        <!-- Account Information Section -->
+        <!-- Personal Information Section -->
         <div class="profile-section">
-            <h2 class="section-title">Account Information</h2>
+            <h2 class="section-title">Personal Information</h2>
             <div class="info-grid">
                 <div class="info-label">Full Name:</div>
                 <div class="info-value" id="fullName">Loading...</div>
                 
-                <div class="info-label">Email Address:</div>
-                <div class="info-value" id="email">Loading...</div>
+                <div class="info-label">Email:</div>
+                <div class="info-value" id="userEmail">Loading...</div>
                 
-                <div class="info-label">Phone Number:</div>
-                <div class="info-value" id="phone">Loading...</div>
+                <div class="info-label">Phone:</div>
+                <div class="info-value" id="userPhone">Loading...</div>
                 
-                <div class="info-label">Account Created:</div>
-                <div class="info-value" id="accountCreated">Loading...</div>
+                <div class="info-label">Joined Date:</div>
+                <div class="info-value" id="joinedDate">Loading...</div>
                 
-                <div class="info-label">Last Login:</div>
-                <div class="info-value" id="lastLogin">Loading...</div>
+                <div class="info-label">Referral Code:</div>
+                <div class="info-value" id="referralCode">Loading...</div>
                 
-                <div class="info-label">Referrals Completed:</div>
-                <div class="info-value" id="referralsCompleted">Loading...</div>
-                
-                <div class="info-label">Account Status:</div>
-                <div class="info-value" id="accountStatus">Loading...</div>
+                <div class="info-label">Referrals:</div>
+                <div class="info-value" id="referralCount">0/6</div>
             </div>
             
             <button class="edit-profile-btn" id="editProfileBtn">Edit Profile</button>
+        </div>
+        
+        <!-- Account Status Section -->
+        <div class="profile-section">
+            <h2 class="section-title">Account Status</h2>
+            <div class="info-grid">
+                <div class="info-label">Verification:</div>
+                <div class="info-value" id="verificationStatus">Unverified</div>
+                
+                <div class="info-label">Trading Status:</div>
+                <div class="info-value" id="tradingStatus">Inactive</div>
+                
+                <div class="info-label">Ads Watched:</div>
+                <div class="info-value" id="adsWatched">0/20</div>
+                
+                <div class="info-label">Login Streak:</div>
+                <div class="info-value" id="loginStreak">0 days</div>
+            </div>
+            
+            <div class="verification-status">
+                <div id="verificationBadge" class="verification-badge unverified">UNVERIFIED</div>
+                <span id="verificationText">Verify your account to enable withdrawals</span>
+            </div>
         </div>
         
         <!-- Financial Information Section -->
         <div class="profile-section">
             <h2 class="section-title">Financial Information</h2>
             <div class="info-grid">
-                <div class="info-label">Current Balance:</div>
-                <div class="info-value" id="currentBalance">Loading...</div>
+                <div class="info-label">Account Balance:</div>
+                <div class="info-value">₦<span id="accountBalance">0</span></div>
                 
-                <div class="info-label">Withdrawable Balance:</div>
-                <div class="info-value" id="withdrawableBalance">Loading...</div>
+                <div class="info-label">Withdrawable:</div>
+                <div class="info-value">₦<span id="withdrawableBalance">0</span></div>
                 
-                <div class="info-label">Total Profit:</div>
-                <div class="info-value" id="totalProfit">Loading...</div>
+                <div class="info-label">Total Earned:</div>
+                <div class="info-value">₦<span id="totalEarned">0</span></div>
                 
                 <div class="info-label">Total Withdrawn:</div>
-                <div class="info-value" id="totalWithdrawn">Loading...</div>
-                
-                <div class="info-label">Trading Capital:</div>
-                <div class="info-value" id="tradingCapital">Loading...</div>
-                
-                <div class="info-label">Daily Profit:</div>
-                <div class="info-value" id="dailyProfit">Loading...</div>
-            </div>
-        </div>
-        
-        <!-- Bank Information Section -->
-        <div class="profile-section">
-            <h2 class="section-title">Bank Information</h2>
-            <div class="info-grid">
-                <div class="info-label">Bank Name:</div>
-                <div class="info-value" id="bankName">Loading...</div>
-                
-                <div class="info-label">Account Number:</div>
-                <div class="info-value" id="accountNumber">Loading...</div>
-                
-                <div class="info-label">Account Name:</div>
-                <div class="info-value" id="bankAccountName">Loading...</div>
-                
-                <div class="info-label">Verification Status:</div>
-                <div class="info-value" id="verificationStatus">Loading...</div>
+                <div class="info-value">₦<span id="totalWithdrawn">0</span></div>
             </div>
             
-            <button class="edit-profile-btn" id="editBankBtn">Update Bank Details</button>
-        </div>
-        
-        <!-- Login History Section -->
-        <div class="profile-section">
-            <h2 class="section-title">Login History</h2>
-            <div class="info-grid">
-                <div class="info-label">Current Session IP:</div>
-                <div class="info-value" id="currentIp">Loading...</div>
-                
-                <div class="info-label">Current Device:</div>
-                <div class="info-value" id="currentDevice">Loading...</div>
-                
-                <div class="info-label">Current Location:</div>
-                <div class="info-value" id="currentLocation">Loading...</div>
+            <!-- Bank Details -->
+            <div id="bankDetailsSection" style="display: none;">
+                <h3 style="margin-top: 20px;">Bank Details</h3>
+                <div class="bank-details">
+                    <div class="info-grid">
+                        <div class="info-label">Bank Name:</div>
+                        <div class="info-value" id="bankNameDisplay">-</div>
+                        
+                        <div class="info-label">Account Number:</div>
+                        <div class="info-value" id="accountNumberDisplay">-</div>
+                        
+                        <div class="info-label">Account Name:</div>
+                        <div class="info-value" id="accountNameDisplay">-</div>
+                    </div>
+                </div>
             </div>
             
-            <h3>Recent Login Activity</h3>
-            <table class="login-history">
+            <button class="edit-profile-btn" id="updateBankBtn" style="margin-top: 15px;">Update Bank Details</button>
+        </div>
+        
+        <!-- Transaction History Section -->
+        <div class="profile-section">
+            <h2 class="section-title">Transaction History</h2>
+            <table class="transactions-table">
                 <thead>
                     <tr>
-                        <th>Date & Time</th>
-                        <th>Device</th>
-                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody id="loginHistoryBody">
+                <tbody id="transactionHistory">
                     <tr>
-                        <td colspan="3">Loading login history...</td>
+                        <td colspan="4">Loading transactions...</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
-        <!-- Transaction History Section -->
+        <!-- Security Section -->
         <div class="profile-section">
-            <h2 class="section-title">Recent Transactions</h2>
-            <div id="transactionHistory">
-                <div class="transaction-item">
-                    <div class="transaction-details">Loading transaction history...</div>
-                </div>
+            <h2 class="section-title">Security</h2>
+            <div class="info-grid">
+                <div class="info-label">Last Login:</div>
+                <div class="info-value" id="lastLogin">-</div>
+                
+                <div class="info-label">Device:</div>
+                <div class="info-value" id="lastDevice">-</div>
+                
+                <div class="info-label">IP Address:</div>
+                <div class="info-value" id="lastIp">-</div>
             </div>
+            
+            <button class="edit-profile-btn" id="changePasswordBtn" style="background: var(--warning); color: var(--dark);">Change Password</button>
+            <button class="edit-profile-btn" id="enable2faBtn" style="background: var(--nigerian-green);">Enable 2FA</button>
         </div>
     </div>
     
-    <!-- Navigation Bar -->
-    <nav class="navigation-bar">
-        <ul>
-            <li>
-                <a href="index.html">
-                    <span class="nav-icon">📊</span>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="trading.html">
-                    <span class="nav-icon">🤖</span>
-                    <span>Trading</span>
-                </a>
-            </li>
-            <li>
-                <a href="ads.html">
-                    <span class="nav-icon">📺</span>
-                    <span>Ads</span>
-                </a>
-            </li>
-            <li>
-                <a href="profile.html" class="active">
-                    <span class="nav-icon">👤</span>
-                    <span>Profile</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="editProfileModal">
-        <div class="modal-content">
+
             <h3>Edit Profile</h3>
             <div class="form-group">
                 <label for="editFullName">Full Name</label>
                 <input type="text" id="editFullName" placeholder="Enter your full name">
             </div>
             <div class="form-group">
-                <label for="editEmail">Email Address</label>
-                <input type="email" id="editEmail" placeholder="Enter your email">
-            </div>
-            <div class="form-group">
                 <label for="editPhone">Phone Number</label>
                 <input type="tel" id="editPhone" placeholder="Enter your phone number">
             </div>
             <div class="modal-actions">
-                <button class="primary" id="saveProfileBtn">Save Changes</button>
-                <button class="secondary" id="cancelEditProfile">Cancel</button>
+                <button id="saveProfileBtn" class="primary">Save Changes</button>
+                <button id="cancelEditProfile" class="secondary">Cancel</button>
             </div>
         </div>
     </div>
     
-    <!-- Edit Bank Modal -->
-    <div class="modal" id="editBankModal">
+    <!-- Change Password Modal -->
+    <div class="modal" id="changePasswordModal">
         <div class="modal-content">
-            <h3>Update Bank Details</h3>
+            <h3>Change Password</h3>
             <div class="form-group">
-                <label for="editBankName">Bank Name</label>
-                <select id="editBankName" class="form-group input">
-                    <option value="">Select Bank</option>
-                    <option value="access">Access Bank</option>
-                    <option value="zenith">Zenith Bank</option>
-                    <option value="gtb">GTBank</option>
-                    <option value="uba">UBA</option>
-                    <option value="firstbank">First Bank</option>
-                    <option value="fidelity">Fidelity Bank</option>
-                    <option value="union">Union Bank</option>
-                    <option value="stanbic">Stanbic IBTC</option>
-                    <option value="ecobank">Ecobank</option>
-                    <option value="polaris">Polaris Bank</option>
-                    <option value="fcmb">FCMB</option>
-                    <option value="kuda">Kuda Bank</option>
-                    <option value="opay">Opay</option>
-                    <option value="palmpay">PalmPay</option>
-                    <option value="moniepoint">Moniepoint</option>
-                    <option value="other">Other Bank</option>
-                </select>
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" placeholder="Enter current password">
             </div>
             <div class="form-group">
-                <label for="editAccountNumber">Account Number</label>
-                <input type="text" id="editAccountNumber" placeholder="Enter account number">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" placeholder="Enter new password">
             </div>
             <div class="form-group">
-                <label for="editAccountName">Account Name</label>
-                <input type="text" id="editAccountName" placeholder="Account name will be verified" readonly>
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm new password">
             </div>
             <div class="modal-actions">
-                <button class="primary" id="saveBankBtn">Save Bank Details</button>
-                <button class="secondary" id="cancelEditBank">Cancel</button>
+                <button id="savePasswordBtn" class="primary">Change Password</button>
+                <button id="cancelPasswordChange" class="secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 2FA Setup Modal -->
+    <div class="modal" id="twoFactorModal">
+        <div class="modal-content">
+            <h3>Two-Factor Authentication</h3>
+            <div id="setup2faSection">
+                <p>Scan this QR code with your authenticator app:</p>
+                <div id="qrCodeContainer" style="text-align: center; margin: 15px 0;">
+                    <!-- QR code will be inserted here -->
+                    <div style="width: 200px; height: 200px; background: #eee; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                        QR Code Placeholder
+                    </div>
+                </div>
+                <p>Or enter this code manually:</p>
+                <div style="text-align: center; font-size: 18px; font-weight: bold; margin: 10px 0;">JBSWY3DPEHPK3PXP</div>
+                <div class="form-group">
+                    <label for="verificationCode">Verification Code</label>
+                    <input type="text" id="verificationCode" placeholder="Enter 6-digit code">
+                </div>
+                <div class="modal-actions">
+                    <button id="verify2faBtn" class="primary">Verify & Enable</button>
+                    <button id="cancel2faSetup" class="secondary">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <h3 id="successTitle">Success!</h3>
+            <p id="successMessage">Operation completed successfully</p>
+            <div class="modal-actions">
+                <button id="closeSuccessModal" class="primary">OK</button>
             </div>
         </div>
     </div>
@@ -687,43 +625,19 @@
     </div>
     
     <script>
-        // Initialize Dexie database (same as index.html)
-        const db = new Dexie("AI_REF_TRADERS_DB");
-        
-        // Define database schema (must match index.html)
-        db.version(1).stores({
-            users: '++id, email, phone, balance, referrals, adsWatched, totalAdsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, streak, announcements, referrer, fullName, accountCreated, lastLogin, loginHistory, transactions',
-            announcements: '++id, title, content, time, unread',
-            supportTickets: '++id, userId, subject, message, status, createdAt',
-            adminCredentials: '++id, username, password',
-            transactions: '++id, userId, type, amount, status, timestamp'
-        });
+        // Initialize Dexie database (ensure it's declared only once)
+        if (typeof db === 'undefined') {
+            const db = new Dexie("AI_REF_TRADERS_DB");
+            db.version(1).stores({
+                users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
+                announcements: '++id, title, content, time, unread',
+                supportTickets: '++id, userId, subject, message, status, createdAt',
+                transactions: '++id, userId, type, amount, status, timestamp'
+            });
+        }
         
         // Current user data
         let currentUser = null;
-        
-        // Format date for display
-        function formatDate(dateString) {
-            if (!dateString) return 'Not available';
-            const date = new Date(dateString);
-            return date.toLocaleString();
-        }
-        
-        // Format currency for display
-        function formatCurrency(amount) {
-            return '₦' + (amount || 0).toLocaleString();
-        }
-        
-        // Show notification
-        function showNotification(message) {
-            const notification = document.getElementById('notification');
-            document.getElementById('notificationText').textContent = message;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
         
         // Load user data from IndexedDB
         async function loadUserData() {
@@ -749,6 +663,9 @@
                 // Update UI with user data
                 updateProfileUI();
                 
+                // Load transactions
+                loadTransactions();
+                
             } catch (error) {
                 console.error('Error loading user data:', error);
                 showNotification('Error loading profile data');
@@ -759,410 +676,236 @@
         function updateProfileUI() {
             if (!currentUser) return;
             
-            // Account Information
+            // Personal Information
             document.getElementById('fullName').textContent = currentUser.fullName || 'Not set';
-            document.getElementById('email').textContent = currentUser.email || 'Not set';
-            document.getElementById('phone').textContent = currentUser.phone || 'Not set';
-            document.getElementById('accountCreated').textContent = formatDate(currentUser.accountCreated);
-            document.getElementById('lastLogin').textContent = formatDate(currentUser.lastLogin);
-            document.getElementById('referralsCompleted').textContent = currentUser.referrals || 0;
-            document.getElementById('accountStatus').textContent = currentUser.verified ? 'Verified' : 'Unverified';
-            document.getElementById('accountStatus').className = currentUser.verified ? 'info-value status-active' : 'info-value status-inactive';
+            document.getElementById('userEmail').textContent = currentUser.email || 'Not set';
+            document.getElementById('userPhone').textContent = currentUser.phone || 'Not set';
+            document.getElementById('joinedDate').textContent = currentUser.accountCreated ? new Date(currentUser.accountCreated).toLocaleDateString() : 'Not available';
+            document.getElementById('referralCode').textContent = currentUser.email || currentUser.phone || 'N/A';
+            document.getElementById('referralCount').textContent = `${currentUser.referrals || 0}/6`;
+            
+            // Account Status
+            document.getElementById('tradingStatus').textContent = currentUser.tradingActive ? 'Active' : 'Inactive';
+            document.getElementById('tradingStatus').className = currentUser.tradingActive ? 'info-value status-active' : 'info-value status-inactive';
+            document.getElementById('adsWatched').textContent = `${currentUser.adsWatched || 0}/20`;
+            document.getElementById('loginStreak').textContent = currentUser.streak ? `${currentUser.streak.count || 0} days` : '0 days';
+            
+            // Verification status
+            const isVerified = currentUser.verified || false;
+            document.getElementById('verificationStatus').textContent = isVerified ? 'Verified' : 'Unverified';
+            document.getElementById('verificationStatus').className = isVerified ? 'info-value status-active' : 'info-value status-inactive';
+            document.getElementById('verifiedBadge').textContent = isVerified ? '✅' : '❌';
+            document.getElementById('verificationBadge').textContent = isVerified ? 'VERIFIED' : 'UNVERIFIED';
+            document.getElementById('verificationBadge').className = isVerified ? 'verification-badge verified' : 'verification-badge unverified';
+            document.getElementById('verificationText').textContent = isVerified ? 'Your account is fully verified' : 'Verify your account to enable withdrawals';
             
             // Financial Information
-            document.getElementById('currentBalance').textContent = formatCurrency(currentUser.balance);
-            document.getElementById('withdrawableBalance').textContent = formatCurrency(currentUser.withdrawableProfit);
-            document.getElementById('totalProfit').textContent = formatCurrency(currentUser.totalProfit);
+            document.getElementById('balanceDisplay').textContent = currentUser.balance?.toLocaleString() || '0';
+            document.getElementById('accountBalance').textContent = currentUser.balance?.toLocaleString() || '0';
+            document.getElementById('withdrawableBalance').textContent = currentUser.withdrawableProfit?.toLocaleString() || '0';
+            document.getElementById('totalEarned').textContent = currentUser.totalProfit?.toLocaleString() || '0';
             
             // Calculate total withdrawn from transactions
-            calculateTotalWithdrawn().then(total => {
-                document.getElementById('totalWithdrawn').textContent = formatCurrency(total);
-            });
+            calculateTotalWithdrawn();
             
-            document.getElementById('tradingCapital').textContent = formatCurrency(currentUser.tradingCapital);
-            document.getElementById('dailyProfit').textContent = formatCurrency(currentUser.dailyProfit);
-            
-            // Bank Information
-            if (currentUser.bankDetails) {
-                document.getElementById('bankName').textContent = currentUser.bankDetails.bankName || 'Not set';
-                document.getElementById('accountNumber').textContent = currentUser.bankDetails.accountNumber || 'Not set';
-                document.getElementById('bankAccountName').textContent = currentUser.bankDetails.accountName || 'Not set';
-                document.getElementById('verificationStatus').textContent = currentUser.verified ? 'Verified' : 'Pending Verification';
-                document.getElementById('verificationStatus').className = currentUser.verified ? 'info-value status-active' : 'info-value status-inactive';
+            // Bank details
+            if (currentUser.bankDetails && isVerified) {
+                document.getElementById('bankDetailsSection').style.display = 'block';
+                document.getElementById('bankNameDisplay').textContent = currentUser.bankDetails.bankName || '-';
+                document.getElementById('accountNumberDisplay').textContent = currentUser.bankDetails.accountNumber ? '••••••••' + currentUser.bankDetails.accountNumber.slice(-4) : '-';
+                document.getElementById('accountNameDisplay').textContent = currentUser.bankDetails.accountName || '-';
             } else {
-                document.getElementById('bankName').textContent = 'Not set';
-                document.getElementById('accountNumber').textContent = 'Not set';
-                document.getElementById('bankAccountName').textContent = 'Not set';
-                document.getElementById('verificationStatus').textContent = 'Not verified';
-                document.getElementById('verificationStatus').className = 'info-value status-inactive';
+                document.getElementById('bankDetailsSection').style.display = 'none';
             }
             
-            // Login Information
-            document.getElementById('currentIp').textContent = getCurrentIp() || 'Unknown';
-            document.getElementById('currentDevice').textContent = getDeviceInfo() || 'Unknown';
-            document.getElementById('currentLocation').textContent = getLocationInfo() || 'Unknown';
+            // Security
+            document.getElementById('lastLogin').textContent = currentUser.lastLogin ? new Date(currentUser.lastLogin).toLocaleString() : '-';
             
-            // Username display
-            document.getElementById('usernameDisplay').textContent = currentUser.fullName ? currentUser.fullName.split(' ')[0] : 'User';
-            
-            // Load login history
-            loadLoginHistory();
-            
-            // Load transaction history
-            loadTransactionHistory();
+            // Simulate device and IP info (in a real app, this would come from backend)
+            document.getElementById('lastDevice').textContent = navigator.userAgent.split('(')[1].split(')')[0] || '-';
+            document.getElementById('lastIp').textContent = '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
         }
         
-        // Calculate total withdrawn from transactions
+        // Load transaction history
+        async function loadTransactions() {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                const userPhone = localStorage.getItem('userPhone');
+                
+                // Get transactions for this user
+                const transactions = await db.transactions
+                    .where('userId').equals(userEmail || userPhone)
+                    .reverse()
+                    .limit(10)
+                    .toArray();
+                
+                const tbody = document.getElementById('transactionHistory');
+                tbody.innerHTML = '';
+                
+                if (transactions.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4">No transactions yet</td></tr>';
+                    return;
+                }
+                
+                transactions.forEach(tx => {
+                    const row = document.createElement('tr');
+                    
+                    // Determine transaction type and styling
+                    let typeClass = '';
+                    let typeText = '';
+                    let amountPrefix = '';
+                    
+                    switch (tx.type) {
+                        case 'deposit':
+                            typeText = 'Deposit';
+                            typeClass = 'transaction-credit';
+                            amountPrefix = '+₦';
+                            break;
+                        case 'withdrawal':
+                            typeText = 'Withdrawal';
+                            typeClass = 'transaction-debit';
+                            amountPrefix = '-₦';
+                            break;
+                        case 'profit':
+                            typeText = 'Trading Profit';
+                            typeClass = 'transaction-credit';
+                            amountPrefix = '+₦';
+                            break;
+                        case 'referral':
+                            typeText = 'Referral Bonus';
+                            typeClass = 'transaction-credit';
+                            amountPrefix = '+₦';
+                            break;
+                        case 'game':
+                            typeText = 'Game Earnings';
+                            typeClass = 'transaction-credit';
+                            amountPrefix = '+₦';
+                            break;
+                        case 'verification':
+                            typeText = 'Verification Fee';
+                            typeClass = 'transaction-debit';
+                            amountPrefix = '-₦';
+                            break;
+                        default:
+                            typeText = 'Transaction';
+                            amountPrefix = '₦';
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${new Date(tx.timestamp).toLocaleDateString()}</td>
+                        <td>${typeText}</td>
+                        <td class="${typeClass}">${amountPrefix}${tx.amount?.toLocaleString() || '0'}</td>
+                        <td>${tx.status || 'completed'}</td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transactionHistory').innerHTML = '<tr><td colspan="4">Error loading transactions</td></tr>';
+            }
+        }
+        
+        // Calculate total withdrawn amount
         async function calculateTotalWithdrawn() {
             try {
                 const userEmail = localStorage.getItem('userEmail');
                 const userPhone = localStorage.getItem('userPhone');
                 
+                // Get all withdrawal transactions
                 const withdrawals = await db.transactions
                     .where('userId').equals(userEmail || userPhone)
-                    .and(transaction => transaction.type === 'withdrawal' && transaction.status === 'completed')
+                    .and(tx => tx.type === 'withdrawal' && tx.status === 'completed')
                     .toArray();
                 
-                return withdrawals.reduce((total, tx) => total + tx.amount, 0);
+                // Sum all withdrawal amounts
+                const totalWithdrawn = withdrawals.reduce((sum, tx) => sum + (tx.amount || 0), 0);
+                
+                // Update UI
+                document.getElementById('totalWithdrawn').textContent = totalWithdrawn.toLocaleString();
+                
+                // Update user object if needed
+                if (currentUser) {
+                    currentUser.totalWithdrawn = totalWithdrawn;
+                }
+                
             } catch (error) {
                 console.error('Error calculating total withdrawn:', error);
-                return 0;
+                document.getElementById('totalWithdrawn').textContent = '0';
             }
         }
         
-        // Get current IP (simulated)
-        function getCurrentIp() {
-            // In a real app, you would get this from the server or a service
-            return '192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255);
-        }
-        
-        // Get device info
-        function getDeviceInfo() {
-            const userAgent = navigator.userAgent;
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationText').textContent = message;
+            notification.classList.add('show');
             
-            if (userAgent.match(/Android/i)) {
-                return 'Android Device';
-            } else if (userAgent.match(/iPhone|iPad|iPod/i)) {
-                return 'iOS Device';
-            } else if (userAgent.match(/Windows/i)) {
-                return 'Windows PC';
-            } else if (userAgent.match(/Mac/i)) {
-                return 'Mac';
-            } else if (userAgent.match(/Linux/i)) {
-                return 'Linux PC';
-            } else {
-                return 'Unknown Device';
-            }
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
         
-        // Get location info (simulated)
-        function getLocationInfo() {
-            // In a real app, you would use geolocation or IP lookup
-            const locations = ['Lagos, Nigeria', 'Abuja, Nigeria', 'Port Harcourt, Nigeria', 'Kano, Nigeria', 'Ibadan, Nigeria'];
-            return locations[Math.floor(Math.random() * locations.length)];
+        // Show success modal
+        function showSuccess(title, message) {
+            document.getElementById('successTitle').textContent = title;
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('successModal').classList.add('active');
         }
         
-        // Load login history
-        async function loadLoginHistory() {
-            try {
-                const loginHistoryBody = document.getElementById('loginHistoryBody');
-                
-                if (!currentUser.loginHistory || currentUser.loginHistory.length === 0) {
-                    loginHistoryBody.innerHTML = '<tr><td colspan="3">No login history available</td></tr>';
-                    return;
-                }
-                
-                // Sort by most recent first
-                const sortedHistory = [...currentUser.loginHistory].sort((a, b) => {
-                    return new Date(b.loginTime) - new Date(a.loginTime);
-                });
-                
-                // Display last 5 logins
-                loginHistoryBody.innerHTML = '';
-                sortedHistory.slice(0, 5).forEach(login => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${formatDate(login.loginTime)}</td>
-                        <td>${login.device || 'Unknown'}</td>
-                        <td>${login.location || 'Unknown'}</td>
-                    `;
-                    loginHistoryBody.appendChild(row);
-                });
-                
-            } catch (error) {
-                console.error('Error loading login history:', error);
-                document.getElementById('loginHistoryBody').innerHTML = '<tr><td colspan="3">Error loading login history</td></tr>';
-            }
-        }
-        
-        // Load transaction history
-        async function loadTransactionHistory() {
-            try {
-                const userEmail = localStorage.getItem('userEmail');
-                const userPhone = localStorage.getItem('userPhone');
-                
-                const transactions = await db.transactions
-                    .where('userId').equals(userEmail || userPhone)
-                    .sortBy('timestamp');
-                
-                // Reverse to show most recent first
-                transactions.reverse();
-                
-                const transactionHistory = document.getElementById('transactionHistory');
-                transactionHistory.innerHTML = '';
-                
-                if (transactions.length === 0) {
-                    transactionHistory.innerHTML = '<div class="transaction-item"><div class="transaction-details">No transactions yet</div></div>';
-                    return;
-                }
-                
-                // Display last 5 transactions
-                transactions.slice(0, 5).forEach(tx => {
-                    const item = document.createElement('div');
-                    item.className = 'transaction-item';
-                    
-                    const details = document.createElement('div');
-                    details.className = 'transaction-details';
-                    
-                    const amount = document.createElement('div');
-                    amount.className = 'transaction-amount ' + 
-                        (tx.type === 'deposit' || tx.type === 'profit' ? 'transaction-positive' : 'transaction-negative');
-                    
-                    // Format transaction details
-                    let typeText = '';
-                    switch (tx.type) {
-                        case 'deposit':
-                            typeText = 'Deposit';
-                            break;
-                        case 'withdrawal':
-                            typeText = 'Withdrawal';
-                            break;
-                        case 'profit':
-                            typeText = 'Trading Profit';
-                            break;
-                        case 'referral':
-                            typeText = 'Referral Bonus';
-                            break;
-                        case 'game':
-                            typeText = 'Game Earnings';
-                            break;
-                        default:
-                            typeText = 'Transaction';
-                    }
-                    
-                    details.textContent = `${typeText} - ${formatDate(tx.timestamp)}`;
-                    amount.textContent = (tx.type === 'withdrawal' ? '-' : '+') + formatCurrency(tx.amount);
-                    
-                    item.appendChild(details);
-                    item.appendChild(amount);
-                    transactionHistory.appendChild(item);
-                });
-                
-            } catch (error) {
-                console.error('Error loading transaction history:', error);
-                document.getElementById('transactionHistory').innerHTML = 
-                    '<div class="transaction-item"><div class="transaction-details">Error loading transactions</div></div>';
-            }
-        }
-        
-        // Save profile changes
-        async function saveProfileChanges() {
-            try {
-                const fullName = document.getElementById('editFullName').value.trim();
-                const email = document.getElementById('editEmail').value.trim();
-                const phone = document.getElementById('editPhone').value.trim();
-                
-                if (!fullName || !email || !phone) {
-                    showNotification('Please fill in all fields');
-                    return;
-                }
-                
-                // Update user data
-                currentUser.fullName = fullName;
-                currentUser.email = email;
-                currentUser.phone = phone;
-                
-                // Save to database
-                await db.users.update(currentUser.id, {
-                    fullName: fullName,
-                    email: email,
-                    phone: phone
-                });
-                
-                // Update UI
-                updateProfileUI();
-                
-                // Close modal
-                document.getElementById('editProfileModal').classList.remove('active');
-                
-                showNotification('Profile updated successfully');
-                
-            } catch (error) {
-                console.error('Error saving profile changes:', error);
-                showNotification('Error updating profile');
-            }
-        }
-        
-        // Save bank details
-        async function saveBankDetails() {
-            try {
-                const bankName = document.getElementById('editBankName').value;
-                const accountNumber = document.getElementById('editAccountNumber').value.trim();
-                const accountName = document.getElementById('editAccountName').value.trim();
-                
-                if (!bankName || !accountNumber || !accountName) {
-                    showNotification('Please fill in all bank details');
-                    return;
-                }
-                
-                if (accountNumber.length !== 10) {
-                    showNotification('Account number must be 10 digits');
-                    return;
-                }
-                
-                // Update user data
-                currentUser.bankDetails = {
-                    bankName: bankName,
-                    accountNumber: accountNumber,
-                    accountName: accountName
-                };
-                
-                // Mark as unverified until payment is made
-                currentUser.verified = false;
-                
-                // Save to database
-                await db.users.update(currentUser.id, {
-                    bankDetails: currentUser.bankDetails,
-                    verified: false
-                });
-                
-                // Update UI
-                updateProfileUI();
-                
-                // Close modal
-                document.getElementById('editBankModal').classList.remove('active');
-                
-                showNotification('Bank details updated. Please verify with ₦1,050 to enable withdrawals.');
-                
-            } catch (error) {
-                console.error('Error saving bank details:', error);
-                showNotification('Error updating bank details');
-            }
-        }
-        
-        // Verify account number with bank (simulated)
-        function verifyAccountNumber(bankName, accountNumber) {
-            return new Promise((resolve) => {
-                // Simulate API call delay
-                setTimeout(() => {
-                    // In a real app, this would call your backend API to verify with Paystack or other service
-                    const names = ['Adeola Johnson', 'Chinedu Okoro', 'Fatima Bello', 'Emeka Nwachukwu', 'Amina Yusuf'];
-                    const randomName = names[Math.floor(Math.random() * names.length)];
-                    
-                    resolve({
-                        success: true,
-                        accountName: randomName
-                    });
-                }, 1000);
-            });
-        }
-        
-        // Handle account number input
-        document.getElementById('editAccountNumber').addEventListener('blur', async function() {
-            const bankName = document.getElementById('editBankName').value;
-            const accountNumber = this.value.trim();
+        // Theme management
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
             
-            if (!bankName || !accountNumber || accountNumber.length !== 10) {
-                return;
+            // Check for saved theme preference or use preferred color scheme
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Set initial theme
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
             }
             
-            // Show loading
-            document.getElementById('editAccountName').value = 'Verifying...';
+            // Update toggle button based on current theme
+            updateThemeToggle();
             
-            try {
-                const verification = await verifyAccountNumber(bankName, accountNumber);
-                
-                if (verification.success) {
-                    document.getElementById('editAccountName').value = verification.accountName;
-                } else {
-                    document.getElementById('editAccountName').value = 'Verification failed';
-                }
-            } catch (error) {
-                console.error('Error verifying account:', error);
-                document.getElementById('editAccountName').value = 'Error verifying';
-            }
-        });
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Set up theme toggle
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            
-            document.getElementById('themeToggle').addEventListener('click', function() {
+            // Add event listener for theme toggle
+            themeToggle.addEventListener('click', () => {
                 const currentTheme = document.documentElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                // Set the new theme
                 document.documentElement.setAttribute('data-theme', newTheme);
                 localStorage.setItem('theme', newTheme);
                 
-                // Update icon and text
-                if (newTheme === 'dark') {
-                    document.getElementById('themeIcon').textContent = '☀️';
-                    document.getElementById('themeText').textContent = 'Light Mode';
-                } else {
-                    document.getElementById('themeIcon').textContent = '🌙';
-                    document.getElementById('themeText').textContent = 'Dark Mode';
-                }
+                // Update toggle button
+                updateThemeToggle();
             });
             
-            // Update icon and text based on current theme
-            if (savedTheme === 'dark') {
-                document.getElementById('themeIcon').textContent = '☀️';
-                document.getElementById('themeText').textContent = 'Light Mode';
+            function updateThemeToggle() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                if (currentTheme === 'dark') {
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = 'Dark Mode';
+                }
             }
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set up theme toggle
+            setupThemeToggle();
             
             // Load user data
             await loadUserData();
-            
-            // Set up edit profile modal
-            document.getElementById('editProfileBtn').addEventListener('click', function() {
-                // Populate form with current data
-                document.getElementById('editFullName').value = currentUser.fullName || '';
-                document.getElementById('editEmail').value = currentUser.email || '';
-                document.getElementById('editPhone').value = currentUser.phone || '';
-                
-                // Show modal
-                document.getElementById('editProfileModal').classList.add('active');
-            });
-            
-            document.getElementById('cancelEditProfile').addEventListener('click', function() {
-                document.getElementById('editProfileModal').classList.remove('active');
-            });
-            
-            document.getElementById('saveProfileBtn').addEventListener('click', saveProfileChanges);
-            
-            // Set up edit bank modal
-            document.getElementById('editBankBtn').addEventListener('click', function() {
-                // Populate form with current data if available
-                if (currentUser.bankDetails) {
-                    document.getElementById('editBankName').value = currentUser.bankDetails.bankName || '';
-                    document.getElementById('editAccountNumber').value = currentUser.bankDetails.accountNumber || '';
-                    document.getElementById('editAccountName').value = currentUser.bankDetails.accountName || '';
-                } else {
-                    document.getElementById('editBankName').value = '';
-                    document.getElementById('editAccountNumber').value = '';
-                    document.getElementById('editAccountName').value = '';
-                }
-                
-                // Show modal
-                document.getElementById('editBankModal').classList.add('active');
-            });
-            
-            document.getElementById('cancelEditBank').addEventListener('click', function() {
-                document.getElementById('editBankModal').classList.remove('active');
-            });
-            
-            document.getElementById('saveBankBtn').addEventListener('click', saveBankDetails);
             
             // Logout button
             document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -1173,6 +916,271 @@
                     window.location.href = 'index.html';
                 }
             });
+            
+            // Edit profile button
+            document.getElementById('editProfileBtn').addEventListener('click', function() {
+                // Populate the edit form with current values
+                document.getElementById('editFullName').value = currentUser.fullName || '';
+                document.getElementById('editPhone').value = currentUser.phone || '';
+                
+                // Show the modal
+                document.getElementById('editProfileModal').classList.add('active');
+            });
+            
+            // Save profile changes
+            document.getElementById('saveProfileBtn').addEventListener('click', async function() {
+                const newName = document.getElementById('editFullName').value.trim();
+                const newPhone = document.getElementById('editPhone').value.trim();
+                
+                if (!newName) {
+                    showNotification('Please enter your full name');
+                    return;
+                }
+                
+                try {
+                    // Update user in database
+                    await db.users.update(currentUser.id, {
+                        fullName: newName,
+                        phone: newPhone
+                    });
+                    
+                    // Update current user object
+                    currentUser.fullName = newName;
+                    currentUser.phone = newPhone;
+                    
+                    // Update UI
+                    updateProfileUI();
+                    
+                    // Close modal
+                    document.getElementById('editProfileModal').classList.remove('active');
+                    
+                    // Show success
+                    showNotification('Profile updated successfully');
+                    
+                } catch (error) {
+                    console.error('Error updating profile:', error);
+                    showNotification('Error updating profile');
+                }
+            });
+            
+            // Cancel edit profile
+            document.getElementById('cancelEditProfile').addEventListener('click', function() {
+                document.getElementById('editProfileModal').classList.remove('active');
+            });
+            
+            // Update bank details button
+            document.getElementById('updateBankBtn').addEventListener('click', function() {
+                document.getElementById('bankModal').classList.add('active');
+            });
+            
+            // Bank verification button
+            document.getElementById('paystackVerifyBtn').addEventListener('click', async function() {
+                const bankName = document.getElementById('bankName').value === 'Other' 
+                    ? document.getElementById('otherBankName').value 
+                    : document.getElementById('bankName').value;
+                const accountNumber = document.getElementById('accountNumber').value;
+                
+                if (!bankName || !accountNumber || accountNumber.length !== 10) {
+                    showNotification('Please enter valid bank details (10-digit account number)');
+                    return;
+                }
+                
+                try {
+                    // In a real app, this would call your backend API to verify with Paystack
+                    // For demo, we'll simulate a successful verification
+                    
+                    // Show loading state
+                    this.disabled = true;
+                    this.textContent = 'Processing...';
+                    
+                    // Simulate API call delay
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    
+                    // Update user as verified
+                    await db.users.update(currentUser.id, {
+                        verified: true,
+                        bankDetails: {
+                            bankName: bankName,
+                            accountNumber: accountNumber,
+                            accountName: document.getElementById('accountName').value || 'Verified Account'
+                        },
+                        withdrawableProfit: (currentUser.withdrawableProfit || 0) + 500 // Add the ₦500 verification bonus
+                    });
+                    
+                    // Record the verification transaction
+                    await db.transactions.add({
+                        userId: currentUser.email || currentUser.phone,
+                        type: 'verification',
+                        amount: 1050,
+                        status: 'completed',
+                        timestamp: new Date().getTime()
+                    });
+                    
+                    // Record the bonus credit
+                    await db.transactions.add({
+                        userId: currentUser.email || currentUser.phone,
+                        type: 'bonus',
+                        amount: 500,
+                        status: 'completed',
+                        timestamp: new Date().getTime()
+                    });
+                    
+                    // Reload user data
+                    await loadUserData();
+                    
+                    // Close modal
+                    document.getElementById('bankModal').classList.remove('active');
+                    
+                    // Show success
+                    showSuccess(
+                        'Verification Successful', 
+                        'Your bank account has been verified and ₦500 has been added to your withdrawable balance.'
+                    );
+                    
+                } catch (error) {
+                    console.error('Error verifying account:', error);
+                    showNotification('Error verifying account. Please try again.');
+                } finally {
+                    this.disabled = false;
+                    this.textContent = 'Pay ₦1,050 with Paystack';
+                }
+            });
+            
+            // Cancel bank binding
+            document.getElementById('cancelBankBinding').addEventListener('click', function() {
+                document.getElementById('bankModal').classList.remove('false');
+            });
+            
+            // Bank name dropdown change
+            document.getElementById('bankName').addEventListener('change', function() {
+                const otherBankInput = document.getElementById('otherBankName');
+                if (this.value === 'Other') {
+                    otherBankInput.style.display = 'block';
+                } else {
+                    otherBankInput.style.display = 'none';
+                }
+            });
+            
+            // Account number verification (simulated)
+            document.getElementById('accountNumber').addEventListener('blur', function() {
+                if (this.value.length === 10) {
+                    // Simulate account name lookup
+                    document.getElementById('accountName').value = 'Verified Account';
+                }
+            });
+            
+            // Change password button
+            document.getElementById('changePasswordBtn').addEventListener('click', function() {
+                document.getElementById('changePasswordModal').classList.add('active');
+            });
+            
+            // Save password change
+            document.getElementById('savePasswordBtn').addEventListener('click', async function() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showNotification('Please fill in all fields');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    showNotification('New passwords do not match');
+                    return;
+                }
+                
+                // In a real app, this would verify current password with backend
+                // For demo, we'll just show success
+                
+                // Clear fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+                
+                // Close modal
+                document.getElementById('changePasswordModal').classList.remove('active');
+                
+                // Show success
+                showNotification('Password changed successfully');
+            });
+            
+            // Cancel password change
+            document.getElementById('cancelPasswordChange').addEventListener('click', function() {
+                document.getElementById('changePasswordModal').classList.remove('active');
+            });
+            
+            // Enable 2FA button
+            document.getElementById('enable2faBtn').addEventListener('click', function() {
+                document.getElementById('twoFactorModal').classList.add('active');
+            });
+            
+            // Verify 2FA code
+            document.getElementById('verify2faBtn').addEventListener('click', async function() {
+                const code = document.getElementById('verificationCode').value;
+                
+                if (!code || code.length !== 6) {
+                    showNotification('Please enter a valid 6-digit code');
+                    return;
+                }
+                
+                // In a real app, this would verify with backend
+                // For demo, we'll just show success
+                
+                // Update user in database
+                await db.users.update(currentUser.id, {
+                    twoFactorEnabled: true
+                });
+                
+                // Update current user
+                currentUser.twoFactorEnabled = true;
+                
+                // Clear field
+                document.getElementById('verificationCode').value = '';
+                
+                // Close modal
+                document.getElementById('twoFactorModal').classList.remove('active');
+                
+                // Show success
+                showNotification('Two-factor authentication enabled successfully');
+            });
+            
+            // Cancel 2FA setup
+            document.getElementById('cancel2faSetup').addEventListener('click', function() {
+                document.getElementById('twoFactorModal').classList.remove('active');
+            });
+            
+            // Close success modal
+            document.getElementById('closeSuccessModal').addEventListener('click', function() {
+                document.getElementById('successModal').classList.remove('active');
+            });
+            
+            // Populate bank dropdown (simulated)
+            function populateBankDropdown() {
+                const bankSelect = document.getElementById('bankName');
+                const nigerianBanks = [
+                    "Access Bank", "First Bank", "GTBank", "UBA", "Zenith Bank", 
+                    "Fidelity Bank", "Union Bank", "Stanbic IBTC", "FCMB", "Keystone Bank",
+                    "Polaris Bank", "Sterling Bank", "Wema Bank", "Heritage Bank", "Ecobank",
+                    "Kuda Bank", "Opay", "Palmpay", "Moniepoint", "Sparkle"
+                ];
+                
+                // Clear existing options except the first one and "Other"
+                while (bankSelect.options.length > 2) {
+                    bankSelect.remove(1);
+                }
+                
+                // Add Nigerian banks
+                nigerianBanks.sort().forEach(bank => {
+                    const option = document.createElement('option');
+                    option.value = bank;
+                    option.textContent = bank;
+                    bankSelect.insertBefore(option, bankSelect.lastElementChild);
+                });
+            }
+            
+            // Initialize bank dropdown
+            populateBankDropdown();
         });
     </script>
 </body>

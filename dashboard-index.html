@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <!-- Nigeria-Focused SEO Meta Tags -->
     <meta name="description" content="AI REF-TRADERS: Make money online in Nigeria through AI trading, referrals & games. Perfect for Nigerians looking for legit online income opportunities in Lagos, Abuja, Port Harcourt">
     <meta name="keywords" content="make money online Nigeria, Lagos side hustle, Abuja online business, Nigerian passive income, how to earn online in Nigeria, legit Nigerian biz, Nigerian youth opportunity">
@@ -3968,21 +3968,8 @@
                 this.disabled = false;
                 this.innerHTML = 'Pay ₦1,050 with Paystack';
             }
-        });
+        });s
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCx8Uvhoimdahoggu6Ucn-Lb1Q59T2Ef9s",
-  authDomain: "ai-ref-traders-c27e3.firebaseapp.com",
-  projectId: "ai-ref-traders-c27e3",
-  storageBucket: "ai-ref-traders-c27e3.firebasestorage.app",
-  messagingSenderId: "437331346504",
-  appId: "1:437331346504:web:283761903d3c161d81047d",
-  measurementId: "G-06L4SNDMPZ"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
     </script>
 <script>
   // Save data (works on all pages)
@@ -4023,7 +4010,14 @@
         showNotification('Welcome to AI REF-TRADERS!', 'success');
     });
 </script>
+ 
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <script src="js/api.js"></script>
+<!-- Add this before the closing </body> tag -->
+    <script src="js/telegram-integration.js"></script>
+    <script src="js/shared-data-service.js"></script>
+    <script src="js/telegram-bridge.js"></script>
+    <script src="js/page-connector.js"></script>
+    <script src="js/ads-connector.js"></script>
 </body>
 </html>

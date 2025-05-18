@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Paystack -->
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI REF-TRADERS - Admin Panel</title>
-    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/otpauth@9.0.2/dist/otpauth.umd.min.js"></script>
+    
     <style>
         :root {
             --primary: #6C5CE7;
@@ -44,10 +45,6 @@
             --nigerian-green-light: #1E3A2F;
         }
         
-        * {
-            box-sizing: border-box;
-        }
-        
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
@@ -55,23 +52,12 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: all 0.3s;
-            min-height: 100vh;
         }
         
         .container {
             max-width: 100%;
             padding: 15px;
             padding-bottom: 70px;
-        }
-        
-        .app-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            flex-wrap: wrap;
         }
         
         .user-chip {
@@ -83,7 +69,6 @@
             align-items: center;
             gap: 5px;
             font-weight: bold;
-            margin-top: 10px;
         }
         
         .nigeria-badge {
@@ -135,7 +120,6 @@
             display: flex;
             gap: 10px;
             margin: 20px 0;
-            flex-wrap: wrap;
         }
         
         button {
@@ -146,7 +130,6 @@
             cursor: pointer;
             flex: 1;
             transition: all 0.2s;
-            min-width: 120px;
         }
         
         button:active {
@@ -239,8 +222,6 @@
             transform: translateY(20px);
             transition: transform 0.3s;
             color: var(--text-color);
-            max-height: 90vh;
-            overflow-y: auto;
         }
         
         .modal.active .modal-content {
@@ -251,7 +232,6 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
-            flex-wrap: wrap;
         }
         
         .notification {
@@ -267,8 +247,6 @@
             z-index: 100;
             opacity: 0;
             transition: opacity 0.3s;
-            max-width: 90%;
-            text-align: center;
         }
         
         .notification.show {
@@ -281,8 +259,6 @@
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
             overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
         }
         
         .admin-tab {
@@ -309,7 +285,6 @@
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
-            font-size: 14px;
         }
         
         .user-table th, .user-table td {
@@ -350,7 +325,7 @@
         
         .admin-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -377,7 +352,6 @@
             display: flex;
             gap: 10px;
             margin-top: 15px;
-            flex-wrap: wrap;
         }
         
         .batch-progress {
@@ -425,7 +399,6 @@
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 4px 12px var(--shadow-color);
-            width: 90%;
         }
         
         .login-title {
@@ -442,7 +415,6 @@
             border-radius: 8px;
             background: var(--input-bg);
             color: var(--text-color);
-            font-size: 16px;
         }
         
         .login-form button {
@@ -467,7 +439,7 @@
         }
         
         /* Responsive */
-        @media (max-width: 768px) {
+        @media (max-width: 600px) {
             .admin-stats-grid {
                 grid-template-columns: 1fr 1fr;
             }
@@ -476,67 +448,12 @@
                 flex-direction: column;
             }
             
-            .action-bar button {
-                width: 100%;
-            }
-            
             .user-table {
-                font-size: 12px;
+                font-size: 14px;
             }
             
             .user-table th, .user-table td {
                 padding: 8px 5px;
-            }
-            
-            .modal-content {
-                width: 95%;
-                padding: 15px;
-            }
-            
-            .modal-actions button {
-                width: 100%;
-            }
-            
-            .admin-tab {
-                padding: 8px 10px;
-                font-size: 14px;
-            }
-            
-            .app-bar h1 {
-                font-size: 1.5rem;
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            
-            .user-chip {
-                margin-left: auto;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .admin-stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .totp-input {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-            }
-            
-            .login-container {
-                margin: 20px auto;
-                padding: 15px;
-            }
-            
-            .login-title {
-                font-size: 1.3rem;
-                margin-bottom: 15px;
-            }
-            
-            .login-form input {
-                padding: 10px;
-                font-size: 14px;
             }
         }
 
@@ -555,80 +472,11 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
-        /* Input focus styles */
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.2);
-        }
-        
-        /* Button hover states */
-        button:hover {
-            opacity: 0.9;
-        }
-        
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-color);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-        
-        /* Make tables more responsive */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
     </style>
 </head>
 <body>
-    <!-- Theme Toggle Button -->
-    <div class="theme-toggle">
-        <button class="theme-toggle-btn" id="themeToggle">
-            <span class="theme-icon" id="themeIcon">🌙</span>
-            <span id="themeText">Dark Mode</span>
-        </button>
-    </div>
-
-    <!-- Login Form -->
-    <div class="login-container" id="loginContainer">
-        <div class="auth-step active" id="passwordStep">
-            <h2 class="login-title">Admin Login</h2>
-            <div class="login-form">
-                <input type="text" id="adminUsername" placeholder="Username" autocomplete="username">
-                <input type="password" id="adminPassword" placeholder="Password" autocomplete="current-password">
-                <input type="text" id="adminPasskey" placeholder="Passkey (optional)">
-                <button class="primary" id="adminLoginBtn">Login</button>
-            </div>
-        </div>
-        <div class="auth-step" id="totpStep">
-            <h2 class="login-title">2FA Verification</h2>
-            <div class="login-form">
-                <div style="display: flex; gap: 5px; justify-content: center; margin-bottom: 15px;">
-                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" autocomplete="one-time-code">
-                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
-                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
-                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
-                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
-                    <input type="text" class="totp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric">
-                </div>
-                <button class="primary" id="verifyTotpBtn">Verify</button>
-                <button class="secondary" id="backToPasswordBtn" style="margin-top: 10px;">Back to Password</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Panel (hidden until login) -->
-    <div class="container" id="adminPanel" style="display: none;">
+    <!-- Admin Panel -->
+    <div class="container" id="adminPanel">
         <div class="app-bar">
             <h1>AI REF-TRADERS <span class="nigeria-badge">ADMIN PANEL</span></h1>
             <div class="user-chip">
@@ -696,14 +544,14 @@
             <div class="status-card">
                 <h3>👥 User Management</h3>
                 <div class="admin-form-group">
-                    <input type="text" id="userSearch" placeholder="Search users by ID or email...">
+                    <input type="text" id="userSearch" placeholder="Search users by ID or name...">
                 </div>
-                <div class="table-responsive">
+                <div style="overflow-x: auto;">
                     <table class="user-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Email</th>
+                                <th>Telegram ID</th>
                                 <th>Balance</th>
                                 <th>Referrals</th>
                                 <th>Ads Watched</th>
@@ -804,23 +652,21 @@
             
             <div class="status-card">
                 <h3>📊 Withdrawal Requests</h3>
-                <div class="table-responsive">
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>User ID</th>
-                                <th>Amount (₦)</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="withdrawalTableBody">
-                            <!-- Withdrawals will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Amount (₦)</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawalTableBody">
+                        <!-- Withdrawals will be loaded here -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
@@ -932,23 +778,21 @@
         <div id="supportTab" class="admin-tab-content">
             <div class="status-card">
                 <h3>📩 Support Tickets</h3>
-                <div class="table-responsive">
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>User ID</th>
-                                <th>Subject</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="supportTicketTableBody">
-                            <!-- Tickets will be loaded here -->
-                        </tbody>
-                    </table>
-                </div>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User ID</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="supportTicketTableBody">
+                        <!-- Tickets will be loaded here -->
+                    </tbody>
+                </table>
             </div>
             
             <div class="status-card">
@@ -1009,19 +853,20 @@
     </div>
     
     <script>
-        // Initialize Dexie database
-        const db = new Dexie("AI_REF_TRADERS_DB");
-        
-        db.version(2).stores({
-            users: '++id, email, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
-            announcements: '++id, title, content, time, unread',
-            supportTickets: '++id, userId, subject, message, status, createdAt',
-            transactions: '++id, userId, type, amount, status, timestamp',
-            adminCredentials: '++id, username, password, passkey, totpSecret',
-            systemSettings: '++id, name, value',
-            paymentBatches: '++id, batchSize, processedAt, usersProcessed, totalAmount',
-            verificationNotifications: '++id, userId, batchNumber, notifiedAt, deadline, gracePeriod, completed'
-        });
+        // Initialize Dexie database (ensure it's declared only once)
+        if (typeof db === 'undefined') {
+            const db = new Dexie("AI_REF_TRADERS_DB");
+            db.version(2).stores({
+                users: '++id, telegramId, balance, referrals, adsWatched, verified, tradingActive, tradingCapital, dailyProfit, totalProfit, withdrawableProfit, bankDetails, paymentCircle, gameEarnings, lastAdWatchTime, lastTradingUpdate, totalWithdrawn',
+                announcements: '++id, title, content, time, unread',
+                supportTickets: '++id, userId, subject, message, status, createdAt',
+                transactions: '++id, userId, type, amount, status, timestamp',
+                adminCredentials: '++id, username, password, passkey, totpSecret',
+                systemSettings: '++id, name, value',
+                paymentBatches: '++id, batchSize, processedAt, usersProcessed, totalAmount',
+                verificationNotifications: '++id, userId, batchNumber, notifiedAt, deadline, gracePeriod, completed'
+            });
+        }
 
         // Global variables
         let currentPage = 1;
@@ -1347,7 +1192,7 @@
                 const filteredUsers = searchTerm 
                     ? users.filter(user => 
                         user.id.toString().includes(searchTerm) || 
-                        (user.email && user.email.toLowerCase().includes(searchTerm)))
+                        (user.telegramId && user.telegramId.toString().includes(searchTerm)))
                     : users;
                 
                 // Pagination
@@ -1360,7 +1205,7 @@
                 userTableBody.innerHTML = paginatedUsers.map(user => `
                     <tr>
                         <td>${user.id}</td>
-                        <td>${user.email || 'N/A'}</td>
+                        <td>${user.telegramId || 'N/A'}</td>
                         <td>₦${user.balance?.toLocaleString() || '0'}</td>
                         <td>${user.referrals || '0'}</td>
                         <td>${user.adsWatched || '0'}</td>
@@ -1841,7 +1686,7 @@
                     return;
                 }
                 
-                // In a real app, you would send this reply to the user (e.g., via email)
+                // In a real app, you would send this reply to the user (e.g., via Telegram bot)
                 // For this demo, we'll just update the ticket status
                 ticket.status = 'replied';
                 await db.supportTickets.put(ticket);
@@ -2011,44 +1856,8 @@
             try {
                 const admin = await db.adminCredentials.where('username').equals(username).first();
                 
-                if (!admin) {
-                    showNotification('Invalid credentials.');
-                    return;
-                }
-                
-                // Check password
-                if (admin.password !== password) {
-                    showNotification('Invalid password.');
-                    return;
-                }
-                
-                // Check passkey if required
-                if (admin.passkey && admin.passkey !== passkey) {
-                    showNotification('Invalid passkey.');
-                    return;
-                }
-                
-                // Check if 2FA is enabled
-                if (admin.totpSecret) {
-                    // Show 2FA step
-                    document.getElementById('passwordStep').classList.remove('active');
-                    document.getElementById('totpStep').classList.add('active');
-                    
-                    // Store temporary admin data
-                    tempAdminData = {
-                        username: username,
-                        password: password,
-                        passkey: passkey
-                    };
-                    
-                    // Clear password inputs
-                    document.getElementById('adminPassword').value = '';
-                    document.getElementById('adminPasskey').value = '';
-                    
-                    // Focus first TOTP input
-                    document.querySelector('#totpStep .totp-input').focus();
-                } else {
-                    // Successful login without 2FA
+                if (admin && admin.password === password && (!admin.passkey || admin.passkey === passkey)) {
+                    // Successful login
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     document.getElementById('adminUsernameDisplay').textContent = username;
@@ -2057,6 +1866,8 @@
                     await loadAdminPanelData();
                     
                     showNotification('Login successful!');
+                } else {
+                    showNotification('Invalid credentials.');
                 }
             } catch (error) {
                 console.error('Error during admin login:', error);
@@ -2067,12 +1878,7 @@
         // Verify 2FA code
         async function verify2FACode() {
             try {
-                if (!tempAdminData) {
-                    showNotification('Session expired. Please login again.');
-                    return;
-                }
-                
-                const admin = await db.adminCredentials.where('username').equals(tempAdminData.username).first();
+                const admin = await db.adminCredentials.where('username').equals('admin').first();
                 if (!admin || !admin.totpSecret) {
                     showNotification('2FA not properly set up.');
                     return;
@@ -2101,18 +1907,10 @@
                     // Successful verification
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    document.getElementById('adminUsernameDisplay').textContent = tempAdminData.username;
+                    document.getElementById('adminUsernameDisplay').textContent = 'admin';
 
                     // Load admin panel data
                     await loadAdminPanelData();
-                    
-                    // Clear TOTP inputs
-                    document.querySelectorAll('#totpStep .totp-input').forEach(input => {
-                        input.value = '';
-                    });
-                    
-                    // Clear temp data
-                    tempAdminData = null;
                     
                     showNotification('Login successful!');
                 } else {
@@ -2134,11 +1932,6 @@
                     document.getElementById('adminUsername').value = '';
                     document.getElementById('adminPassword').value = '';
                     document.getElementById('adminPasskey').value = '';
-                    // Show password step
-                    document.getElementById('passwordStep').classList.add('active');
-                    document.getElementById('totpStep').classList.remove('active');
-                    // Clear temp data
-                    tempAdminData = null;
                 }
             });
         }
@@ -2233,28 +2026,6 @@
                 document.getElementById('previewModal').classList.remove('active');
             });
             
-            // Auto-focus next TOTP input
-            document.querySelectorAll('.totp-input').forEach((input, index, inputs) => {
-                input.addEventListener('input', function() {
-                    if (this.value.length === 1 && index < inputs.length - 1) {
-                        inputs[index + 1].focus();
-                    }
-                });
-                
-                // Allow pasting the full code
-                input.addEventListener('paste', function(e) {
-                    e.preventDefault();
-                    const pasteData = e.clipboardData.getData('text').trim();
-                    if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
-                        const inputs = document.querySelectorAll('.totp-input');
-                        for (let i = 0; i < 6; i++) {
-                            inputs[i].value = pasteData[i] || '';
-                        }
-                        inputs[5].focus();
-                    }
-                });
-            });
-            
             // If already logged in, show admin panel
             if (document.getElementById('adminPanel').style.display === 'none') {
                 document.getElementById('loginContainer').style.display = 'block';
@@ -2266,21 +2037,9 @@
         window.processWithdrawal = processWithdrawal;
         window.viewTicket = viewTicket;
     </script>
-<script>
-  // Save data (works on all pages)
-  function saveData(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  // Load data (works on all pages)
-  function loadData(key) {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : null;
-  }
-
-  // Example: Save user settings
-  saveData("theme", "dark"); // Saves "dark" theme
-  const theme = loadData("theme"); // Gets "dark" back
-</script>
+<!-- Add these scripts right before the closing </body> tag -->
+<script src="js/shared-data-service.js"></script>
+<script src="js/telegram-bridge.js"></script>
+<script src="js/page-connector.js"></script>
 </body>
 </html>
